@@ -1,0 +1,4018 @@
+[
+ {
+  "issue": 6463,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6463",
+  "title": "max_input_length, max_new_tokens, max_length, cutoff_len有什么区别？",
+  "ask": "max_input_length, max_new_tokens, max_length, cutoff_len有什么区别？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  llamafactory  ### Reproduction  我不太明白代码中max_input_length, max_new_tokens, max_length, cutoff_len的区别是什么 能详细解释下吗？谢谢。  ### Expected behavior  _No response_  ### Others  _No response_",
+  "comments": 1,
+  "created": "2024-12-27",
+  "params": [
+   "max_new_tokens",
+   "cutoff_len",
+   "max_length"
+  ],
+  "answers": {
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "max_length": {
+    "type": "int",
+    "desc": "文本最大长度（包括输入文本和生成文本的长度）。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_new_tokens",
+   "cutoff_len",
+   "max_length"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "max_new_tokens",
+   "cutoff_len",
+   "max_length"
+  ],
+  "in_title": [
+   "max_new_tokens",
+   "cutoff_len",
+   "max_length"
+  ]
+ },
+ {
+  "issue": 7313,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7313",
+  "title": "训练的时候 eval_dataset 是否支持 max_samples",
+  "ask": "训练的时候 eval_dataset 是否支持 max_samples ｜ 只能使用全部的 eval_dataset 吗？",
+  "comments": 4,
+  "created": "2025-03-14",
+  "params": [
+   "eval_dataset",
+   "max_samples"
+  ],
+  "answers": {
+   "eval_dataset": {
+    "type": "Optional[str]",
+    "desc": "用于评估的数据集名称。使用逗号分隔多个数据集。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "max_samples": {
+    "type": "Optional[int]",
+    "desc": "每个数据集的最大样本数：设置后，每个数据集的样本数将被截断至指定的 max_samples。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "eval_dataset",
+   "max_samples"
+  ],
+  "param_heat": 1093,
+  "params_specific": [
+   "eval_dataset",
+   "max_samples"
+  ],
+  "in_title": [
+   "eval_dataset",
+   "max_samples"
+  ]
+ },
+ {
+  "issue": 5129,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5129",
+  "title": "ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然每步保存一个checkpoint。",
+  "ask": "ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然每步保存一个checkpoint。 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  版本是0.8.3  ### Reproduction  ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然是训练每步保存一个checkpoint而且是按照steps策略保存checkpoint。  ### Expected behavior  希望能够限制checkpoints数量，也能够和其他训练方式一",
+  "comments": 3,
+  "created": "2024-08-09",
+  "params": [
+   "save_steps",
+   "save_total_limit"
+  ],
+  "answers": {
+   "save_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   },
+   "save_total_limit": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "save_steps",
+   "save_total_limit"
+  ],
+  "param_heat": 1448,
+  "params_specific": [
+   "save_steps",
+   "save_total_limit"
+  ],
+  "in_title": [
+   "save_steps",
+   "save_total_limit"
+  ]
+ },
+ {
+  "issue": 7373,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7373",
+  "title": "When I use BF16 or FP16 to perform Lora fine-tuning on GemMA-3-12B-it, there will be an error when saving the checkpoint, but FP32 is normal",
+  "ask": "When I use BF16 or FP16 to perform Lora fine-tuning on GemMA-3-12B-it, there will be an error when saving the checkpoint, but FP32 is normal ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  transformers版本：4.50.0.dev0 平台：Linux-5.15.0-43-generic-x86_64-with-glibc2.35 Python版本：3.11.7 Huggingface_hub版本：0.29.3 Safetensors 版本：0.5.3 加速版本：1.5.2 加速配置：未找到 DeepSpeed 版本：未安装 PyTorch 版本（GPU？）：2.6.0+cu",
+  "comments": 3,
+  "created": "2025-03-19",
+  "params": [
+   "bf16",
+   "normal"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "normal": {
+    "type": "固定",
+    "desc": "按 batch 内最长序列 padding",
+    "default": "",
+    "source": "docs/zh/feature-guide/batching.md | 批处理策略"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16",
+   "normal"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16",
+   "normal"
+  ],
+  "in_title": [
+   "bf16",
+   "normal"
+  ]
+ },
+ {
+  "issue": 1265,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1265",
+  "title": "推理时候--cutoff_len 和 --max_new_tokens应该如何设置",
+  "ask": "推理时候--cutoff_len 和 --max_new_tokens应该如何设置 ｜ 数据的source和target长度都差不多为1024，训练的时候设置--cutoff_len 2048 请问推理的时候是应该设置--cutoff_len 2048，--max_new_tokens 1024呢还是--cutoff_len 1024，--max_new_tokens 1024，谢谢",
+  "comments": 2,
+  "created": "2023-10-23",
+  "params": [
+   "source",
+   "max_new_tokens",
+   "cutoff_len"
+  ],
+  "answers": {
+   "source": {
+    "type": "`local \\",
+    "desc": "hf_hub`",
+    "default": "`hf_hub`",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "source",
+   "max_new_tokens",
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "source",
+   "max_new_tokens",
+   "cutoff_len"
+  ],
+  "in_title": [
+   "max_new_tokens",
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 9396,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9396",
+  "title": "video_maxlen 和 cutoff_len 含义",
+  "ask": "video_maxlen 和 cutoff_len 含义 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  video_maxlen 和 cutoff_len 是各自管视频和文本的长度？还是 cutoff_len 包括了 video 转成的token？  ### Reproduction      ### Others  _No response_",
+  "comments": 2,
+  "created": "2025-11-03",
+  "params": [
+   "cutoff_len",
+   "video_maxlen"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "video_maxlen": {
+    "type": "int",
+    "desc": "视频输入的最大采样帧数。",
+    "default": "128",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 多模态模型¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len",
+   "video_maxlen"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len",
+   "video_maxlen"
+  ],
+  "in_title": [
+   "cutoff_len",
+   "video_maxlen"
+  ]
+ },
+ {
+  "issue": 1356,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1356",
+  "title": "GeneratingArguments 中的 max_new_tokens 有默认值，任何情况下 max_length 都不会生效",
+  "ask": "GeneratingArguments 中的 max_new_tokens 有默认值，任何情况下 max_length 都不会生效 ｜ 在设定了 --max_length 而没有 --max_new_tokens 的情况下， --max_length 依然不会生效，因为 max_new_tokens 有默认值而其在不为None时会override max_length。  感谢开发大佬🙏",
+  "comments": 2,
+  "created": "2023-11-02",
+  "params": [
+   "max_new_tokens",
+   "max_length"
+  ],
+  "answers": {
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "max_length": {
+    "type": "int",
+    "desc": "文本最大长度（包括输入文本和生成文本的长度）。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_new_tokens",
+   "max_length"
+  ],
+  "param_heat": 171,
+  "params_specific": [
+   "max_new_tokens",
+   "max_length"
+  ],
+  "in_title": [
+   "max_new_tokens",
+   "max_length"
+  ]
+ },
+ {
+  "issue": 3870,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3870",
+  "title": "训练奖励模型时 --model_name_or_path 加载基础模型   --adapter_name_or_path 加载sft的lora模型 这个错误是什么原因",
+  "ask": "训练奖励模型时 --model_name_or_path 加载基础模型   --adapter_name_or_path 加载sft的lora模型 这个错误是什么原因 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  05/23/2024 15:47:51 - INFO - llmtuner.model.adapter - Loaded adapter(s): saves/Qwen1.5-7B-Chat/lora/train_2024-05-22-15-43-51 05/23/2024 15:47:51 - INFO - llmtuner.model.utils.valuehead - Failed to load v",
+  "comments": 1,
+  "created": "2024-05-23",
+  "params": [
+   "path",
+   "model",
+   "adapter_name_or_path",
+   "model_name_or_path",
+   "sft"
+  ],
+  "answers": {
+   "path": {
+    "type": "`str`",
+    "desc": "必填",
+    "default": "本地路径或 Hub ID",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "adapter_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "适配器路径（本地路径或 Huggingface/ModelScope 路径）。使用逗号分隔多个适配器路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "model_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "模型路径（本地路径或 Huggingface/ModelScope 路径）。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "adapter_name_or_path",
+   "model_name_or_path",
+   "sft"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "adapter_name_or_path",
+   "model_name_or_path"
+  ],
+  "in_title": [
+   "adapter_name_or_path",
+   "model_name_or_path"
+  ]
+ },
+ {
+  "issue": 7759,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7759",
+  "title": "能不能支持输出最大的 max_length，或者数据的 length 分布，用于判断 cutoff_len 设置的合理性",
+  "ask": "能不能支持输出最大的 max_length，或者数据的 length 分布，用于判断 cutoff_len 设置的合理性 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  如题  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-04-18",
+  "params": [
+   "cutoff_len",
+   "max_length"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "max_length": {
+    "type": "int",
+    "desc": "文本最大长度（包括输入文本和生成文本的长度）。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len",
+   "max_length"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len",
+   "max_length"
+  ],
+  "in_title": [
+   "cutoff_len",
+   "max_length"
+  ]
+ },
+ {
+  "issue": 10317,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10317",
+  "title": "为什么neat_packing现在不支持bsz>1了",
+  "ask": "为什么neat_packing现在不支持bsz>1了 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  如题，我更新了一下最新的llama_factory源码，发现有一个assert    之前是可以大于1的  ### Reproduction      ### Others  _No response_",
+  "comments": 14,
+  "created": "2026-03-25",
+  "params": [
+   "neat_packing"
+  ],
+  "answers": {
+   "neat_packing": {
+    "type": "bool",
+    "desc": "是否启用不使用 cross-attention 的 sequences packing。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "neat_packing"
+  ],
+  "param_heat": 58,
+  "params_specific": [
+   "neat_packing"
+  ],
+  "in_title": [
+   "neat_packing"
+  ]
+ },
+ {
+  "issue": 1996,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1996",
+  "title": "--use_unsloth+FlashAttention-2问题",
+  "ask": "--use_unsloth+FlashAttention-2问题 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction    训练的过程中出现以下warning：   训练完第一个epoch后开始训第二个epoch时报OOM    ### Expected behavior  1、现在LLaMA-Factory中使用--use_unsloth支持多卡训练吗？目前我看训练过程好像没问题，希望支持多卡训练。 2、训练第二个epoch开始的时候报OOM，怀疑代码哪里有问题。  ### System Info  _No respon",
+  "comments": 11,
+  "created": "2023-12-26",
+  "params": [
+   "use_unsloth"
+  ],
+  "answers": {
+   "use_unsloth": {
+    "type": "bool",
+    "desc": "是否使用 unsloth 优化 LoRA 微调。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "use_unsloth"
+  ],
+  "param_heat": 73,
+  "params_specific": [
+   "use_unsloth"
+  ],
+  "in_title": [
+   "use_unsloth"
+  ]
+ },
+ {
+  "issue": 1730,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1730",
+  "title": "val_size 拆分逻辑合理性",
+  "ask": "val_size 拆分逻辑合理性 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  当设置了val_size=0.1后，假设我添加了10个数据集用以sft训练，框架会将10个数据集拼接成1个数据集后，随机取出其中的9份用于训练，1份用于验证。但是先针对10个数据集中的每一个，拆分成9份和1份，然后合并后作为最终的训练集与评测集，会不会更合理一些。  ### Expected behavior  提这个问题的原因：添加多个数据集训练后，呈现训练loss下降，评测loss上升的趋势，初步怀疑",
+  "comments": 10,
+  "created": "2023-12-04",
+  "params": [
+   "val_size",
+   "sft"
+  ],
+  "answers": {
+   "val_size": {
+    "type": "float",
+    "desc": "验证集相对所使用的训练数据集的大小。取值在 [0,1) 之间。启用 streaming 时 val_size 应是整数。",
+    "default": "0.0",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "val_size",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "val_size"
+  ],
+  "in_title": [
+   "val_size"
+  ]
+ },
+ {
+  "issue": 1492,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1492",
+  "title": "为什么DPO或者PPO训练的时候需要传入model_name_or_path和checkpoint_dir两个参数",
+  "ask": "为什么DPO或者PPO训练的时候需要传入model_name_or_path和checkpoint_dir两个参数 ｜ 我理解，只需要传入checkpoint_dir就可以了，难道DPO或者PPO不是对SFT后的checkpoint继续训练吗？那么model_name_or_path对应的原始的语言模型起什么作用？",
+  "comments": 8,
+  "created": "2023-11-14",
+  "params": [
+   "model_name_or_path",
+   "sft"
+  ],
+  "answers": {
+   "model_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "模型路径（本地路径或 Huggingface/ModelScope 路径）。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model_name_or_path",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "model_name_or_path"
+  ],
+  "in_title": [
+   "model_name_or_path"
+  ]
+ },
+ {
+  "issue": 3308,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3308",
+  "title": "昇腾910B 微调chatglm3 fp16、bf16均失败",
+  "ask": "昇腾910B 微调chatglm3 fp16、bf16均失败 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  accelerate launch --config_file /xxx/.cache/huggingface/accelerate/default_config.yaml \\  ./src/train_bash.py \\  --stage sft \\  --do_train \\  --model_name_or_path /xxx/chatglm3-6b \\  --dataset alpaca_gpt4",
+  "comments": 8,
+  "created": "2024-04-17",
+  "params": [
+   "output_dir",
+   "learning_rate",
+   "num_train_epochs",
+   "bf16",
+   "save_steps"
+  ],
+  "answers": {
+   "output_dir": {
+    "type": "`str`",
+    "desc": "`outputs/<uuid>`",
+    "default": "输出目录",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "learning_rate": {
+    "type": "`float`",
+    "desc": "`1e-4`",
+    "default": "训练及优化器插件使用的学习率",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "num_train_epochs": {
+    "type": "`int`",
+    "desc": "`3`",
+    "default": "训练轮数",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "save_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 1188,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1188",
+  "title": "How to set the context param when using \"--shift_attn\"?",
+  "ask": "How to set the context param when using \"--shift_attn\"? ｜ According to the help that: --shift_attn [SHIFT_ATTN]  Enable shift short attention (S^2-Attn) proposed by LongLoRA. (default: False)  How can I set the specifi context length for the LongLoRA task to extend?",
+  "comments": 7,
+  "created": "2023-10-15",
+  "params": [
+   "shift_attn",
+   "task"
+  ],
+  "answers": {
+   "shift_attn": {
+    "type": "bool",
+    "desc": "是否启用 Shift Short Attention (S^2-Attn)。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "task": {
+    "type": "str",
+    "desc": "评估任务的名称，可选项有 mmlu_test, ceval_validation, cmmlu_test",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 评估参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "shift_attn",
+   "task"
+  ],
+  "param_heat": 256,
+  "params_specific": [
+   "shift_attn"
+  ],
+  "in_title": [
+   "shift_attn"
+  ]
+ },
+ {
+  "issue": 1665,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1665",
+  "title": "请问--cutoff_len这个参数如果不想让文本被截断的话应该如何设置比较好",
+  "ask": "请问--cutoff_len这个参数如果不想让文本被截断的话应该如何设置比较好 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  我看到datasets_info中把prompt和response分开了，那么在后续处理时是否是把这两个文本拼接起来。另外加上template这个参数的话。那么一个完整的sample应该是prompt_tempale + prompt + response。所以不想被截断的话长度应该至少等于所有样本里len(prompt_tempale + prompt + response)的最大值。不知道我理解的对不",
+  "comments": 6,
+  "created": "2023-11-28",
+  "params": [
+   "cutoff_len",
+   "template"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 5759,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5759",
+  "title": "请教下作者，目前新版代码关于cutoff_len是怎么处理的？",
+  "ask": "请教下作者，目前新版代码关于cutoff_len是怎么处理的？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  无  ### Reproduction  无  ### Expected behavior  https://github.com/hiyouga/LLaMA-Factory/blob/main/src/llamafactory/data/processors/supervised.py#L56 没看明白这里对超过cutoff的数据做了什么处理，哪个大佬帮忙解答下？     ### Others  _No",
+  "comments": 6,
+  "created": "2024-10-21",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 6314,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6314",
+  "title": "为什么DPO训练时ref_model不指定为初始的SFT完的模型，而是用每个batch参数更新后的policy model来初始化呢？",
+  "ask": "为什么DPO训练时ref_model不指定为初始的SFT完的模型，而是用每个batch参数更新后的policy model来初始化呢？ ｜ 如下，DPO lora训练时，ref_model=None，在trainer.py中每次计算ref_chosen_logps / ref_rejected_logps时，都会用当前参数更新后的policy model来对ref_model进行初始化，请教下这个实现是有什么特别考虑或者实验效果更好吗？     期待你的回复，谢谢~~ @hiyouga",
+  "comments": 5,
+  "created": "2024-12-12",
+  "params": [
+   "model",
+   "ref_model",
+   "sft"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "ref_model": {
+    "type": "Optional[str]",
+    "desc": "PPO 或 DPO 训练中使用的参考模型路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "ref_model",
+   "sft"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "ref_model"
+  ],
+  "in_title": [
+   "ref_model"
+  ]
+ },
+ {
+  "issue": 3392,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3392",
+  "title": "sft predict with num_beams>1",
+  "ask": "sft predict with num_beams>1 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  如何在sft do_predict的时候支持num_beams>1的生成  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 5,
+  "created": "2024-04-23",
+  "params": [
+   "num_beams",
+   "sft"
+  ],
+  "answers": {
+   "num_beams": {
+    "type": "int",
+    "desc": "用于 beam_search 的束宽度。值为 1 表示不使用 beam_search。",
+    "default": "1",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "num_beams",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "num_beams"
+  ],
+  "in_title": [
+   "num_beams"
+  ]
+ },
+ {
+  "issue": 8187,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8187",
+  "title": "compute_accuracy问题",
+  "ask": "compute_accuracy问题 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  我有一个二分类任务，数据集label为'0'或'1'，我使用该数据去sft模型，使用compute_accuracy:true，得到的eval_accuracy为99%，我理解由于只有一个token，因此该accuracy即为最终分类accuracy，但我重新推理得到的accuracy为90%，为什么会不同呢，如果compute_accuracy没有问题的话，是否是我推理代码的问题，如果我想保持和",
+  "comments": 5,
+  "created": "2025-05-28",
+  "params": [
+   "compute_accuracy",
+   "sft"
+  ],
+  "answers": {
+   "compute_accuracy": {
+    "type": "bool",
+    "desc": "是否在评估时计算 token 级别的准确率。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "compute_accuracy",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "compute_accuracy"
+  ],
+  "in_title": [
+   "compute_accuracy"
+  ]
+ },
+ {
+  "issue": 6828,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6828",
+  "title": "8卡h20，cutoff_len超过1000就报错",
+  "ask": "8卡h20，cutoff_len超过1000就报错 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  **qwen2.5 7b lora微调，cutoff_len超过1000就报错。是显存不够吗？提示词长度较长，我希望设置到4096，该如何处理？**    ### Reproduction      ### Others  _No response_",
+  "comments": 5,
+  "created": "2025-02-06",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 8989,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8989",
+  "title": "neat_packing support transformers 4.55",
+  "ask": "neat_packing support transformers 4.55 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  目前Neat packing只支持4.53，Neat packing is incompatible with transformers>=4.53.0.   ### Pull Request  _No response_",
+  "comments": 5,
+  "created": "2025-08-21",
+  "params": [
+   "packing",
+   "neat_packing"
+  ],
+  "answers": {
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "neat_packing": {
+    "type": "bool",
+    "desc": "是否启用不使用 cross-attention 的 sequences packing。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "packing",
+   "neat_packing"
+  ],
+  "param_heat": 329,
+  "params_specific": [
+   "packing",
+   "neat_packing"
+  ],
+  "in_title": [
+   "neat_packing"
+  ]
+ },
+ {
+  "issue": 4139,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4139",
+  "title": "关于cast_trainable_params_to_fp32导致lora predict发生错误",
+  "ask": "关于cast_trainable_params_to_fp32导致lora predict发生错误 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  LLaMA Factory, version 0.7.2.dev0  ### Reproduction  **问题描述：** 在lora sft训练中，如果扩充special token，则adapter_config会将modules_to_save 设置成input和output embedding层。 训练完成后，导入lora推理时，会在 https://github.com/hiyouga/LLaM",
+  "comments": 4,
+  "created": "2024-06-07",
+  "params": [
+   "model",
+   "modules_to_save",
+   "cast_trainable_params_to_fp32",
+   "sft"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "modules_to_save": {
+    "type": "`list[str] \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/model.md | 模型参数 > peft_config > LoRA"
+   },
+   "cast_trainable_params_to_fp32": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否将可训练参数转换为 fp32",
+    "source": "docs/zh/configuration/model.md | 模型参数 > peft_config > Freeze"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "modules_to_save",
+   "cast_trainable_params_to_fp32",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "modules_to_save",
+   "cast_trainable_params_to_fp32"
+  ],
+  "in_title": [
+   "cast_trainable_params_to_fp32"
+  ]
+ },
+ {
+  "issue": 1473,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1473",
+  "title": "设置cutoff_len=4096后预训练不起来有什么方法解决吗？",
+  "ask": "设置cutoff_len=4096后预训练不起来有什么方法解决吗？ ｜ 只有两张24g内存的卡，有什么方法能够跑起来吗？",
+  "comments": 4,
+  "created": "2023-11-12",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 8994,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8994",
+  "title": "全量微调gpt-oss的时候，原始gpt-oss-20b是MXFP4的，如果设置bf16=false，是不是微调后的输出结果就可以保持精度为MXFP4精度了？",
+  "ask": "全量微调gpt-oss的时候，原始gpt-oss-20b是MXFP4的，如果设置bf16=false，是不是微调后的输出结果就可以保持精度为MXFP4精度了？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  全量微调gpt-oss的时候，原始gpt-oss-20b是MXFP4的，如果设置bf16=false，是不是微调后的输出结果就可以保持精度为MXFP4精度了？  ### Reproduction      ### Others  _No response_",
+  "comments": 4,
+  "created": "2025-08-21",
+  "params": [
+   "bf16"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 744,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/744",
+  "title": "ValueError: Trainer: evaluation requires an eval_dataset.",
+  "ask": "ValueError: Trainer: evaluation requires an eval_dataset. ｜ 微调的时候总是训练到一定步数就报错，要求提供一个评测集，这个怎么改呢   使用的参数如下： CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \\  --stage sft \\  --model_name_or_path /data1/zhangxing/models/Qwen-7B-Chat \\  --do_train \\  --dataset psy_pub_data60w \\  --finetuning_type lora \\  --template chatml \\  --lora_rank 8 \\  --lora_target c_attn",
+  "comments": 4,
+  "created": "2023-08-31",
+  "params": [
+   "eval_dataset",
+   "output_dir",
+   "learning_rate",
+   "num_train_epochs",
+   "max_grad_norm"
+  ],
+  "answers": {
+   "eval_dataset": {
+    "type": "Optional[str]",
+    "desc": "用于评估的数据集名称。使用逗号分隔多个数据集。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "output_dir": {
+    "type": "`str`",
+    "desc": "`outputs/<uuid>`",
+    "default": "输出目录",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "learning_rate": {
+    "type": "`float`",
+    "desc": "`1e-4`",
+    "default": "训练及优化器插件使用的学习率",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "num_train_epochs": {
+    "type": "`int`",
+    "desc": "`3`",
+    "default": "训练轮数",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "max_grad_norm": {
+    "type": "`float`",
+    "desc": "`1.0`",
+    "default": "梯度裁剪阈值",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "eval_dataset"
+  ],
+  "param_heat": 215,
+  "params_specific": [
+   "eval_dataset"
+  ],
+  "in_title": [
+   "eval_dataset"
+  ]
+ },
+ {
+  "issue": 1792,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1792",
+  "title": "请问Predict的temperature等配置是什么？",
+  "ask": "请问Predict的temperature等配置是什么？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  ChatGLM3模型微调后，导出为新的模型。导出的模型加载起来测试，发现微调是有效果的，但效果不如[Predict](https://github.com/hiyouga/LLaMA-Factory?tab=readme-ov-file#predict)的效果好。  [Predict](https://github.com/hiyouga/LLaMA-Factory?tab=readme-ov-file#",
+  "comments": 4,
+  "created": "2023-12-11",
+  "params": [
+   "temperature"
+  ],
+  "answers": {
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "temperature"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 4105,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4105",
+  "title": "开启Unsloth在多卡训练（GPU数量>2）的设置下出现batch_size有误的bug",
+  "ask": "开启Unsloth在多卡训练（GPU数量>2）的设置下出现batch_size有误的bug ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  CUDA: 12.1 transformers: 4.41.2 PyTorch: 2.3.0  ### Reproduction  CUDA_VISIBLE_DEVICES=0,1,2,3 llamafactory-cli train examples/lora_multi_gpu/qwen.yaml  ### Expected behavior  我使用Qwen1.5-7B作为基座模型进行微调，开启uns",
+  "comments": 4,
+  "created": "2024-06-06",
+  "params": [
+   "batch_size"
+  ],
+  "answers": {
+   "batch_size": {
+    "type": "int",
+    "desc": "每个GPU使用的批量大小，默认值为 4。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "batch_size"
+  ],
+  "param_heat": 109,
+  "params_specific": [
+   "batch_size"
+  ],
+  "in_title": [
+   "batch_size"
+  ]
+ },
+ {
+  "issue": 3834,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3834",
+  "title": "llama factory推理时，如何配置seed参数",
+  "ask": "llama factory推理时，如何配置seed参数 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  python src/api_demo.py \\  --model_name_or_path /model/Qwen1.5-7B-Chat \\  --adapter_name_or_path /qwen_model/lora/qwen1_5_7b_contract_100_sft_90 \\  --template qwen \\  --finetuning_type lora \\  --max_new_to",
+  "comments": 3,
+  "created": "2024-05-21",
+  "params": [
+   "max_new_tokens",
+   "model",
+   "adapter_name_or_path",
+   "seed",
+   "finetuning_type"
+  ],
+  "answers": {
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "adapter_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "适配器路径（本地路径或 Huggingface/ModelScope 路径）。使用逗号分隔多个适配器路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   },
+   "finetuning_type": {
+    "type": "Literal[“lora”, “freeze”, “full”]",
+    "desc": "微调方法",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "adapter_name_or_path",
+   "seed",
+   "finetuning_type"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "adapter_name_or_path",
+   "seed",
+   "finetuning_type"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 6584,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6584",
+  "title": "How to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk.",
+  "ask": "How to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk. ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  ### output output_dir: /root/autodl-tmp logging_steps: 10 save_steps: 15000 plot_loss: true overwrite_output_dir: true  How to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just tr",
+  "comments": 3,
+  "created": "2025-01-09",
+  "params": [
+   "output_dir",
+   "save_steps",
+   "logging_steps",
+   "plot_loss"
+  ],
+  "answers": {
+   "output_dir": {
+    "type": "`str`",
+    "desc": "`outputs/<uuid>`",
+    "default": "输出目录",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "save_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   },
+   "logging_steps": {
+    "type": "`int`",
+    "desc": "`1`",
+    "default": "日志间隔",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   },
+   "plot_loss": {
+    "type": "bool",
+    "desc": "是否保存训练过程中的损失曲线。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "output_dir",
+   "save_steps",
+   "logging_steps",
+   "plot_loss"
+  ],
+  "param_heat": 1711,
+  "params_specific": [
+   "output_dir",
+   "save_steps",
+   "logging_steps",
+   "plot_loss"
+  ],
+  "in_title": [
+   "save_steps"
+  ]
+ },
+ {
+  "issue": 1001,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1001",
+  "title": "在训练时采用不同learning_rate，为什么指标评估时所需时间相差很大，微调数据大概2.5w，验证数据2.8K，具体参数如下",
+  "ask": "在训练时采用不同learning_rate，为什么指标评估时所需时间相差很大，微调数据大概2.5w，验证数据2.8K，具体参数如下 ｜ learning_rate为2e-5时所需时间大概4分钟       learing_rate为2e-2时所需时间大概1小时",
+  "comments": 3,
+  "created": "2023-09-22",
+  "params": [
+   "learning_rate"
+  ],
+  "answers": {
+   "learning_rate": {
+    "type": "`float`",
+    "desc": "`1e-4`",
+    "default": "训练及优化器插件使用的学习率",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "learning_rate"
+  ],
+  "param_heat": 1602,
+  "params_specific": [
+   "learning_rate"
+  ],
+  "in_title": [
+   "learning_rate"
+  ]
+ },
+ {
+  "issue": 3952,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3952",
+  "title": "--cutoff_len 1024  截断长度设置的1024，是指1024个字，还是1024个token",
+  "ask": "--cutoff_len 1024  截断长度设置的1024，是指1024个字，还是1024个token ｜ 1.--cutoff_len 1024 截断长度设置的1024，是指1024个字，还是1024个token? 2.当单条样本不足1024的时候，会添加 endoftext，这个是模型自动加的，还是说需要人为在构建数据集时手动添加。",
+  "comments": 3,
+  "created": "2024-05-29",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 1841,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1841",
+  "title": "SUS-Chat-34B-AWQ这个怎么微调呢？ SUS-Chat-34B加入--quantization_bit 4可以微调的",
+  "ask": "SUS-Chat-34B-AWQ这个怎么微调呢？ SUS-Chat-34B加入--quantization_bit 4可以微调的 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  SUS-Chat-34B-AWQ这个怎么微调呢？ SUS-Chat-34B加入--quantization_bit 4可以微调的  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 3,
+  "created": "2023-12-14",
+  "params": [
+   "quantization_bit"
+  ],
+  "answers": {
+   "quantization_bit": {
+    "type": "Optional[int]",
+    "desc": "指定在量化过程中使用的位数，通常是4位、8位等。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 模型量化¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "quantization_bit"
+  ],
+  "param_heat": 256,
+  "params_specific": [
+   "quantization_bit"
+  ],
+  "in_title": [
+   "quantization_bit"
+  ]
+ },
+ {
+  "issue": 7213,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7213",
+  "title": "train_mm_proj_only 这个参数感觉设置的不搭配",
+  "ask": "train_mm_proj_only 这个参数感觉设置的不搭配 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  finetuning_args.py 中freeze_vision_tower、freeze_multi_modal_projector都感觉很合理。 但是train_mm_proj_only 这个参数与整体不搭配，是不是freeze_llm更合理？  ### Reproduction      ### Others  _No response_",
+  "comments": 3,
+  "created": "2025-03-07",
+  "params": [
+   "freeze_vision_tower",
+   "freeze_multi_modal_projector",
+   "train_mm_proj_only"
+  ],
+  "answers": {
+   "freeze_vision_tower": {
+    "type": "bool",
+    "desc": "MLLM 训练时是否冻结视觉塔。",
+    "default": "True",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "freeze_multi_modal_projector": {
+    "type": "bool",
+    "desc": "MLLM 训练时是否冻结多模态投影器。",
+    "default": "True",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "train_mm_proj_only": {
+    "type": "bool",
+    "desc": "是否仅训练多模态投影器。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "freeze_vision_tower",
+   "freeze_multi_modal_projector",
+   "train_mm_proj_only"
+  ],
+  "param_heat": 191,
+  "params_specific": [
+   "freeze_vision_tower",
+   "freeze_multi_modal_projector",
+   "train_mm_proj_only"
+  ],
+  "in_title": [
+   "train_mm_proj_only"
+  ]
+ },
+ {
+  "issue": 10412,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10412",
+  "title": "CPT 前 base 模型续写会自然终止，CPT 后相同提示词一直生成到 max_new_tokens 才停是正常现象吗？",
+  "ask": "CPT 前 base 模型续写会自然终止，CPT 后相同提示词一直生成到 max_new_tokens 才停是正常现象吗？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  llamafactory 版本：0.9.5.dev0  ### Reproduction      ### Others  用的Qwen3-8b-Base模型，模型训练配置文件中，模板设置如下：template: default。 查看官网源码发现其在处理数据时，会自动调用qwen模型下的结束符\"eos_token\": \" \"。 查看了官网及相关解决方案，未果，特虚心请教。 请问还未进行SFT，当",
+  "comments": 2,
+  "created": "2026-04-21",
+  "params": [
+   "max_new_tokens",
+   "template",
+   "sft"
+  ],
+  "answers": {
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_new_tokens",
+   "template"
+  ],
+  "param_heat": 2375,
+  "params_specific": [
+   "max_new_tokens"
+  ],
+  "in_title": [
+   "max_new_tokens"
+  ]
+ },
+ {
+  "issue": 2057,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2057",
+  "title": "请问PT阶段可以使用packing吗？",
+  "ask": "请问PT阶段可以使用packing吗？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  您好，目前我看到在sft训练阶段可以使用--sft_packing True, 请问在pt阶段如何使用packing呢？  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 2,
+  "created": "2024-01-02",
+  "params": [
+   "packing",
+   "sft"
+  ],
+  "answers": {
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "packing",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "packing"
+  ],
+  "in_title": [
+   "packing"
+  ]
+ },
+ {
+  "issue": 2887,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2887",
+  "title": "预训练阶段，为什么单条样本长度不够cutoff_len就会用下一个样本加上特殊符号<|endoftext|>拼接，而不是用pad填充呢，这样做训练期间不影响两个不同样本的语义信息吗？",
+  "ask": "预训练阶段，为什么单条样本长度不够cutoff_len就会用下一个样本加上特殊符号<|endoftext|>拼接，而不是用pad填充呢，这样做训练期间不影响两个不同样本的语义信息吗？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  预训练print的不同样本的拼接：    1.预训练阶段，为什么单条样本长度不够cutoff_len就会用下一个样本加上特殊符号 拼接，而不是用pad填充呢，这样做训练期间不影响两个不同样本的语义信息吗？ 2.另外拼接的代码，我没有找到，是这个函数里面吗？preprocess_pretrain_dataset 3.别的模型预训练的时候，好像没有这么做，这种做法是业界通用的吗？      ### Expec",
+  "comments": 2,
+  "created": "2024-03-19",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 2001,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2001",
+  "title": "bf16的模型用gptq转int8和int4怎么转",
+  "ask": "bf16的模型用gptq转int8和int4怎么转 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  bf16的模型用gptq转int8和int4怎么转，好像没见到这个功能  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 2,
+  "created": "2023-12-26",
+  "params": [
+   "bf16"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 6672,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6672",
+  "title": "为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？",
+  "ask": "为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？ ｜ ### Reminder  - [X] I have read the above rules and searched the existing issues.  ### System Info  (base) ubuntu@localhost:~$ pip list Package Version ---------------------------------------- ------------- **accelerate 1.1.1 adam_mini 1.1.1** aiofiles 23.2.1 aiohappyeyeballs 2.4.0 aiohttp 3.10.5 ai",
+  "comments": 2,
+  "created": "2025-01-16",
+  "params": [
+   "lora_rank"
+  ],
+  "answers": {
+   "lora_rank": {
+    "type": "int",
+    "desc": "LoRA 微调的本征维数 r， r 越大可训练的参数越多。默认值为 8",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > LoRA¶ > method"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "lora_rank"
+  ],
+  "param_heat": 613,
+  "params_specific": [
+   "lora_rank"
+  ],
+  "in_title": [
+   "lora_rank"
+  ]
+ },
+ {
+  "issue": 2633,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2633",
+  "title": "推理可以直接设置do_sample=False的贪心采样策略吗",
+  "ask": "推理可以直接设置do_sample=False的贪心采样策略吗 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  似乎没有找到，只能设置temperature和top_p  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 2,
+  "created": "2024-02-29",
+  "params": [
+   "do_sample",
+   "temperature",
+   "top_p"
+  ],
+  "answers": {
+   "do_sample": {
+    "type": "bool",
+    "desc": "是否使用采样策略生成文本。如果设置为 False，将使用 greedy decoding。",
+    "default": "True",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "top_p": {
+    "type": "float",
+    "desc": "用于控制生成时候选 token 集合大小的参数。例如：top_p = 0.7 意味着模型会先选择概率最高的若干个 token 直到其累积概率之和大于 0.7，然后在这些 token 组成的集合中进行采样。",
+    "default": "0.7",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "do_sample",
+   "temperature",
+   "top_p"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "do_sample",
+   "temperature",
+   "top_p"
+  ],
+  "in_title": [
+   "do_sample"
+  ]
+ },
+ {
+  "issue": 7496,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7496",
+  "title": "设置了stream, max_steps ，算出来的epoch数量不对",
+  "ask": "设置了stream, max_steps ，算出来的epoch数量不对 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info    这个是不是有bug  ### Reproduction      ### Others  _No response_",
+  "comments": 2,
+  "created": "2025-03-26",
+  "params": [
+   "max_steps"
+  ],
+  "answers": {
+   "max_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_steps"
+  ],
+  "param_heat": 144,
+  "params_specific": [
+   "max_steps"
+  ],
+  "in_title": [
+   "max_steps"
+  ]
+ },
+ {
+  "issue": 6400,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6400",
+  "title": "GLM模型如何实现train_on_prompt？",
+  "ask": "GLM模型如何实现train_on_prompt？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  无  ### Reproduction  无  ### Expected behavior  glm无法实现train_on_prompt，是因为glm模型本身的问题，还是因为llama-factory的模板不支持（efficient_eos）？ 如果是模板的问题，可以提供修改的思路吗？ 谢谢  ### Others  _No response_",
+  "comments": 2,
+  "created": "2024-12-20",
+  "params": [
+   "train_on_prompt"
+  ],
+  "answers": {
+   "train_on_prompt": {
+    "type": "bool",
+    "desc": "是否在输入 prompt 上进行训练。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "train_on_prompt"
+  ],
+  "param_heat": 59,
+  "params_specific": [
+   "train_on_prompt"
+  ],
+  "in_title": [
+   "train_on_prompt"
+  ]
+ },
+ {
+  "issue": 8459,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8459",
+  "title": "lora微调dpo过程中如果sft的model包含lora，且没有显式指定ref_model, 会导致ref_model设置错误",
+  "ask": "lora微调dpo过程中如果sft的model包含lora，且没有显式指定ref_model, 会导致ref_model设置错误 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  在以下设置下运行 DPO：      如果没有显式指定 --ref_model，LLaMA Factory 会自动设置 ref_model = model，并在内部使用 disable_adapter()，使参考模型的行为等同于 **原始 base 模型**，而非微调后的 **SFT 模型**。  文件路径：src/trainers/dpo_trainer.py 中的逻辑如下：     如果未设置",
+  "comments": 1,
+  "created": "2025-06-25",
+  "params": [
+   "model",
+   "ref_model",
+   "sft"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "ref_model": {
+    "type": "Optional[str]",
+    "desc": "PPO 或 DPO 训练中使用的参考模型路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "ref_model",
+   "sft"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "ref_model"
+  ],
+  "in_title": [
+   "ref_model"
+  ]
+ },
+ {
+  "issue": 8612,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8612",
+  "title": "请教下在finetuning_type为full的情况下，冻结参数的设置会生效吗？",
+  "ask": "请教下在finetuning_type为full的情况下，冻结参数的设置会生效吗？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  看到在model/adapter.py中有如下函数定义，即在full_tuning的时候，如果检测到forbidden module，还是会将参数冻结，请教下这个设置会生效吗？  def _setup_full_tuning(  model: \"PreTrainedModel\",  finetuning_args: \"FinetuningArguments\",  is_trainable: boo",
+  "comments": 1,
+  "created": "2025-07-11",
+  "params": [
+   "model",
+   "cast_trainable_params_to_fp32",
+   "finetuning_type"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "cast_trainable_params_to_fp32": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否将可训练参数转换为 fp32",
+    "source": "docs/zh/configuration/model.md | 模型参数 > peft_config > Freeze"
+   },
+   "finetuning_type": {
+    "type": "Literal[“lora”, “freeze”, “full”]",
+    "desc": "微调方法",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "finetuning_type"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "finetuning_type"
+  ],
+  "in_title": [
+   "finetuning_type"
+  ]
+ },
+ {
+  "issue": 3948,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3948",
+  "title": "Evaluation temperature",
+  "ask": "Evaluation temperature ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  Hi, I want to evaluate the performance of the model and set the \"--do_predict \". Which temperature does the model use for evaluation during prediction？Is the default temperature 0.7? How to change the tem",
+  "comments": 1,
+  "created": "2024-05-28",
+  "params": [
+   "model",
+   "temperature"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "temperature"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 8165,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8165",
+  "title": "Qwen3的数据集default_system要自己在每个sample中设置吗？",
+  "ask": "Qwen3的数据集default_system要自己在每个sample中设置吗？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  template.py文件中qwen3的template好像并没有指定default_system，我在sft的时候不加'role':'system'的信息的话看起来最终的对话里也没有system，是需要根据自己的数据是否thinking在每个sample里自带上system吗？  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-05-27",
+  "params": [
+   "template",
+   "default_system",
+   "sft"
+  ],
+  "answers": {
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "default_system": {
+    "type": "str",
+    "desc": "默认的 system_message，例如: “You are a helpful assistant.”",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "template",
+   "default_system",
+   "sft"
+  ],
+  "param_heat": 2375,
+  "params_specific": [
+   "default_system"
+  ],
+  "in_title": [
+   "default_system"
+  ]
+ },
+ {
+  "issue": 4268,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4268",
+  "title": "关于packing参数在sft阶段的疑问",
+  "ask": "关于packing参数在sft阶段的疑问 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  你好，我注意到训练的参数中有packing这个参数，但是没有详细介绍，查看了相关的issue，也看了源码，但还有一些不太懂的地方想请教下： 1、我阅读源码后的理解是这样的，在sft阶段的数据打包过程中，先对每个样本编码，若长度超过cutoff_len，不会截断，而是直接丢弃，全部编码完成后，使用贪心算法，按长度的逆序开始把样本一条条放入包中，直到不能放为止，长度不够则填充。我的理解正确吗？ 2、我在训练ll",
+  "comments": 1,
+  "created": "2024-06-13",
+  "params": [
+   "cutoff_len",
+   "packing",
+   "sft"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "packing",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "packing"
+  ],
+  "in_title": [
+   "packing"
+  ]
+ },
+ {
+  "issue": 8915,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8915",
+  "title": "full sft训练qwen2-vl的时候在bf16=True能不能一部分模型移到float32下训练？",
+  "ask": "full sft训练qwen2-vl的时候在bf16=True能不能一部分模型移到float32下训练？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  想问如何可以：指定部分模型从初始化开始就是float32，可以正常加载float32的预训练参数，并在float32下进行训练？ 我看下面这行，初始化之后就变成了bf16，甚至不知道是在哪一步变成bf16的。。。  with ContextManagers(init_contexts):  # Let's make sure we don't run the init function of bu",
+  "comments": 1,
+  "created": "2025-08-14",
+  "params": [
+   "model",
+   "bf16",
+   "sft"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 4302,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4302",
+  "title": "不支持orpo，报错，改成stage dpo    --pref_loss: orpo 也不行",
+  "ask": "不支持orpo，报错，改成stage dpo    --pref_loss: orpo 也不行 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  deepspeed --num_gpus 8 ../../src/train.py \\  --deepspeed ${Your_Deepspeed_Config_Path} \\  --stage dpo \\  --pref_loss: orpo \\  --orpo_beta 0.05 \\  ### Reproduction      ### Expected behavior  正常运行orpo  ###",
+  "comments": 1,
+  "created": "2024-06-15",
+  "params": [
+   "pref_loss",
+   "stage"
+  ],
+  "answers": {
+   "pref_loss": {
+    "type": "Literal[“sigmoid”, “hinge”, “ipo”, “kto_pair”, “orpo”, “simpo”]",
+    "desc": "DPO 训练中使用的偏好损失类型。可选值为： sigmoid, hinge, ipo, kto_pair, orpo, simpo。",
+    "default": "sigmoid",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   },
+   "stage": {
+    "type": "Literal[“pt”, “sft”, “rm”, “ppo”, “dpo”, “kto”]",
+    "desc": "训练阶段",
+    "default": "sft",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "pref_loss",
+   "stage"
+  ],
+  "param_heat": 1905,
+  "params_specific": [
+   "pref_loss"
+  ],
+  "in_title": [
+   "pref_loss"
+  ]
+ },
+ {
+  "issue": 1325,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1325",
+  "title": "PPO trainer 能否支持下 args.max_steps",
+  "ask": "PPO trainer 能否支持下 args.max_steps ｜ transformers Trainer中 max_steps 的优先级高于 num_train_epochs。但是目前 ppo_train 函数并未支持 max_steps 参数。  感谢🙏",
+  "comments": 1,
+  "created": "2023-10-31",
+  "params": [
+   "num_train_epochs",
+   "max_steps"
+  ],
+  "answers": {
+   "num_train_epochs": {
+    "type": "`int`",
+    "desc": "`3`",
+    "default": "训练轮数",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "max_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "num_train_epochs",
+   "max_steps"
+  ],
+  "param_heat": 1547,
+  "params_specific": [
+   "num_train_epochs",
+   "max_steps"
+  ],
+  "in_title": [
+   "max_steps"
+  ]
+ },
+ {
+  "issue": 1564,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1564",
+  "title": "cutoff_len的设置对性能的影响",
+  "ask": "cutoff_len的设置对性能的影响 ｜ 您好，为了提高训练速度，我在预训练的时候将cutoff_len设置为256。 这样训练出来的模型，假如在推理和chat的时候将最大token数设置为4096，但模型是否仍然会偏向于输出较短的答案。  如果预训练时仅设置为256，但指令调优的时候设置为4096，是否会弥补预训练阶段的不足。",
+  "comments": 1,
+  "created": "2023-11-19",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 9043,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9043",
+  "title": "多任务微调，怎样设置不同数据集有不同的cutoff_len?",
+  "ask": "多任务微调，怎样设置不同数据集有不同的cutoff_len? ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  如题，有的数据集2k，有的数据集20k，长度差异明显，但想要通过多任务学习的方式一起训练，短数据集可能会因为paddding而训练效果不佳，可以为每个数据集指定对应的cutoff_len吗  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-08-28",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 1508,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1508",
+  "title": "bf16多卡deepspeed全参数微调chatglm2出错",
+  "ask": "bf16多卡deepspeed全参数微调chatglm2出错 ｜ 同一个数据集，用bf16单卡LoRA微调没有问题，但多卡全参数微调就出错，训练过程正常不报错，损失也在下降，但是最终生成结果混乱，且predict的时候batch size>1就报错。  主要环境：    训练代码：    deepspeed配置：    训练损失下降正常：    做predict时的代码：    报错信息：    使用batch size = 1 时可以正常做predict，但是结果出错    以上错误在单卡，bf16，QLoRA训练时，都没有出现，最后模型的结果也很正常。但多卡就出问题。fp16和bf16都试过，都会出现同样的问题。",
+  "comments": 1,
+  "created": "2023-11-15",
+  "params": [
+   "size",
+   "bf16"
+  ],
+  "answers": {
+   "size": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "全部",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "size",
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 1573,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1573",
+  "title": "对nvidia driver的版本要求是什么，指定了运行使用bf16，但是训练确跑在CPU上。期望能运行在GPU上",
+  "ask": "对nvidia driver的版本要求是什么，指定了运行使用bf16，但是训练确跑在CPU上。期望能运行在GPU上 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  CUDA_VISIBLE_DEVICES=0 python src/train_web.py  出现日志  /root/anaconda3/lib/python3.9/site-packages/torch/cuda/__init__.py:138: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old",
+  "comments": 1,
+  "created": "2023-11-20",
+  "params": [
+   "bf16"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 6349,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6349",
+  "title": "max_samples 参数指定多个数据集的数量报错",
+  "ask": "max_samples 参数指定多个数据集的数量报错 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info     ### Reproduction  配置文件：    ### Expected behavior  参数文档上说`max_samples`参数用于`指定每个数据集的最大样本数量，使用逗号分隔。` 但我用上面的配置会报错：   定位到代码这个地方：   ### Others  _No response_",
+  "comments": 1,
+  "created": "2024-12-16",
+  "params": [
+   "max_samples"
+  ],
+  "answers": {
+   "max_samples": {
+    "type": "Optional[int]",
+    "desc": "每个数据集的最大样本数：设置后，每个数据集的样本数将被截断至指定的 max_samples。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_samples"
+  ],
+  "param_heat": 1093,
+  "params_specific": [
+   "max_samples"
+  ],
+  "in_title": [
+   "max_samples"
+  ]
+ },
+ {
+  "issue": 8075,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8075",
+  "title": "请问在lora 微调qwen3 moe模型时，如何设置lora_target",
+  "ask": "请问在lora 微调qwen3 moe模型时，如何设置lora_target ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  设置了router 的auxloss 系数，请问如何正确设置lora_target，才能微调moe的路由， 或者说能不能实现微调路由  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-05-15",
+  "params": [
+   "lora_target"
+  ],
+  "answers": {
+   "lora_target": {
+    "type": "str",
+    "desc": "应用 LoRA 方法的模块名称。使用逗号分隔多个模块，使用 all 指定所有模块。默认值为 all",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > LoRA¶ > method"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "lora_target"
+  ],
+  "param_heat": 1050,
+  "params_specific": [
+   "lora_target"
+  ],
+  "in_title": [
+   "lora_target"
+  ]
+ },
+ {
+  "issue": 1283,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1283",
+  "title": "如何使用flash_attn2进行加速训练？以下示例脚本可以吗，按照提示加了--flash_attn 参数，但通过对比发现加不加这个参数训练速度都一样",
+  "ask": "如何使用flash_attn2进行加速训练？以下示例脚本可以吗，按照提示加了--flash_attn 参数，但通过对比发现加不加这个参数训练速度都一样 ｜ deepspeed --num_gpus 2 --master_port=54321 src/train_bash.py \\  --deepspeed src/deepspeed_config.json \\  --stage pt \\  --flash_attn \\  --model_name_or_path /public/home/lfchen/llama/Chinese-LLaMA-Alpaca/llama_models/llama-2-7b-hf \\  --do_train \\  --dataset wiki_demo \\  --finetuning_type lora \\  --lo",
+  "comments": 1,
+  "created": "2023-10-26",
+  "params": [
+   "flash_attn",
+   "output_dir",
+   "learning_rate",
+   "num_train_epochs",
+   "save_steps"
+  ],
+  "answers": {
+   "flash_attn": {
+    "type": "Literal[“auto”, “disabled”, “sdpa”, “fa2”]",
+    "desc": "是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。",
+    "default": "auto",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "output_dir": {
+    "type": "`str`",
+    "desc": "`outputs/<uuid>`",
+    "default": "输出目录",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "learning_rate": {
+    "type": "`float`",
+    "desc": "`1e-4`",
+    "default": "训练及优化器插件使用的学习率",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "num_train_epochs": {
+    "type": "`int`",
+    "desc": "`3`",
+    "default": "训练轮数",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "save_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "flash_attn"
+  ],
+  "param_heat": 683,
+  "params_specific": [
+   "flash_attn"
+  ],
+  "in_title": [
+   "flash_attn"
+  ]
+ },
+ {
+  "issue": 5725,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5725",
+  "title": "fa2和neat_packing的关系",
+  "ask": "fa2和neat_packing的关系 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  latest version  ### Reproduction    是不是设置flash_attn='fa2'而且neat_packing=True，那么就不启用4Dmask，还是用的2D mask  ### Expected behavior  _No response_  ### Others  _No response_",
+  "comments": 1,
+  "created": "2024-10-16",
+  "params": [
+   "flash_attn",
+   "neat_packing"
+  ],
+  "answers": {
+   "flash_attn": {
+    "type": "Literal[“auto”, “disabled”, “sdpa”, “fa2”]",
+    "desc": "是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。",
+    "default": "auto",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "neat_packing": {
+    "type": "bool",
+    "desc": "是否启用不使用 cross-attention 的 sequences packing。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "flash_attn",
+   "neat_packing"
+  ],
+  "param_heat": 683,
+  "params_specific": [
+   "flash_attn",
+   "neat_packing"
+  ],
+  "in_title": [
+   "neat_packing"
+  ]
+ },
+ {
+  "issue": 1567,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1567",
+  "title": "Reward Modeling LoRA 训练 能否支持 resume_from_checkpoint ?",
+  "ask": "Reward Modeling LoRA 训练 能否支持 resume_from_checkpoint ? ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  运行参数：    错误信息：    ### Expected behavior  从 resume_from_checkpoint 指定的ckpt续跑。  ### System Info  transformers==4.33.2  ### Others  错误原因： transformers Trainer._load_from_checkpoint 函数仅支持从 pytorch_model.bin 续",
+  "comments": 1,
+  "created": "2023-11-20",
+  "params": [
+   "resume_from_checkpoint",
+   "dataset"
+  ],
+  "answers": {
+   "resume_from_checkpoint": {
+    "type": "从训练 checkpoint 继续训练",
+    "desc": "Trainer 初始化阶段",
+    "default": "模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态",
+    "source": "docs/zh/feature-guide/model_saving.md | 模型保存与恢复 > 初始化权重与恢复训练"
+   },
+   "dataset": {
+    "type": "Optional[str]",
+    "desc": "用于训练的数据集名称。使用逗号分隔多个数据集。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "resume_from_checkpoint"
+  ],
+  "param_heat": 581,
+  "params_specific": [
+   "resume_from_checkpoint"
+  ],
+  "in_title": [
+   "resume_from_checkpoint"
+  ]
+ },
+ {
+  "issue": 4438,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4438",
+  "title": "单机多卡微调glm4-9B设置max_grad_norm=1,但是仍然出现了梯度爆炸的问题",
+  "ask": "单机多卡微调glm4-9B设置max_grad_norm=1,但是仍然出现了梯度爆炸的问题 ｜ zheg作者您好，上图是我的训练时的配置信息，我是单机多卡训练，但是在训练过程中会出现grad_norm=nan的情况，我设置了梯度裁剪的值为1，为什么还是会出现这种情况？下图是训练过程中的log情况",
+  "comments": 1,
+  "created": "2024-06-24",
+  "params": [
+   "max_grad_norm"
+  ],
+  "answers": {
+   "max_grad_norm": {
+    "type": "`float`",
+    "desc": "`1.0`",
+    "default": "梯度裁剪阈值",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_grad_norm"
+  ],
+  "param_heat": 396,
+  "params_specific": [
+   "max_grad_norm"
+  ],
+  "in_title": [
+   "max_grad_norm"
+  ]
+ },
+ {
+  "issue": 6686,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6686",
+  "title": "DPO 能否支持数据packing",
+  "ask": "DPO 能否支持数据packing ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  DPO 能否支持数据packing，从而提升训练性能。  ### Pull Request  _No response_",
+  "comments": 1,
+  "created": "2025-01-17",
+  "params": [
+   "packing"
+  ],
+  "answers": {
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "packing"
+  ],
+  "param_heat": 329,
+  "params_specific": [
+   "packing"
+  ],
+  "in_title": [
+   "packing"
+  ]
+ },
+ {
+  "issue": 6237,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6237",
+  "title": "如何设置模型推理的一些参数如temperature",
+  "ask": "如何设置模型推理的一些参数如temperature ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  您好，我看模型参数的temperature一直是0.7，即使我在yaml文件中设置了为0.1也不变；我查找代码发现推理时候参数是在src/llamafactory/hparams/generating_args.py，但是这个文件中设置的temperature是0.9也不是0.7；想问问有地方能够调参吗，非常感谢  ### Reproduction  model_name_or_path: Qwen/Qwe",
+  "comments": 1,
+  "created": "2024-12-04",
+  "params": [
+   "adapter_name_or_path",
+   "finetuning_type",
+   "template",
+   "model_name_or_path",
+   "temperature"
+  ],
+  "answers": {
+   "adapter_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "适配器路径（本地路径或 Huggingface/ModelScope 路径）。使用逗号分隔多个适配器路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "finetuning_type": {
+    "type": "Literal[“lora”, “freeze”, “full”]",
+    "desc": "微调方法",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "model_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "模型路径（本地路径或 Huggingface/ModelScope 路径）。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "temperature"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 1964,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1964",
+  "title": "请问在推理或预测的时候如何指定temperature等参数？",
+  "ask": "请问在推理或预测的时候如何指定temperature等参数？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  例如要运行cli_demo.py或predict.py，如何设置其中的temperature、top-p之类的参数  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 1,
+  "created": "2023-12-22",
+  "params": [
+   "temperature"
+  ],
+  "answers": {
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "temperature"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 5421,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5421",
+  "title": "求助：请问使用llama-factory 的教程里的Batch Predicting and Computing BLEU and ROUGE Scores 对下的脚本llamafactory-cli train examples/train_lora/llama3_lora_predict.yaml 来进行预测时，默认的参数是多少，如topk,temperature，max_len等参数是多少，或者有什么命令可以查看吗",
+  "ask": "求助：请问使用llama-factory 的教程里的Batch Predicting and Computing BLEU and ROUGE Scores 对下的脚本llamafactory-cli train examples/train_lora/llama3_lora_predict.yaml 来进行预测时，默认的参数是多少，如topk,temperature，max_len等参数是多少，或者有什么命令可以查看吗 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  - `llamafactory` version: 0.9.0 - Platform: Linux-5.4.0-193-generic-x86_64-with-glibc2.31 - Python version: 3.11.9 - PyTorch version: 2.4.0+cu121 (GPU) - Transformers version: 4.43.4 - Datasets version: 2.",
+  "comments": 1,
+  "created": "2024-09-12",
+  "params": [
+   "temperature"
+  ],
+  "answers": {
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "temperature"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 8453,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8453",
+  "title": "help：训练/推理qwen时默认的temperature/topk等参数是模型的值，还是llama factory的值",
+  "ask": "help：训练/推理qwen时默认的temperature/topk等参数是模型的值，还是llama factory的值 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  - `llamafactory` version: 0.9.2.dev0 - Platform: Linux- - Python version: 3.10.12 - PyTorch version: 2.5.1+cu124 (GPU) - Transformers version: 4.48.3 - Datasets version: 3.2.0 - Accelerate version: 1.",
+  "comments": 1,
+  "created": "2025-06-25",
+  "params": [
+   "temperature"
+  ],
+  "answers": {
+   "temperature": {
+    "type": "float",
+    "desc": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。",
+    "default": "0.95",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "temperature"
+  ],
+  "param_heat": 207,
+  "params_specific": [
+   "temperature"
+  ],
+  "in_title": [
+   "temperature"
+  ]
+ },
+ {
+  "issue": 3836,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3836",
+  "title": "[rank2]: ImportError: Megatron is not installed. please build it from source.",
+  "ask": "[rank2]: ImportError: Megatron is not installed. please build it from source. ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  accelerate launch --config_file /root/.cache/huggingface/accelerate/default_config.yaml src/train.py --stage sft --do_train True --model_name_or_path /data/Qwen1.5-1.8B-Chat --preprocessing_num_workers 16",
+  "comments": 1,
+  "created": "2024-05-21",
+  "params": [
+   "source",
+   "flash_attn",
+   "lora_alpha",
+   "lora_dropout",
+   "use_rslora"
+  ],
+  "answers": {
+   "source": {
+    "type": "`local \\",
+    "desc": "hf_hub`",
+    "default": "`hf_hub`",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "flash_attn": {
+    "type": "Literal[“auto”, “disabled”, “sdpa”, “fa2”]",
+    "desc": "是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。",
+    "default": "auto",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "lora_alpha": {
+    "type": "Optional[int]",
+    "desc": "LoRA 缩放系数。一般情况下为 lora_rank * 2。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > LoRA¶"
+   },
+   "lora_dropout": {
+    "type": "float",
+    "desc": "LoRA 微调中的 dropout 率。默认值为 0",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > LoRA¶ > method"
+   },
+   "use_rslora": {
+    "type": "bool",
+    "desc": "是否使用秩稳定 LoRA(Rank-Stabilized LoRA)，默认值为 False。",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > LoRA¶ > method"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "source"
+  ],
+  "param_heat": 188,
+  "params_specific": [
+   "source"
+  ],
+  "in_title": [
+   "source"
+  ]
+ },
+ {
+  "issue": 1428,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1428",
+  "title": "建议增加参数控制最大的保存checkpoint数量save_total_limit",
+  "ask": "建议增加参数控制最大的保存checkpoint数量save_total_limit ｜ 建议增加参数控制最大的保存checkpoint数量save_total_limit，设置后能自动滚动删除",
+  "comments": 1,
+  "created": "2023-11-08",
+  "params": [
+   "save_total_limit"
+  ],
+  "answers": {
+   "save_total_limit": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "save_total_limit"
+  ],
+  "param_heat": 175,
+  "params_specific": [
+   "save_total_limit"
+  ],
+  "in_title": [
+   "save_total_limit"
+  ]
+ },
+ {
+  "issue": 10581,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10581",
+  "title": "How to set a random seed in the weibuUI interface to control randomness",
+  "ask": "How to set a random seed in the weibuUI interface to control randomness ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  I can not find this param setting in the weibuUI,how can I control the randomness.  ### Reproduction  I can not find this param setting in the weibuUI,how can I control the randomness.   ### Others  _",
+  "comments": 1,
+  "created": "2026-06-16",
+  "params": [
+   "seed"
+  ],
+  "answers": {
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "seed"
+  ],
+  "param_heat": 168,
+  "params_specific": [
+   "seed"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 9066,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9066",
+  "title": "能否支持Seed-OSS",
+  "ask": "能否支持Seed-OSS ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  Hi, 最近发现Seed-OSS在我目前的任务上性能非常好，希望也能支持使用llama-factory进行微调，感谢  ### Pull Request  _No response_",
+  "comments": 1,
+  "created": "2025-09-03",
+  "params": [
+   "seed"
+  ],
+  "answers": {
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "seed"
+  ],
+  "param_heat": 168,
+  "params_specific": [
+   "seed"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 1731,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1731",
+  "title": "从huggingface中加载数据集时始终为`split=train`",
+  "ask": "从huggingface中加载数据集时始终为`split=train` ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  在`dataset_info.json`中设置`split: \"test\"`  ### Expected behavior  加载数据集中`split=test`部分  ### System Info  _No response_  ### Others 注意到`data_args.split`始终为`\"train\"`",
+  "comments": 1,
+  "created": "2023-12-04",
+  "params": [
+   "split"
+  ],
+  "answers": {
+   "split": {
+    "type": "`str`",
+    "desc": "`train`",
+    "default": "数据集 split",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "split"
+  ],
+  "param_heat": 153,
+  "params_specific": [
+   "split"
+  ],
+  "in_title": [
+   "split"
+  ]
+ },
+ {
+  "issue": 9162,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9162",
+  "title": "When using Hugging Face datasets, how can I specify the split?",
+  "ask": "When using Hugging Face datasets, how can I specify the split? ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  Hello, As the title said, when using Hugging Face datasets, how can I specify the split?     ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-09-19",
+  "params": [
+   "split"
+  ],
+  "answers": {
+   "split": {
+    "type": "`str`",
+    "desc": "`train`",
+    "default": "数据集 split",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "split"
+  ],
+  "param_heat": 153,
+  "params_specific": [
+   "split"
+  ],
+  "in_title": [
+   "split"
+  ]
+ },
+ {
+  "issue": 8371,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8371",
+  "title": "api形式的reward_model出入参文档",
+  "ask": "api形式的reward_model出入参文档 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  注意到在ppo中，支持reward_model_type == \"api\"，请问大佬可以提供api的出入参规范吗  ### Pull Request  _No response_",
+  "comments": 1,
+  "created": "2025-06-12",
+  "params": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "answers": {
+   "reward_model": {
+    "type": "Optional[str]",
+    "desc": "PPO 训练中使用的奖励模型路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   },
+   "reward_model_type": {
+    "type": "Literal[“lora”, “full”, “api”]",
+    "desc": "PPO 训练中使用的奖励模型类型。可选值为： lora, full, api。",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "param_heat": 75,
+  "params_specific": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "in_title": [
+   "reward_model"
+  ]
+ },
+ {
+  "issue": 7314,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7314",
+  "title": "--tokenized_path  这个参数取消了吗",
+  "ask": "--tokenized_path  这个参数取消了吗 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  提交的时候报没有该参数，是什么情况，我使用的是0.9.2的版本  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-03-15",
+  "params": [
+   "tokenized_path"
+  ],
+  "answers": {
+   "tokenized_path": {
+    "type": "Optional[str]",
+    "desc": "Tokenized datasets的保存或加载路径。如果路径存在，会加载已有的 tokenized datasets；如果路径不存在，则会在分词后将 tokenized datasets 保存在此路径中。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "tokenized_path"
+  ],
+  "param_heat": 53,
+  "params_specific": [
+   "tokenized_path"
+  ],
+  "in_title": [
+   "tokenized_path"
+  ]
+ },
+ {
+  "issue": 9241,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9241",
+  "title": "Can I use multiple tokenized_path?",
+  "ask": "Can I use multiple tokenized_path? ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  Hello, If I tokenize different datasets in parallel on different machines, resulting in multiple tokenized_path, how can I merge and use them together?  ### Reproduction      ### Others  _No response_",
+  "comments": 1,
+  "created": "2025-10-09",
+  "params": [
+   "tokenized_path"
+  ],
+  "answers": {
+   "tokenized_path": {
+    "type": "Optional[str]",
+    "desc": "Tokenized datasets的保存或加载路径。如果路径存在，会加载已有的 tokenized datasets；如果路径不存在，则会在分词后将 tokenized datasets 保存在此路径中。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "tokenized_path"
+  ],
+  "param_heat": 53,
+  "params_specific": [
+   "tokenized_path"
+  ],
+  "in_title": [
+   "tokenized_path"
+  ]
+ },
+ {
+  "issue": 5269,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5269",
+  "title": "resize_vocab参数的使用",
+  "ask": "resize_vocab参数的使用 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  无  ### Reproduction  无  ### Expected behavior  想请教一下resize_vocab: true的作用。开启后会在训练过程中自动扩充词表和嵌入层吗？还是说词表得手动扩充，然后在训练过程中自动调整嵌入层呢？  ### Others  _No response_",
+  "comments": 1,
+  "created": "2024-08-26",
+  "params": [
+   "resize_vocab"
+  ],
+  "answers": {
+   "resize_vocab": {
+    "type": "bool",
+    "desc": "是否调整词表和嵌入层的大小。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "resize_vocab"
+  ],
+  "param_heat": 44,
+  "params_specific": [
+   "resize_vocab"
+  ],
+  "in_title": [
+   "resize_vocab"
+  ]
+ },
+ {
+  "issue": 5478,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5478",
+  "title": "Can we set default_system in yaml file when training?",
+  "ask": "Can we set default_system in yaml file when training? ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  - `llamafactory` version: 0.8.4.dev0 - Platform: Linux-5.4.0-125-generic-x86_64-with-glibc2.29 - Python version: 3.8.10 - PyTorch version: 2.4.0+cu121 (GPU) - Transformers version: 4.44.2 - Datasets versio",
+  "comments": 1,
+  "created": "2024-09-19",
+  "params": [
+   "source",
+   "template",
+   "default_system"
+  ],
+  "answers": {
+   "source": {
+    "type": "`local \\",
+    "desc": "hf_hub`",
+    "default": "`hf_hub`",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "default_system": {
+    "type": "str",
+    "desc": "默认的 system_message，例如: “You are a helpful assistant.”",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "default_system"
+  ],
+  "param_heat": 25,
+  "params_specific": [
+   "default_system"
+  ],
+  "in_title": [
+   "default_system"
+  ]
+ },
+ {
+  "issue": 1757,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1757",
+  "title": "不同模型的lora的target_modules是如何确定的？",
+  "ask": "不同模型的lora的target_modules是如何确定的？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  非常感谢你们的工作！ 请问src/llmtuner/extras/constants.py 里的register_model_group里的module字段（lora的target_modules）是如何确定的？     ### Expected behavior  无  ### System Info  无  ### Others  无",
+  "comments": 1,
+  "created": "2023-12-06",
+  "params": [
+   "target_modules"
+  ],
+  "answers": {
+   "target_modules": {
+    "type": "`list[str] \\",
+    "desc": "str`",
+    "default": "`all`",
+    "source": "docs/zh/configuration/model.md | 模型参数 > peft_config > LoRA"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "target_modules"
+  ],
+  "param_heat": 18,
+  "params_specific": [
+   "target_modules"
+  ],
+  "in_title": [
+   "target_modules"
+  ]
+ },
+ {
+  "issue": 1261,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1261",
+  "title": "关于新版本代码的split_special_tokens参数",
+  "ask": "关于新版本代码的split_special_tokens参数 ｜ 使用新版本代码增量预训练chatglm2-6B，src/llmtuner/tuner/core/loader.py中出现报错，model_args.split_special_tokens参数不存在。请问在训练脚本中应当将这个参数设置为什么呢？  希望得到您的解答，谢谢",
+  "comments": 1,
+  "created": "2023-10-23",
+  "params": [
+   "split_special_tokens"
+  ],
+  "answers": {
+   "split_special_tokens": {
+    "type": "bool",
+    "desc": "是否在分词时将 special token 分割。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "split_special_tokens"
+  ],
+  "param_heat": 17,
+  "params_specific": [
+   "split_special_tokens"
+  ],
+  "in_title": [
+   "split_special_tokens"
+  ]
+ },
+ {
+  "issue": 1183,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1183",
+  "title": "llama2模型推理时，报错 --flash_attn: not found",
+  "ask": "llama2模型推理时，报错 --flash_attn: not found ｜ llama2模型推理时，报错 --flash_attn: not found 请问这个参数应该加在什么位置  test.sh CUDA_VISIBLE_DEVICES=0 python src/train_bash.py \\  --stage sft \\  --model_name_or_path ../llama2-model \\  --do_predict \\  --dataset icl_cot \\  --template default \\  --finetuning_type full \\  --checkpoint_dir ../llama2-model \\  --output_d",
+  "comments": 0,
+  "created": "2023-10-14",
+  "params": [
+   "model",
+   "flash_attn",
+   "output_dir",
+   "stage",
+   "finetuning_type"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "flash_attn": {
+    "type": "Literal[“auto”, “disabled”, “sdpa”, “fa2”]",
+    "desc": "是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。",
+    "default": "auto",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "output_dir": {
+    "type": "`str`",
+    "desc": "`outputs/<uuid>`",
+    "default": "输出目录",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "stage": {
+    "type": "Literal[“pt”, “sft”, “rm”, “ppo”, “dpo”, “kto”]",
+    "desc": "训练阶段",
+    "default": "sft",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "finetuning_type": {
+    "type": "Literal[“lora”, “freeze”, “full”]",
+    "desc": "微调方法",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "model",
+   "flash_attn",
+   "stage",
+   "finetuning_type"
+  ],
+  "param_heat": 2612,
+  "params_specific": [
+   "flash_attn",
+   "finetuning_type"
+  ],
+  "in_title": [
+   "flash_attn"
+  ]
+ },
+ {
+  "issue": 7771,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7771",
+  "title": "如何在prompt长度超过LLM的接受上限时自动截断，使用了--cutoff_len 8192并没有效果",
+  "ask": "如何在prompt长度超过LLM的接受上限时自动截断，使用了--cutoff_len 8192并没有效果 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  具体使用的指令如下：CUDA_VISIBLE_DEVICES=6,7 GRADIO_SHARE=1 API_PORT=8000 llamafactory-cli api --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct --template llama3 --infer_backend vllm --vllm_maxlen 8192",
+  "comments": 0,
+  "created": "2025-04-19",
+  "params": [
+   "cutoff_len",
+   "template",
+   "model_name_or_path",
+   "infer_backend",
+   "vllm_maxlen"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "model_name_or_path": {
+    "type": "Optional[str]",
+    "desc": "模型路径（本地路径或 Huggingface/ModelScope 路径）。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "infer_backend": {
+    "type": "Literal[“huggingface”, “vllm”]",
+    "desc": "推理时使用的后端引擎，支持 huggingface 或 vllm。",
+    "default": "huggingface",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "vllm_maxlen": {
+    "type": "int",
+    "desc": "最大序列长度（包括输入文本和生成文本）。",
+    "default": "4096",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > vllm 推理¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len",
+   "template",
+   "model_name_or_path",
+   "infer_backend",
+   "vllm_maxlen"
+  ],
+  "param_heat": 2375,
+  "params_specific": [
+   "cutoff_len",
+   "model_name_or_path",
+   "infer_backend",
+   "vllm_maxlen"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 5271,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5271",
+  "title": "packing样本拼接的疑问",
+  "ask": "packing样本拼接的疑问 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  preprocess_packed_supervised_dataset  ### Reproduction  sft 时指定packing=true进行packing，看代码的时候有几个疑问，还望解答 1. 为什么 prompt或 response长度是奇数，就跳过了这个样本呢？岂不是有可能会丢失很多样本？   2. 单个样本长度超过 cutoff_len，也丢掉了，这是为啥呢？     ### Expe",
+  "comments": 0,
+  "created": "2024-08-26",
+  "params": [
+   "cutoff_len",
+   "packing",
+   "sft"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len",
+   "packing",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "cutoff_len",
+   "packing"
+  ],
+  "in_title": [
+   "packing"
+  ]
+ },
+ {
+  "issue": 7878,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7878",
+  "title": "推理时max_new_tokens大小影响输出结果？",
+  "ask": "推理时max_new_tokens大小影响输出结果？ ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  请问一下，我sft训练qwen2.5vl的时候设置cutoff_len为3050，chat的时候一开始设置max_new_tokens为10000，出现了模型输出一直在重复某些话，但是把max_new_tokens设为305附近，效果好了一些，请问为什么max_new_tokens会影响模型性能，需要一定设为sft训练时候的cutoff_len嘛？   ### Reproduction",
+  "comments": 0,
+  "created": "2025-04-28",
+  "params": [
+   "max_new_tokens",
+   "cutoff_len",
+   "sft"
+  ],
+  "answers": {
+   "max_new_tokens": {
+    "type": "int",
+    "desc": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。",
+    "default": "1024",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "max_new_tokens",
+   "cutoff_len",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "max_new_tokens",
+   "cutoff_len"
+  ],
+  "in_title": [
+   "max_new_tokens"
+  ]
+ },
+ {
+  "issue": 4462,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4462",
+  "title": "对sft阶段的数据进行packing之后，同一条训练数据内的指令之间是否会相互影响？",
+  "ask": "对sft阶段的数据进行packing之后，同一条训练数据内的指令之间是否会相互影响？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  如题，同一条训练数据内的指令之间能否看到彼此，会不会相互影响呢？  ### Reproduction  无  ### Expected behavior  _No response_  ### Others  _No response_",
+  "comments": 0,
+  "created": "2024-06-25",
+  "params": [
+   "packing",
+   "sft"
+  ],
+  "answers": {
+   "packing": {
+    "type": "Optional[bool]",
+    "desc": "是否启用 sequences packing。预训练时默认启用。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "packing",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "packing"
+  ],
+  "in_title": [
+   "packing"
+  ]
+ },
+ {
+  "issue": 8984,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8984",
+  "title": "请问现在是否支持 Seed-OSS-36B 的SFT训练?",
+  "ask": "请问现在是否支持 Seed-OSS-36B 的SFT训练? ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  null  ### Reproduction      ### Others  _No response_",
+  "comments": 0,
+  "created": "2025-08-21",
+  "params": [
+   "seed",
+   "sft"
+  ],
+  "answers": {
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "seed",
+   "sft"
+  ],
+  "param_heat": 2301,
+  "params_specific": [
+   "seed"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 9138,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9138",
+  "title": "咨询：是否支持根据train dataset按比例split为eval dataset",
+  "ask": "咨询：是否支持根据train dataset按比例split为eval dataset ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  还是必须提前构造好eval dataset呢  ### Reproduction      ### Others  _No response_",
+  "comments": 0,
+  "created": "2025-09-16",
+  "params": [
+   "split",
+   "dataset"
+  ],
+  "answers": {
+   "split": {
+    "type": "`str`",
+    "desc": "`train`",
+    "default": "数据集 split",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   },
+   "dataset": {
+    "type": "Optional[str]",
+    "desc": "用于训练的数据集名称。使用逗号分隔多个数据集。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "split",
+   "dataset"
+  ],
+  "param_heat": 2171,
+  "params_specific": [
+   "split"
+  ],
+  "in_title": [
+   "split"
+  ]
+ },
+ {
+  "issue": 5820,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5820",
+  "title": "What is the correct meaning of the cutoff_len parameter?",
+  "ask": "What is the correct meaning of the cutoff_len parameter? ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  llama factory version: 0.9.1.dev0 platform : linux ubuntu  python: 3.11  ### Reproduction  nothing  ### Expected behavior  _No response_  ### Others  My understanding is that the cutoff_len parameter refer",
+  "comments": 0,
+  "created": "2024-10-25",
+  "params": [
+   "model",
+   "cutoff_len"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 1407,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1407",
+  "title": "seq_length为什么是8192，cutoff_len 为4096时",
+  "ask": "seq_length为什么是8192，cutoff_len 为4096时",
+  "comments": 0,
+  "created": "2023-11-06",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 5893,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5893",
+  "title": "训练集output长度1万8，微调时cutoff_len设置为2万，效果不好怎么办？",
+  "ask": "训练集output长度1万8，微调时cutoff_len设置为2万，效果不好怎么办？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  LLaMA-Factory 0.90 Qwen2.5-coder-1.5b-instruct  ### Reproduction  Cutoff length = 20000  训练集的output长度为17000  ### Expected behavior  _No response_  ### Others  _No response_",
+  "comments": 0,
+  "created": "2024-11-01",
+  "params": [
+   "cutoff_len"
+  ],
+  "answers": {
+   "cutoff_len": {
+    "type": "int",
+    "desc": "输入的最大 token 数，超过该长度会被截断。",
+    "default": "2048",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "cutoff_len"
+  ],
+  "param_heat": 1523,
+  "params_specific": [
+   "cutoff_len"
+  ],
+  "in_title": [
+   "cutoff_len"
+  ]
+ },
+ {
+  "issue": 9591,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9591",
+  "title": "Pure BF16配置后，lora层的梯度为什么还是fp32?",
+  "ask": "Pure BF16配置后，lora层的梯度为什么还是fp32? ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  `- `llamafactory` version: 0.9.4.dev0 - Platform: Linux-6.8.0-79-generic-x86_64-with-glibc2.39 - Python version: 3.12.12 - PyTorch version: 2.8.0+cu128 (GPU) - Transformers version: 4.51.3 - Datasets",
+  "comments": 0,
+  "created": "2025-12-09",
+  "params": [
+   "bf16",
+   "pure_bf16",
+   "stage",
+   "finetuning_type",
+   "lora_rank"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "pure_bf16": {
+    "type": "bool",
+    "desc": "是否以纯 bf16 精度训练模型（不使用 AMP）。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "stage": {
+    "type": "Literal[“pt”, “sft”, “rm”, “ppo”, “dpo”, “kto”]",
+    "desc": "训练阶段",
+    "default": "sft",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "finetuning_type": {
+    "type": "Literal[“lora”, “freeze”, “full”]",
+    "desc": "微调方法",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   },
+   "lora_rank": {
+    "type": "int",
+    "desc": "LoRA 微调的本征维数 r， r 越大可训练的参数越多。默认值为 8",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > LoRA¶ > method"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 9152,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9152",
+  "title": "Qwen3全量微调，bf16: true，为什么微调后保存的模型精度为float32呢",
+  "ask": "Qwen3全量微调，bf16: true，为什么微调后保存的模型精度为float32呢 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  如题  ### Pull Request  _No response_",
+  "comments": 0,
+  "created": "2025-09-18",
+  "params": [
+   "bf16"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 10132,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10132",
+  "title": "UDA error (/build/source/flash-attn/flash_fwd_launch_template.h:191): no kernel image is available for execution on the device",
+  "ask": "UDA error (/build/source/flash-attn/flash_fwd_launch_template.h:191): no kernel image is available for execution on the device ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  ubuntu22.04 python3.11 双5090FE  ### Reproduction  加载gptoss后chat报错：CUDA error (/build/source/flash-attn/flash_fwd_launch_template.h:191): no kernel image is available for execution on the device 当切换默认c",
+  "comments": 0,
+  "created": "2026-01-25",
+  "params": [
+   "source"
+  ],
+  "answers": {
+   "source": {
+    "type": "`local \\",
+    "desc": "hf_hub`",
+    "default": "`hf_hub`",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "source"
+  ],
+  "param_heat": 188,
+  "params_specific": [
+   "source"
+  ],
+  "in_title": [
+   "source"
+  ]
+ },
+ {
+  "issue": 3536,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3536",
+  "title": "您好，请问在推理过程中设置相同的温度和top p如何生成多样性回答，设置不同的seed？",
+  "ask": "您好，请问在推理过程中设置相同的温度和top p如何生成多样性回答，设置不同的seed？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### Reproduction  --seed?  ### Expected behavior  _No response_  ### System Info  _No response_  ### Others  _No response_",
+  "comments": 0,
+  "created": "2024-05-01",
+  "params": [
+   "seed"
+  ],
+  "answers": {
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "seed"
+  ],
+  "param_heat": 168,
+  "params_specific": [
+   "seed"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 9093,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9093",
+  "title": "未来会支持Seed-OSS 的微调训练吗",
+  "ask": "未来会支持Seed-OSS 的微调训练吗 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description  未来会支持Seed-OSS 的微调训练吗  ### Pull Request  _No response_",
+  "comments": 0,
+  "created": "2025-09-08",
+  "params": [
+   "seed"
+  ],
+  "answers": {
+   "seed": {
+    "type": "int",
+    "desc": "用于数据加载器的随机种子，默认值为 42。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "seed"
+  ],
+  "param_heat": 168,
+  "params_specific": [
+   "seed"
+  ],
+  "in_title": [
+   "seed"
+  ]
+ },
+ {
+  "issue": 6315,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6315",
+  "title": "昇腾训练千问2-7B DPO下设置batch_size问题求助",
+  "ask": "昇腾训练千问2-7B DPO下设置batch_size问题求助 ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  利用昇腾机器通过DPO训练方法训练千问模型，报显存不足，当然通过一定的方法能训练起来，但是存在隐患，想找一个更好的解决办法，特来求助： 设置： 昇腾8机，64卡 64GB显存机器 seq_length 4096 micro_batch_size_per_gpu 1  train_batch_size 64 gradient_accumulation_step 1 这样的情况下跑着跑着会显存不足。  后来设置",
+  "comments": 0,
+  "created": "2024-12-12",
+  "params": [
+   "batch_size",
+   "master_addr",
+   "master_port"
+  ],
+  "answers": {
+   "batch_size": {
+    "type": "int",
+    "desc": "每个GPU使用的批量大小，默认值为 4。",
+    "default": "",
+    "source": "webdocs/getting_started__eval.md | 评估¶ > 评估相关参数¶"
+   },
+   "master_addr": {
+    "type": "Optional[str]",
+    "desc": "分布式通信的主节点ip地址。默认使用ray集群主节点ip地址。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 训练参数¶ > RAY¶"
+   },
+   "master_port": {
+    "type": "Optional[str]",
+    "desc": "主节点上用于监听连接的端口。默认使用随机可用端口。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 训练参数¶ > RAY¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "batch_size"
+  ],
+  "param_heat": 109,
+  "params_specific": [
+   "batch_size"
+  ],
+  "in_title": [
+   "batch_size"
+  ]
+ },
+ {
+  "issue": 8370,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8370",
+  "title": "api形式的reward_model出入参文档",
+  "ask": "api形式的reward_model出入参文档 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  注意到在ppo中，支持reward_model_type == \"api\"，请问大佬可以提供api的出入参规范吗  ### Reproduction      ### Others  _No response_",
+  "comments": 0,
+  "created": "2025-06-12",
+  "params": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "answers": {
+   "reward_model": {
+    "type": "Optional[str]",
+    "desc": "PPO 训练中使用的奖励模型路径。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   },
+   "reward_model_type": {
+    "type": "Literal[“lora”, “full”, “api”]",
+    "desc": "PPO 训练中使用的奖励模型类型。可选值为： lora, full, api。",
+    "default": "lora",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > RLHF¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "param_heat": 75,
+  "params_specific": [
+   "reward_model",
+   "reward_model_type"
+  ],
+  "in_title": [
+   "reward_model"
+  ]
+ },
+ {
+  "issue": 8121,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8121",
+  "title": "怎么设置resize_vocab=true",
+  "ask": "怎么设置resize_vocab=true ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### Description     ### Pull Request  _No response_",
+  "comments": 0,
+  "created": "2025-05-20",
+  "params": [
+   "resize_vocab"
+  ],
+  "answers": {
+   "resize_vocab": {
+    "type": "bool",
+    "desc": "是否调整词表和嵌入层的大小。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "resize_vocab"
+  ],
+  "param_heat": 44,
+  "params_specific": [
+   "resize_vocab"
+  ],
+  "in_title": [
+   "resize_vocab"
+  ]
+ },
+ {
+  "issue": 8993,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/8993",
+  "title": "freeze_trainable_layers",
+  "ask": "freeze_trainable_layers ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  freeze_trainable_layers: int = field(  default=2,  metadata={  \"help\": (  \"The number of trainable layers for freeze (partial-parameter) fine-tuning. \"  \"Positive numbers mean the last n layers are se",
+  "comments": 0,
+  "created": "2025-08-21",
+  "params": [
+   "freeze_trainable_layers"
+  ],
+  "answers": {
+   "freeze_trainable_layers": {
+    "type": "int",
+    "desc": "可训练层的数量。正数表示最后 n 层被设置为可训练的，负数表示前 n 层被设置为可训练的。默认值为 2",
+    "default": "",
+    "source": "webdocs/advanced__tuning_algorithms.md | ... > Freeze¶ > method"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "freeze_trainable_layers"
+  ],
+  "param_heat": 29,
+  "params_specific": [
+   "freeze_trainable_layers"
+  ],
+  "in_title": [
+   "freeze_trainable_layers"
+  ]
+ },
+ {
+  "issue": 9091,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9091",
+  "title": "多机多卡，设置data_shared_file_system为true每个worker都要算一遍tokenize",
+  "ask": "多机多卡，设置data_shared_file_system为true每个worker都要算一遍tokenize ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  在文档参数介绍中 https://llamafactory.readthedocs.io/zh-cn/latest/advanced/arguments.html  依照解释把data_shared_file_system设置为true，反而发现是每个worker算一遍tokenize。  ### Reproduction  data_shared_file_system: true 剩余参数依照",
+  "comments": 0,
+  "created": "2025-09-08",
+  "params": [
+   "data_shared_file_system"
+  ],
+  "answers": {
+   "data_shared_file_system": {
+    "type": "Optional[bool]",
+    "desc": "多机多卡时，不同机器存放数据集的路径是否是共享文件系统。数据集处理在该值为true时只在第一个node发生，为false时在每个node都处理一次。",
+    "default": "false",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 0,
+  "strong_params": [
+   "data_shared_file_system"
+  ],
+  "param_heat": 20,
+  "params_specific": [
+   "data_shared_file_system"
+  ],
+  "in_title": [
+   "data_shared_file_system"
+  ]
+ },
+ {
+  "issue": 5324,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5324",
+  "title": "qwen2-vl微调，freeze_vision_tower设为false时报错",
+  "ask": "qwen2-vl微调，freeze_vision_tower设为false时报错 ｜ 使用examples/train_lora/qwen2vl_lora_sft.yaml脚本微调，一切正常。 将freeze_vision_tower设置为false后，运行脚本报错：ValueError: Target module Conv3d(3, 1280, kernel_size=(2, 14, 14), stride=(2, 14, 14), bias=False) is not supported. Currently, only the following modules are supported: `torch.nn.Linear`, `torch.nn.Embedding`",
+  "comments": 5,
+  "created": "2024-09-02",
+  "params": [
+   "freeze_vision_tower"
+  ],
+  "answers": {
+   "freeze_vision_tower": {
+    "type": "bool",
+    "desc": "MLLM 训练时是否冻结视觉塔。",
+    "default": "True",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 微调参数¶ > 基本参数¶"
+   }
+  },
+  "n_trace": 1,
+  "strong_params": [
+   "freeze_vision_tower"
+  ],
+  "param_heat": 191,
+  "params_specific": [
+   "freeze_vision_tower"
+  ],
+  "in_title": [
+   "freeze_vision_tower"
+  ]
+ },
+ {
+  "issue": 1527,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1527",
+  "title": "当前efficient_eos都是True，设置train_on_prompt的意义是什么？",
+  "ask": "当前efficient_eos都是True，设置train_on_prompt的意义是什么？ ｜ if data_args.train_on_prompt and template.efficient_eos:  raise ValueError(\"Current template does not support `train_on_prompt`.\")",
+  "comments": 3,
+  "created": "2023-11-16",
+  "params": [
+   "template",
+   "train_on_prompt"
+  ],
+  "answers": {
+   "template": {
+    "type": "Optional[str]",
+    "desc": "训练和推理时构造 prompt 的模板。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "train_on_prompt": {
+    "type": "bool",
+    "desc": "是否在输入 prompt 上进行训练。",
+    "default": "False",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   }
+  },
+  "n_trace": 1,
+  "strong_params": [
+   "train_on_prompt"
+  ],
+  "param_heat": 59,
+  "params_specific": [
+   "train_on_prompt"
+  ],
+  "in_title": [
+   "train_on_prompt"
+  ]
+ },
+ {
+  "issue": 9025,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9025",
+  "title": "不支持bf16",
+  "ask": "不支持bf16 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info  这是我运行llama-factory的代码        运行的时候我得到了这个error    我觉得非常的奇怪 我以前在这个机子上运行llama-facotry的时候都没有这个error ValueError: Your setup doesn't support bf16/gpu. 这次我下载了新的llama factory 运行新的代码时有这个error 。    ### Reproduc",
+  "comments": 1,
+  "created": "2025-08-26",
+  "params": [
+   "bf16"
+  ],
+  "answers": {
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   }
+  },
+  "n_trace": 1,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ },
+ {
+  "issue": 5570,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5570",
+  "title": "在昇腾环境下推理模型时需要设置do_sample=False才能运行没法调节参数，有什么解决方案吗？",
+  "ask": "在昇腾环境下推理模型时需要设置do_sample=False才能运行没法调节参数，有什么解决方案吗？ ｜ ### Reminder  - [X] I have read the README and searched the existing issues.  ### System Info  - `llamafactory` version: 0.9.1.dev0 - Platform: Linux-4.19.36-vhulk1907.1.0.h619.eulerosv2r8.aarch64-aarch64-with-glibc2.28 - Python version: 3.10.14 - PyTorch version: 2.1.0 (NPU) - Transformers version:",
+  "comments": 1,
+  "created": "2024-09-27",
+  "params": [
+   "model",
+   "task",
+   "do_sample"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "task": {
+    "type": "str",
+    "desc": "评估任务的名称，可选项有 mmlu_test, ceval_validation, cmmlu_test",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 评估参数¶"
+   },
+   "do_sample": {
+    "type": "bool",
+    "desc": "是否使用采样策略生成文本。如果设置为 False，将使用 greedy decoding。",
+    "default": "True",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   }
+  },
+  "n_trace": 7,
+  "strong_params": [
+   "do_sample"
+  ],
+  "param_heat": 137,
+  "params_specific": [
+   "do_sample"
+  ],
+  "in_title": [
+   "do_sample"
+  ]
+ },
+ {
+  "issue": 6638,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6638",
+  "title": "TypeError: LlavaForConditionalGeneration.forward() got an unexpected keyword argument 'default_system'",
+  "ask": "TypeError: LlavaForConditionalGeneration.forward() got an unexpected keyword argument 'default_system' ｜ ### Reminder  - [X] I have read the above rules and searched the existing issues.  ### System Info  I can use llama factory training normally, but encounter the following problems during inference with order: FORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train eval_llava_lora_sft.yaml",
+  "comments": 5,
+  "created": "2025-01-14",
+  "params": [
+   "eval_dataset",
+   "model",
+   "normal",
+   "default_system",
+   "sft"
+  ],
+  "answers": {
+   "eval_dataset": {
+    "type": "Optional[str]",
+    "desc": "用于评估的数据集名称。使用逗号分隔多个数据集。",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 数据参数¶"
+   },
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "normal": {
+    "type": "固定",
+    "desc": "按 batch 内最长序列 padding",
+    "default": "",
+    "source": "docs/zh/feature-guide/batching.md | 批处理策略"
+   },
+   "default_system": {
+    "type": "str",
+    "desc": "默认的 system_message，例如: “You are a helpful assistant.”",
+    "default": "None",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 生成参数¶"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 23,
+  "strong_params": [
+   "default_system"
+  ],
+  "param_heat": 25,
+  "params_specific": [
+   "default_system"
+  ],
+  "in_title": [
+   "default_system"
+  ]
+ },
+ {
+  "issue": 7151,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/7151",
+  "title": "webui上选择的是bf16, 跑的时候报错并提示只支持bf16",
+  "ask": "webui上选择的是bf16, 跑的时候报错并提示只支持bf16 ｜ ### Reminder  - [x] I have read the above rules and searched the existing issues.  ### System Info   webui上选择的是bf16, 跑的时候提示却提示只支持bf16 ? 请问这个是怎么回事呢？      0%| | 0/35325 [00:00   sys.exit(main())  ^^^^^^  File \"/home/being/github/LLaMA-Factory/src/llamafactory/cli.py\", line 112, in main  run_exp()  Fil",
+  "comments": 2,
+  "created": "2025-03-04",
+  "params": [
+   "model",
+   "flash_attn",
+   "bf16",
+   "resume_from_checkpoint",
+   "sft"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   },
+   "flash_attn": {
+    "type": "Literal[“auto”, “disabled”, “sdpa”, “fa2”]",
+    "desc": "是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。",
+    "default": "auto",
+    "source": "webdocs/advanced__arguments.md | 参数介绍¶ > 模型参数¶ > 基本参数¶"
+   },
+   "bf16": {
+    "type": "`bool`",
+    "desc": "`true`",
+    "default": "是否使用 bf16",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > 训练过程与精度"
+   },
+   "resume_from_checkpoint": {
+    "type": "从训练 checkpoint 继续训练",
+    "desc": "Trainer 初始化阶段",
+    "default": "模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态",
+    "source": "docs/zh/feature-guide/model_saving.md | 模型保存与恢复 > 初始化权重与恢复训练"
+   },
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  },
+  "n_trace": 44,
+  "strong_params": [
+   "bf16"
+  ],
+  "param_heat": 1197,
+  "params_specific": [
+   "bf16"
+  ],
+  "in_title": [
+   "bf16"
+  ]
+ }
+]

@@ -1,0 +1,219 @@
+[
+ {
+  "issue": 4261,
+  "question": "命令行如何中断训练及其恢复训练",
+  "answer": "使用 `resume_from_checkpoint` 指定 checkpoint 路径，或在训练 YAML 中设置 `resume_from_checkpoint: auto`，从 output_dir 自动查找最新完整 checkpoint 恢复训练。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+  "evidence": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。"
+ },
+ {
+  "issue": 5628,
+  "question": "如何从checkpoints 完整复原出 optimizer,model 等的训练时的状态，使其可以从中断点继续训练",
+  "answer": "设置 `resume_from_checkpoint` 指向 checkpoint 路径（或 `auto`），即可恢复训练状态；该字段默认 None。",
+  "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 初始化权重与恢复训练",
+  "evidence": "从训练 checkpoint 继续训练"
+ },
+ {
+  "issue": 7226,
+  "question": "开启视觉模型的api之后怎么给他传图片？",
+  "answer": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。",
+  "doc_location": "webdocs/getting_started__data_preparation.md > 数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶",
+  "evidence": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。"
+ },
+ {
+  "issue": 3482,
+  "question": "vllm如何进行batch推理",
+  "answer": "通过在指令 `python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。",
+  "doc_location": "webdocs/getting_started__eval.md > 评估¶ > NLG 评估¶ > eval",
+  "evidence": "同样，您也通过在指令 `pythonscripts/vllm_infer.py--model_name_or_pathpath_to_merged_model--datasetalpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。"
+ },
+ {
+  "issue": 6257,
+  "question": "请问单机多卡怎么训练",
+  "answer": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。",
+  "doc_location": "webdocs/advanced__distributed.md > 分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactory-cli¶",
+  "evidence": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。"
+ },
+ {
+  "issue": 3643,
+  "question": "请问如何使用多机多卡推理呢？",
+  "answer": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml",
+  "doc_location": "webdocs/advanced__distributed.md > accelerate_singleNode_config.yaml > 多机多卡¶ > llamafactory-cli¶",
+  "evidence": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml"
+ },
+ {
+  "issue": 7172,
+  "question": "sft只保存模型权重不保存优化器参数怎么设置",
+  "answer": "设置 `save_only_model: true`，只保存模型权重、不保存优化器状态。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶",
+  "evidence": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。"
+ },
+ {
+  "issue": 7648,
+  "question": "Need Help for Usage: how to do resume/continuing training from checkpoint",
+  "answer": "`resume_from_checkpoint: auto`",
+  "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "evidence": "`resume_from_checkpoint: auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。"
+ },
+ {
+  "issue": 1373,
+  "question": "如何resume一个LoRA training —— 您好， 我想在一个LoRA training的result上进行continuous training，请问参数应该如何设置? \"checkpoint_dir\": \"xxx\" \"resume_lora_training\": true 请问resume_from_checkpoint也需要设置么?  ",
+  "answer": "可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+  "evidence": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。"
+ },
+ {
+  "issue": 5830,
+  "question": "如何同时使用yaml文件和命令行参数？",
+  "answer": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：",
+  "doc_location": "webdocs/getting_started__sft.md > SFT 训练¶ > 命令行¶",
+  "evidence": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调："
+ },
+ {
+  "issue": 4600,
+  "question": "kto训练完如何预测",
+  "answer": "请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。",
+  "doc_location": "webdocs/advanced__trainers.md > 训练方法¶ > Post-training¶ > KTO¶",
+  "evidence": "KTO(Kahneman-Taversky Optimization) 的出现是为了解决成对的偏好数据难以获得的问题。 KTO使用了一种新的损失函数使其只需二元的标记数据， 即只需标注回答的好坏即可训练，并取得与 DPO 相似甚至更好的效果。在使用 KTO 时，请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。"
+ },
+ {
+  "issue": 5682,
+  "question": "（Instruct/Chat）模型对应的模板怎么找？",
+  "answer": "通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.",
+  "doc_location": "webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶",
+  "evidence": "通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template."
+ },
+ {
+  "issue": 2822,
+  "question": "有一个40G的数据集，但是由于他太大，所以跑sft出很多问题。如果把数据集拆成多个小数据集，如何配置训练？",
+  "answer": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。",
+  "doc_location": "docs/zh/feature-guide/data_preparation.md > 数据准备 > 配置训练数据集",
+  "evidence": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。"
+ },
+ {
+  "issue": 6484,
+  "question": "如何指定只冻结 LLM 进行多模态模型的训练？",
+  "answer": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。",
+  "doc_location": "docs/zh/feature-guide/sft.md > 监督微调（SFT） > Freeze",
+  "evidence": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。以下 `peft_config` 替换 LoRA 配置，模型、数据与训练字段沿用全参示例："
+ },
+ {
+  "issue": 3656,
+  "question": "How to use accelerate to SFT with multiple machines?",
+  "answer": "通过运行以下指令开始训练：\n\n```\naccelerate launch \n--config_file fsdp_config_multiple_nodes.yaml \ntrain.py llm_config.yaml\n```",
+  "doc_location": "webdocs/advanced__distributed.md > deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > accelerate¶",
+  "evidence": "当配置完成后，在所有机器上运行如下命令即可启动FSDP的多机多卡训练：\n\n```\naccelerate launch \n--config_file fsdp_config_multiple_nodes.yaml \ntrain.py llm_config.yaml\n```"
+ },
+ {
+  "issue": 5416,
+  "question": "qwen2vl 7b , how to call api",
+  "answer": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。",
+  "doc_location": "webdocs/getting_started__inference.md > 推理¶",
+  "evidence": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。"
+ },
+ {
+  "issue": 1429,
+  "question": "请教如何编写template —— 您好，想向您请教下如何自定义template  原始Input：    原始配置：   原始样例返回内容：    改写的template：    改写后返回内容： ` 问题：“你好，你是谁？” {\"role\":\"assistant\",\"content\":\"\\n我是李华，你是谁？\\n\\n\"} `",
+  "answer": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "doc_location": "webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶",
+  "evidence": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。"
+ },
+ {
+  "issue": 5356,
+  "question": "如何对多轮对话数据进行批量推理？数据集格式规范",
+  "answer": "您可以通过以下指令启动 vllm 推理引擎并使用数据集进行批量推理：\n\npython scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo",
+  "doc_location": "webdocs/getting_started__inference.md > 推理¶ > 批量推理¶ > 数据集¶",
+  "evidence": "您可以通过以下指令启动 vllm 推理引擎并使用数据集进行批量推理：\n\npython scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo"
+ },
+ {
+  "issue": 1128,
+  "question": "请问怎么缓解大模型微调后重复输出同一句话 —— 当把max_length调小时，生成内容不完整。把max_length调大后，模型生成完内容之后，会重复输出最后一句话去达到最大max_length，请问这种现象如何缓解。谢谢！",
+  "answer": "对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > vllm 推理¶",
+  "evidence": "对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。"
+ },
+ {
+  "issue": 6198,
+  "question": "我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？",
+  "answer": "通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`",
+  "doc_location": "docs/zh/feature-guide/sft.md > 监督微调（SFT） > LoRA",
+  "evidence": "LoRA 冻结基座权重并训练 adapter，通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`"
+ },
+ {
+  "issue": 6558,
+  "question": "【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗",
+  "answer": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。",
+  "doc_location": "docs/zh/feature-guide/inference.md > 推理 > 使用 LoRA Adapter",
+  "evidence": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。"
+ },
+ {
+  "issue": 5214,
+  "question": "请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？",
+  "answer": "您可以通过 `llamafactory-cli exportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > LoRA 合并¶",
+  "evidence": "您可以通过 `llamafactory-cli exportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。"
+ },
+ {
+  "issue": 1022,
+  "question": "怎么指定 最长输入长度和最短输出长度呢 —— 看到新版代码把max_source_length和max_target_length这两个参数取消,想要指定最大输入输出长度该怎么办呢,目前使用max_length 无法指定最大输入长度",
+  "answer": "最长输入长度由 `cutoff_len` 控制（默认 2048，超出截断）；最大输出长度由 `max_new_tokens` 控制（默认 1024，会覆盖 max_length）。",
+  "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度",
+  "evidence": "`cutoff_len` | `int` | `2048` | 最大序列长度 |"
+ },
+ {
+  "issue": 1458,
+  "question": "调用api_demo的时候如何能切换多个微调后的lora模型 —— 目前是这样运行 但只能加载固定一个lora模型，    api调用的时候可以通过model参数切换lora模型吗",
+  "answer": "通过 `peft_config.adapter_name_or_path` 指定 adapter。",
+  "doc_location": "docs/zh/feature-guide/inference.md > 推理 > 使用 LoRA Adapter",
+  "evidence": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。以下片段加入 `chat.yaml`，加载 [SFT 的 LoRA 示例](sft.md#lora)产生的 `outputs/qwen3_lora`；对应基座为 `Qwen/Qwen3-0.6B`："
+ },
+ {
+  "issue": 67,
+  "question": "export model以后如何加载微调后的llama模型？",
+  "answer": "将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。",
+  "doc_location": "docs/zh/feature-guide/inference.md > 推理 > 使用训练或合并后的模型",
+  "evidence": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。"
+ },
+ {
+  "issue": 4306,
+  "question": "新版改动有点大，之前的multi_node.sh脚本已经移除，最新版本如何制定多卡进行lora预训练和微调呢",
+  "answer": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml",
+  "doc_location": "webdocs/advanced__distributed.md > accelerate_multiNode_config.yaml > DeepSpeed¶ > 多机多卡¶",
+  "evidence": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml"
+ },
+ {
+  "issue": 6497,
+  "question": "How to use multiple images in  multimodal dataset?",
+  "answer": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。",
+  "doc_location": "webdocs/getting_started__data_preparation.md > 数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶",
+  "evidence": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。"
+ },
+ {
+  "issue": 5530,
+  "question": "deepspeed 单机多卡sft时，如何只保存模型",
+  "answer": "设置 `save_only_model: true`，deepspeed 训练时同样只保存模型权重。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶",
+  "evidence": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。"
+ },
+ {
+  "issue": 5479,
+  "question": "qwen2vl-sft后如何将adapter_model.safetensors和模型原始参数合并使用",
+  "answer": "您可以通过 `llamafactory-cli export merge_config.yaml` 指令来合并模型。",
+  "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > LoRA 合并¶",
+  "evidence": "您可以通过 `llamafactory-cliexportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。"
+ },
+ {
+  "issue": 6390,
+  "question": "新手发问：SFT只有部分assistant的内容计算loss，该如何实现 —— ### Discussed in https://github.com/hiyouga/LLaMA-Factory/discussions/6389      Originally posted by **ReycoLi** December 19, 2024  数据集的格式如下  \"message",
+  "answer": "多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。",
+  "doc_location": "docs/zh/feature-guide/data_preparation.md > 数据准备 > SFT 数据格式",
+  "evidence": "多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。"
+ },
+ {
+  "issue": 6026,
+  "question": "请问给其他模型如何配置正确的template模板",
+  "answer": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "doc_location": "webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶",
+  "evidence": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。"
+ }
+]

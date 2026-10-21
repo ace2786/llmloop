@@ -1,0 +1,266 @@
+[
+ {
+  "issue": 10132,
+  "question": "UDA error (/build/source/flash-attn/flash_fwd_launch_template.h:191): no kernel image is available for execution on the device",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "flash-attn 编译产物报 UDA error，属环境编译问题，文档无排障章节",
+  "llm_verdict": "没有提供关于UDA错误的具体信息，无法从文档中找到相关答案。"
+ },
+ {
+  "issue": 6638,
+  "question": "TypeError: LlavaForConditionalGeneration.forward() got an unexpected keyword argument 'default_system'",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "LlavaForConditionalGeneration 的 forward 收到 default_system 报 TypeError，属具体 bug，文档无",
+  "llm_verdict": "没有提供关于 'default_system' 键错误的具体信息，无法确定答案。"
+ },
+ {
+  "issue": 10581,
+  "question": "How to set a random seed in the weibuUI interface to control randomness",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "webui 界面里设置随机种子，文档未覆盖 webui 操作",
+  "llm_verdict": "The provided paragraphs do not contain information about setting a random seed in the weibuUI interf"
+ },
+ {
+  "issue": 8994,
+  "question": "全量微调gpt-oss的时候，原始gpt-oss-20b是MXFP4的，如果设置bf16=false，是不是微调后的输出结果就可以保持精度为MXFP4精度了？",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "gpt-oss-20b 原始 MXFP4 精度，设 bf16=false 能否保持该精度，文档未涉及",
+  "llm_verdict": "文档中没有明确说明设置bf16=false时微调后的输出结果是否可以保持MXFP4精度。"
+ },
+ {
+  "issue": 3836,
+  "question": "[rank2]: ImportError: Megatron is not installed. please build it from source.",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "Megatron 未安装的 ImportError，属安装问题，文档无",
+  "llm_verdict": "The provided candidate paragraphs do not contain the specific information about the ImportError for "
+ },
+ {
+  "issue": 1841,
+  "question": "SUS-Chat-34B-AWQ这个怎么微调呢？ SUS-Chat-34B加入--quantization_bit 4可以微调的",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "SUS-Chat-34B-AWQ 这个具体模型怎么微调，文档模型列表未收录",
+  "llm_verdict": "文档中没有提供关于SUS-Chat-34B-AWQ模型微调的具体步骤或配置。虽然提到了可以使用`--quantization_bit 4`进行微调，但没有提供详细的微调过程。"
+ },
+ {
+  "issue": 4438,
+  "question": "单机多卡微调glm4-9B设置max_grad_norm=1,但是仍然出现了梯度爆炸的问题 —— zheg作者您好，上图是我的训练时的配置信息，我是单机多卡训练，但是在训练过程中会出现grad_norm=nan的情况，我设置了梯度裁剪的值为1，为什么还是会出现这种情况？下图是训练过程中的log情况",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "glm4-9B 设 max_grad_norm=1 仍梯度爆炸，文档只给参数含义不给排障",
+  "llm_verdict": "没有提供关于如何解决梯度爆炸问题的具体答案。虽然提到了梯度裁剪的值，但没有明确指出如何处理梯度爆炸的情况。"
+ },
+ {
+  "issue": 2887,
+  "question": "预训练阶段，为什么单条样本长度不够cutoff_len就会用下一个样本加上特殊符号<|endoftext|>拼接，而不是用pad填充呢，这样做训练期间不影响两个不同样本的语义信息吗？",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "预训练为何用 endoftext 拼接而非 pad，属实现原理，文档未解释",
+  "llm_verdict": "The provided paragraphs do not contain a direct answer to the user's question about why single sampl"
+ },
+ {
+  "issue": 9093,
+  "question": "未来会支持Seed-OSS 的微调训练吗",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "是否支持 Seed-OSS 微调，文档模型支持列表无 Seed-OSS",
+  "llm_verdict": "文档中没有提及关于Seed-OSS的微调训练支持的信息。"
+ },
+ {
+  "issue": 9066,
+  "question": "能否支持Seed-OSS",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "能否支持 Seed-OSS，同上",
+  "llm_verdict": "文档中没有提及Seed-OSS支持的相关信息。"
+ },
+ {
+  "issue": 8984,
+  "question": "请问现在是否支持 Seed-OSS-36B 的SFT训练?",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "是否支持 Seed-OSS-36B 的 SFT，同上",
+  "llm_verdict": "文档中没有明确提到 Seed-OSS-36B 的SFT训练支持情况。"
+ },
+ {
+  "issue": 5421,
+  "question": "求助：请问使用llama-factory 的教程里的Batch Predicting and Computing BLEU and ROUGE Scores 对下的脚本llamafactory-cli train examples/train_lora/llama3_lora_predict.yaml 来进行预测时，默认的参数是多少，如topk,temperature，max_len等参数是多少，或者有什么命令可以查看吗",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "教程脚本里 BLEU/ROUGE 计算的参数默认值，文档无",
+  "llm_verdict": "The document does not explicitly state the default values for parameters such as topk, temperature, "
+ },
+ {
+  "issue": 7373,
+  "question": "When I use BF16 or FP16 to perform Lora fine-tuning on GemMA-3-12B-it, there will be an error when saving the checkpoint, but FP32 is normal",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "Gemma-3-12B-it 用 BF16/FP16 做 LoRA 报错，属具体模型问题",
+  "llm_verdict": "The provided candidate paragraphs do not contain a direct answer to the user's question about the er"
+ },
+ {
+  "issue": 3308,
+  "question": "昇腾910B 微调chatglm3 fp16、bf16均失败",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "昇腾 910B 微调 chatglm3 fp16/bf16 均失败，属硬件+模型组合问题",
+  "llm_verdict": "The provided candidate paragraphs do not contain a direct answer to the user's question about the fa"
+ },
+ {
+  "issue": 6828,
+  "question": "8卡h20，cutoff_len超过1000就报错",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "8 卡 H20 上 cutoff_len 超过 1000 就报错，属硬件显存问题",
+  "llm_verdict": "文档中没有明确指出8卡H20在cutoff_len超过1000时报错的具体原因，也没有提供如何处理设置到4096的解决方案。"
+ },
+ {
+  "issue": 10317,
+  "question": "为什么neat_packing现在不支持bsz>1了",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "neat_packing 为何不支持 bsz>1，属设计决策，文档未说明原因",
+  "llm_verdict": "文档中没有找到关于neat_packing不支持bsz>1的具体原因。"
+ },
+ {
+  "issue": 1730,
+  "question": "val_size 拆分逻辑合理性",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "val_size 拆分逻辑是否合理，属实现细节，文档未展开",
+  "llm_verdict": "文档中没有明确说明 val_size 拆分逻辑的具体实现。"
+ },
+ {
+  "issue": 1188,
+  "question": "How to set the context param when using \"--shift_attn\"? —— According to the help that: --shift_attn [SHIFT_ATTN]  Enable shift short attention (S^2-Attn) proposed by LongLoRA. (default: False)  How can I set the specifi",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "shift_attn 下如何设置 context 参数，文档未说明",
+  "llm_verdict": "The provided candidate paragraphs do not contain the specific information on how to set the context "
+ },
+ {
+  "issue": 7759,
+  "question": "能不能支持输出最大的 max_length，或者数据的 length 分布，用于判断 cutoff_len 设置的合理性",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "能否输出数据 length 分布以判断 cutoff_len 合理性，属功能请求",
+  "llm_verdict": "The provided candidate paragraphs do not contain information about the maximum `max_length` or data "
+ },
+ {
+  "issue": 8989,
+  "question": "neat_packing support transformers 4.55",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "neat_packing 是否支持 transformers 4.55，属版本兼容，文档无",
+  "llm_verdict": "没有找到关于neat_packing支持transformers 4.55的明确信息。"
+ },
+ {
+  "issue": 1573,
+  "question": "对nvidia driver的版本要求是什么，指定了运行使用bf16，但是训练确跑在CPU上。期望能运行在GPU上",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "NVIDIA 驱动版本要求，文档无环境要求章节",
+  "llm_verdict": "没有明确指出对 NVIDIA 驱动版本的具体要求，也没有提供关于如何确保运行在 GPU 上的具体步骤。"
+ },
+ {
+  "issue": 2001,
+  "question": "bf16的模型用gptq转int8和int4怎么转",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "bf16 模型用 gptq 转 int8/int4 的具体步骤，文档无量化转换流程",
+  "llm_verdict": "The provided candidate paragraphs do not contain the specific instructions on how to convert a bf16 "
+ },
+ {
+  "issue": 8915,
+  "question": "full sft训练qwen2-vl的时候在bf16=True能不能一部分模型移到float32下训练？",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "bf16=True 时能否把部分模型移到 float32 训练，文档无",
+  "llm_verdict": "文档中没有明确说明如何指定部分模型从初始化开始就是float32，并在float32下进行训练。"
+ },
+ {
+  "issue": 9152,
+  "question": "Qwen3全量微调，bf16: true，为什么微调后保存的模型精度为float32呢",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "Qwen3 全量微调后保存的模型精度为何是 float32，属实现细节",
+  "llm_verdict": "没有提供关于模型精度保存为float32的具体原因。"
+ },
+ {
+  "issue": 9591,
+  "question": "Pure BF16配置后，lora层的梯度为什么还是fp32?",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "Pure BF16 后 LoRA 层梯度为何仍是 fp32，属实现原理",
+  "llm_verdict": "没有提供关于Pure BF16配置后lora层梯度为什么还是fp32的明确答案。"
+ },
+ {
+  "issue": 4105,
+  "question": "开启Unsloth在多卡训练（GPU数量>2）的设置下出现batch_size有误的bug",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "Unsloth + 多卡（>2）时 batch_size 有误，属已知 bug",
+  "llm_verdict": "文档中没有明确指出开启Unsloth在多卡训练（GPU数量>2）的设置下batch_size有误的bug的具体解决方法。"
+ },
+ {
+  "issue": 4139,
+  "question": "关于cast_trainable_params_to_fp32导致lora predict发生错误",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "cast_trainable_params_to_fp32 导致 lora predict 报错，属 bug",
+  "llm_verdict": "没有提供关于cast_trainable_params_to_fp32导致lora predict发生错误的明确答案。"
+ },
+ {
+  "issue": 3870,
+  "question": "训练奖励模型时 --model_name_or_path 加载基础模型   --adapter_name_or_path 加载sft的lora模型 这个错误是什么原因",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "奖励模型同时用 model_name_or_path 与 adapter_name_or_path 报错，属具体报错",
+  "llm_verdict": "用户提问中提到的错误原因没有在提供的候选段落中找到明确的解释。"
+ },
+ {
+  "issue": 1508,
+  "question": "bf16多卡deepspeed全参数微调chatglm2出错 —— 同一个数据集，用bf16单卡LoRA微调没有问题，但多卡全参数微调就出错，训练过程正常不报错，损失也在下降，但是最终生成结果混乱，且predict的时候batch size>1就报错。  主要环境：    训练代码：    deepspeed配置：    训练损失下降正常：    做predict时的代码：    报错",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "bf16 多卡 deepspeed 全参微调 chatglm2 出错，属环境组合问题",
+  "llm_verdict": "用户提问的问题在提供的文档段落中没有直接写明答案。文档段落主要介绍了LlamaFactory的配置、参数、训练方法等，但没有针对用户提问的具体问题提供直接的解决方案。"
+ },
+ {
+  "issue": 7151,
+  "question": "webui上选择的是bf16, 跑的时候报错并提示只支持bf16",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "webui 选 bf16 后报错提示只支持 bf16，属具体报错",
+  "llm_verdict": "没有找到明确解释为什么在WebUI上选择bf16时会出现只支持bf16的报错信息。文档中只提到了bf16的使用和配置，但没有具体说明这个报错的原因。"
+ },
+ {
+  "issue": 5129,
+  "question": "ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然每步保存一个checkpoint。",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "PPO 训练时 save_steps/save_strategy/save_total_limit 无作用，属 bug 反馈",
+  "llm_verdict": "用户提问中提到的功能限制在提供的文档段落中并未找到明确说明。文档中虽然提到了save_steps、save_strategy、save_total_limit等参数，但没有指出它们在PPO训练中的具体"
+ },
+ {
+  "issue": 3392,
+  "question": "sft predict with num_beams>1",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "sft predict 时 num_beams>1 的支持情况，文档只给参数含义",
+  "llm_verdict": "The document does not explicitly mention how to support num_beams>1 in sft do_predict."
+ },
+ {
+  "issue": 8187,
+  "question": "compute_accuracy问题",
+  "answer": "文档中未找到相关内容（此题正确答案就是「资料里没有」）",
+  "doc_location": "（文档未涉及）",
+  "gap": "compute_accuracy 参数在不同场景下的行为，文档未展开",
+  "llm_verdict": "文档中没有明确说明compute_accuracy参数在不同场景下的具体行为和影响。"
+ }
+]

@@ -1,0 +1,2459 @@
+[
+ {
+  "number": 9555,
+  "title": "Multimodal Image Dataset mllm_demo support system prompt？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9555",
+  "comments": 1,
+  "created": "2025-12-01",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 48.3,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [
+   "mllm_demo"
+  ],
+  "params_found": [
+   "mllm_demo"
+  ],
+  "param_ratio": 1.0,
+  "topic_hits": 6,
+  "rank_score": 166.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nUbuntu 22.04, llama factory 0.9.3\n\n### Reproduction\n\nI want to SFT qwen 2.5 VL with the mllm_demo.json format.\nI  find it is very helpful to split system prompt and user prompt. \nmllm_demo.json don't show the support of system prompt, as below.\n\n[\n  {\n    \"messages\": [\n      {\n        \"content\": \"<image>Who are they?\",\n        \"role\": \"user\"\n      },\n      {\n        \"content\": \"They're Kane and Gretzka from Bayern Munich.\",\n        \"role\": \"assistant\"\n    ],\n    \"images\": [\n      \"mllm_demo_data/1.jpg\",\n    ]\n  },\n\nCould I insert  system prompt into the index 0 of messages when I prepare the training data?\n\nthanks!!\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 3300,
+  "title": "微调参数learning_rate，num_train_epochs 不生效",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3300",
+  "comments": 3,
+  "created": "2024-04-16",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 27.4,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [
+   "num_train_epochs"
+  ],
+  "params_found": [
+   "num_train_epochs"
+  ],
+  "param_ratio": 1.0,
+  "topic_hits": 5,
+  "rank_score": 151.7,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n通过以下脚本微调，learning_rate和num_train_epochs都没生效，仍然按照默认的5e-05和3执行。\r\nCUDA_VISIBLE_DEVICES=0 python3 LLaMA-Factory/src/train_bash.py \\\r\n    --stage sft \\\r\n    --do_train \\\r\n    --lora_rank 8 \\\r\n    --lora_alpha 16 \\\r\n    --lora_dropout 0.05 \\\r\n    --model_name_or_path /Baichuan2/baichuan-13b-chat \\\r\n    --dataset event_type_train_with_first_class_detail \\\r\n    --dataset_dir data \\\r\n    --template baichuan2 \\\r\n    --finetuning_type lora \\\r\n    --lora_target W_pack \\\r\n    --output_dir model_chkp/baichuan2/chkp_zero_shot_${now}_${rand} \\\r\n    --overwrite_cache \\\r\n    --overwrite_output_dir \\\r\n    --cutoff_len 2048 \\\r\n    --preprocessing_num_workers 16 \\\r\n    --per_device_train_batch_size 1 \\\r\n    --per_device_eval_batch_size 1 \\\r\n    --gradient_accumulation_steps 1 \\\r\n    --lr_scheduler_type cosine \\\r\n "
+ },
+ {
+  "number": 6584,
+  "title": "How to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk.",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6584",
+  "comments": 3,
+  "created": "2025-01-09",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 43.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "save_steps"
+  ],
+  "params_found": [
+   "save_steps"
+  ],
+  "param_ratio": 1.0,
+  "topic_hits": 2,
+  "rank_score": 148.0,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n### output\r\noutput_dir: /root/autodl-tmp\r\nlogging_steps: 10\r\nsave_steps: 15000\r\nplot_loss: true\r\noverwrite_output_dir: true\r\n\r\nHow to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk.\n\n### Reproduction\n\n### output\r\noutput_dir: /root/autodl-tmp\r\nlogging_steps: 10\r\nsave_steps: 15000\r\nplot_loss: true\r\noverwrite_output_dir: true\r\n\r\nHow to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk.\n\n### Others\n\n### output\r\noutput_dir: /root/autodl-tmp\r\nlogging_steps: 10\r\nsave_steps: 15000\r\nplot_loss: true\r\noverwrite_output_dir: true\r\n\r\nHow to set sav"
+ },
+ {
+  "number": 5129,
+  "title": "ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然每步保存一个checkpoint。",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5129",
+  "comments": 3,
+  "created": "2024-08-09",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 72.2,
+  "doc_path": "docs/zh/configuration/training.md",
+  "doc_heading": "训练参数 > TrainingArguments > Checkpoint 与日志配置",
+  "doc_text": "| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `resume_from_checkpoint` | `str \\| None` | `None` | checkpoint 路径或 `auto` |\n| `save_steps` | `int \\| None` | `None` | 每 N 个全局 step 保存 |\n| `save_epochs` | `float \\| None` | `None` | 每 N 个 epoch 保存 |\n| `save_ckpt_as_hf` | `bool` | `false` | 是否在中间 checkpoint 中额外保存 HF 格式模型 |\n| `save_total_limit` | `int \\| None` | `None` | 最多保留数量 |\n| `logging_steps` | `int` | `1` | 日志间隔 |",
+  "params_asked": [
+   "save_steps",
+   "save_strategy"
+  ],
+  "params_found": [
+   "save_steps"
+  ],
+  "param_ratio": 0.5,
+  "topic_hits": 2,
+  "rank_score": 112.1,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n版本是0.8.3\n\n### Reproduction\n\nppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然是训练每步保存一个checkpoint而且是按照steps策略保存checkpoint。\n\n### Expected behavior\n\n希望能够限制checkpoints数量，也能够和其他训练方式一样，save_steps、save_strategy、save_total_limit参数设定能够发挥用途。\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6761,
+  "title": "does `save_strategy` conflicts with `save_total_limit`?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6761",
+  "comments": 4,
+  "created": "2025-01-25",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 38.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "save_strategy",
+   "save_total_limit"
+  ],
+  "params_found": [
+   "save_total_limit"
+  ],
+  "param_ratio": 0.5,
+  "topic_hits": 1,
+  "rank_score": 91.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nI've checked the [doc](https://huggingface.co/docs/transformers/main_classes/trainer#transformers.TrainingArguments.save_strategy), but didnt find any examples. My current settings are `save_strategy: epoch` and `save_total_limit: 1`. What I want is to save only the final model, but with these settings, it retains two copies of the final model.\n\n### Reproduction\n\n```text\nsave_strategy: epoch\nsave_total_limit: 1\nsave_only_model: true\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6889,
+  "title": "Support apply_chat_template()",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6889",
+  "comments": 3,
+  "created": "2025-02-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 83.4,
+  "doc_path": "docs/zh/feature-guide/inference.md",
+  "doc_heading": "推理 > 覆盖模型 Chat Template",
+  "doc_text": "`custom_chat_template` 接收一段 Jinja2 模板字符串，并覆盖 tokenizer 自带模板：\n\n```yaml\nmodel: path/to/model\ncustom_chat_template: >-\n  {% for message in messages %}\n  {{ message['role'] + ': ' + message['content'] }}\n  {% endfor %}\n```\n\nv1 使用模板字符串，不接受 `template: <name>` 字段。",
+  "params_asked": [
+   "apply_chat_template"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 83.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n直接使用transformers库里边的apply_chat_template()函数来模板化messages，进行推理或者微调。\n\n现在使用template的方式是用手动预先定义的一些前后缀进行匹配的。\n虽然在使用主流模型的时候已经够用，但在许多在这些主流模型上进行微调的模型的模板可能与原始模版有很大区别，甚至会存在更复杂的逻辑，通过在消息前后添加前后缀的方式很有可能难以完成这些逻辑，尤其是在工具调用，或者模板比较复杂的时候。同时手动添加的模板也很难与预先定义的模板完全一致，可能会导致潜在的性能影响。\n\n所以，在模型已有template的时候，直接使用apply_chat_template()模板化历史消息可能更加简洁和高效，免去了繁琐的手动重构，以及更多处理。\n\nExample: LLaMa-3.1-8B when using Tools\n在llama-3.1-8B原始的模板中，进行工具调用的时候，本来应该先给出一个ipython的环境信息，再给出当前的时间，同时system message是单独的，而工具调用指令和tools_text则是添加在第一条消息最前面，如下所示：\n\n_<|begin_of_text|><|start_header_id|>system<|end_header_id|>_\n\n_**Environment: ipython**_\n_Cutting Knowledge Date: December 2023_\n_**Today Date: 26 Jul 2024**_\n\n_You are a bot that responds to weather queries.<|eot_id|><|start_header_id|>user<|end_header_id|>_\n\n_Given the following functions, please r"
+ },
+ {
+  "number": 4920,
+  "title": "对微调的Qwen2-7B模型做量化，为什么使用量化后的模型推理时间变慢，显存占用无明显提升？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4920",
+  "comments": 3,
+  "created": "2024-07-22",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 84.5,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 80.2,
+  "body": "作者您好，我想请问一下，我使用gptq的量化方式对之前微调的Qwen2-7b模型做量化之后，为什么推理时间会变慢很多，并且现存占用无明显提升？\r\n- 模型量化内存占用以及推理时间：\r\n  - 内存占用 （batchsize:35)\r\n    量化后的模型：\r\n![image](https://github.com/user-attachments/assets/214b4c82-bd1e-409c-97f9-08a18ccc1cdb)\r\n未量化的模型：\r\n![image](https://github.com/user-attachments/assets/d7f54a47-1e77-4232-b783-db014b9f569e)\r\n  - 推理时间：\r\n    8bit量化后的模型：40min左右\r\n    未量化的模型：7min左右\r\n  - 参数量：\r\n    8bit量化后的模型：1090199040\r\n    未量化的模型：7615616512"
+ },
+ {
+  "number": 1463,
+  "title": "使用LLaMA-Factory训练文本分类模型是否可行？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1463",
+  "comments": 2,
+  "created": "2023-11-10",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 81.6,
+  "doc_path": "docs/zh/configuration/index.md",
+  "doc_heading": "参数说明 > 参数分类",
+  "doc_text": "| 页面 | 参数 |\n|------|------|\n| [数据参数](data.md) | `DataArguments`、`DatasetInfo` |\n| [模型参数](model.md) | `ModelArguments`、PEFT、量化、初始化和 Kernel |\n| [训练参数](training.md) | `TrainingArguments`、分布式和优化器 |\n| [推理参数](inference.md) | `SampleArguments` |\n\n功能指南中的示例只列出完成对应任务所需的字段。字段类型、默认值和可用选项以本目录为准。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 78.8,
+  "body": "我看到kaggle竞赛中文本分类任务中设置了一个分类层：\r\n```python\r\n#导入大语言序列分类的预训练模型\r\nbase_model = LlamaForSequenceClassification.from_pretrained(\r\n    TARGET_MODEL,\r\n    num_labels=2,#二分类任务\r\n    quantization_config=bnb_config,#使用量化模型的参数\r\n    device_map={\"\":0}#放到GPU上训练\r\n)\r\n\r\nbase_model.config.pretraining_tp = 1 #设置预训练任务类型(pretraining task type）为1，对应的任务类型是7B（7-bit）\r\nbase_model.config.pad_token_id = tokenizer.pad_token_id#正确的padding方式保证数据长度一致.\r\n```\r\n\r\n想请问LLaMA-Factory是否可以直接训练分类文本分类模型？还是自己设置二分类层再训练？谢谢"
+ },
+ {
+  "number": 10162,
+  "title": "希望增加功能：使用tokenizer中的默认模板",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10162",
+  "comments": 2,
+  "created": "2026-02-04",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 72.0,
+  "doc_path": "docs/zh/feature-guide/inference.md",
+  "doc_heading": "推理 > 覆盖模型 Chat Template",
+  "doc_text": "`custom_chat_template` 接收一段 Jinja2 模板字符串，并覆盖 tokenizer 自带模板：\n\n```yaml\nmodel: path/to/model\ncustom_chat_template: >-\n  {% for message in messages %}\n  {{ message['role'] + ': ' + message['content'] }}\n  {% endfor %}\n```\n\nv1 使用模板字符串，不接受 `template: <name>` 字段。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 78.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n这个需求对于base模型的训练会很有帮助。\n我最开始想使用llama-factory sft base模型，但是没有找到合适的模板\n举Qwen2.5-7b为例，我刚开始使用的qwen模板+lora，但是训练完的模型不能输出eos。\n我注意到了qwen模板使用的instruct模板，以<|im_end|>为eos而不是base模型的<|endoftext|>\n后来我补充了qwen_base模板在template.py中：\n```\nregister_template(\n    name=\"qwen_base\",\n    format_user=StringFormatter(slots=[\"<|im_start|>user\\n{{content}}<|im_end|>\\n<|im_start|>assistant\\n\"]),\n    format_assistant=StringFormatter(slots=[\"{{content}}<|endoftext|>\\n\"]),\n    format_system=StringFormatter(slots=[\"<|im_start|>system\\n{{content}}<|im_end|>\\n\"]),\n    format_function=FunctionFormatter(slots=[\"{{content}}<|endoftext|>\\n\"], tool_format=\"qwen\"),\n    format_observation=StringFormatter(\n        slots=[\"<|im_start|>user\\n<tool_response>\\n{{content}}\\n</tool_response><|im_end|>\\n<|im_start|>assistant\\n\"]\n    ),\n    fo"
+ },
+ {
+  "number": 2912,
+  "title": "请问合并权重时如何选择指定的checkpoint",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2912",
+  "comments": 6,
+  "created": "2024-03-21",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 54.1,
+  "doc_path": "docs/zh/feature-guide/index.md",
+  "doc_heading": "功能指南 > 模型保存与使用",
+  "doc_text": "| 页面 | 内容 |\n|------|------|\n| [模型保存与恢复](model_saving.md) | 最终模型、checkpoint、断点续训 |\n| [模型导出](model_export.md) | LoRA 合并和 HF 格式导出 |\n| [推理](inference.md) | CLI 对话与 adapter 加载 |",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 69.1,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n目前采用webui做模型参数的导出。在用LoRA微调时，可能会保存多个中间的checkpoint。但是在合并时，适配器只能选择saves下的某个文件夹，而无法选择其下的某个checkpoint。这意味着只能导出最终的模型状态。\r\n全量参数微调也同样存在这个问题，难以方便地加载其中某个checkpoint做推理测试。希望能够有解决方案，谢谢！\n\n### Expected behavior\n\n_No response_\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6746,
+  "title": "能否支持在Qlora微调后直接导出int4等量化的模型",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6746",
+  "comments": 1,
+  "created": "2025-01-24",
+  "labels": [
+   "duplicate"
+  ],
+  "doc_score": 61.6,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 68.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n1.能否支持在Qlora微调后直接导出int4等量化的模型。现在的版本，在导出Qlora微调后的模型（Qwen-32B模型）还是和原模型差不多大小。\n2.此外如果对Qlora微调后的模型（Qwen-32B模型）进行量化，提示显存不足。目前使用的4090×2，这是正常的吗？能否在量化的时候，优化显存的使用。\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6747,
+  "title": "能否支持在Qlora微调后直接导出int4等量化的模型",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6747",
+  "comments": 3,
+  "created": "2025-01-24",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 61.6,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 68.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n1.能否支持在Qlora微调后直接导出int4等量化的模型。现在的版本，在导出Qlora微调后的模型（Qwen-32B模型）还是和原模型差不多大小。\n2.此外如果对Qlora微调后的模型（Qwen-32B模型）进行量化，提示显存不足。目前使用的4090×2，这是正常的吗？能否在量化的时候，优化显存的使用。\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6099,
+  "title": "使用命令行与qwen-2-2b-instruct交互，怎么上传图片。",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6099",
+  "comments": 4,
+  "created": "2024-11-21",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 57.6,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 66.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nCUDA_VISIBLE_DEVICES=0 llamafactory-cli chat \\\r\n    --model_name_or_path /root/autodl-tmp/LLaMA-Factory-main/export \\\r\n    --template qwen\r\n这是参数\n\n### Reproduction\n\nUser: 请描述一下这张图片\r\nAssistant: 很抱歉，由于缺乏具体的图片描述，我无法提供准确的回答。请提供具体的图片，以便我能更好地帮助你。\r\n\r\nUser: 我该怎么把图片传给你\r\nAssistant: 可以通过以下方式将图片发送给我：1. 点击图片下方的“分享”按钮，然后选择“发送图片”；2. 点击图片下方的“更多”按钮，然后选择“发送图片”。这两种方式都可以将图片发送给我。\r\n\r\nUser: 请描述这张图片 \"D:\\Desktop\\YTU\\5.jpg\"\r\nAssistant: 很抱歉，由于缺乏具体的图片描述，我无法提供准确的回答。请提供具体的图片，以便我能更好地帮助你。\n\n### Expected behavior\n\nUser: 请描述一下这张图片\r\nAssistant: 很抱歉，由于缺乏具体的图片描述，我无法提供准确的回答。请提供具体的图片，以便我能更好地帮助你。\r\n\r\nUser: 我该怎么把图片传给你\r\nAssistant: 可以通过以下方式将图片发送给我：1. 点击图片下方的“分享”按钮，然后选择“发送图片”；2. 点击图片下方的“更多”按钮，然后选择“发送图片”。这两种方式都可以将图片发送给我。\r\n\r\nUser: 请描述这张图片 \"D:\\Desktop\\YTU\\5.jpg\"\r\nAssistant: 很抱歉，由于缺乏具体的图片描述，我无法提供准确的回答。请提供具体的图片，以便我能更好地帮助你。\n\n### Others\n\nUser: 请描述一"
+ },
+ {
+  "number": 6573,
+  "title": "如何对Qwen的量化版本模型做sft及dpo",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6573",
+  "comments": 1,
+  "created": "2025-01-09",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 33.3,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录 > 示例 > 合并 LoRA 适配器与模型量化 > 合并 LoRA 适配器",
+  "doc_text": "注：请勿使用量化后的模型或 `quantization_bit` 参数来合并 LoRA 适配器。\n\n```bash\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 8,
+  "rank_score": 66.7,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n想对Qwen2.5-14B-Instruct-GPTQ-Int4模型先做sft再dpo，因为base模型是量化模型，sft之后不能做base和lora的合并，请问是在dpo的脚本里添加adaper_name_or_path: sft_lora参数就可以吗，如果是这样，在推理阶段，adaper_name_or_path只用dpo的lora就可以吗\r\n看了之前的issure有类似的情况，但是base都不是量化版本的\n\n### Reproduction\n\n```text\r\nPut your message here.\r\n```\r\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 4047,
+  "title": "Win11如何实现多 GPU LoRA 微调",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4047",
+  "comments": 5,
+  "created": "2024-06-03",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 64.9,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 66.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n我windows上想实现多GPU Lora微调，应该如何输入指令呢？\r\n\r\n我研究了下示例\r\n在单机上进行指令监督微调\r\n`CUDA_VISIBLE_DEVICES=0,1,2,3 llamafactory-cli train examples/lora_multi_gpu/llama3_lora_sft.yaml`\r\n\r\n但是Windows如何输入前面CUDA_VISIBLE_DEVICES=0,1,2,3\r\n目前只能python train.py +yaml文件路径，但是这样只能实现单GPU训练，请问怎么在win11实现多GPU微调呢？ \n\n### Reproduction\n\n![9511022e8e3bf67896c2084d3acbed7](https://github.com/hiyouga/LLaMA-Factory/assets/16223129/a589663d-cb16-4831-acb9-2278b96bed29)\r\n\r\n我已经尝试过在环境变量添加CUDA_VISIBLE_DEVICES=0,1\r\n但是也并不生效\r\n以及在train.py前添加CUDA_VISIBLE_DEVICES=0,1，运行报错，均以失败告终\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 4021,
+  "title": "训练参数没有说明，无从下手，能不能提供个参数说明文档",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4021",
+  "comments": 5,
+  "created": "2024-06-01",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 48.8,
+  "doc_path": "examples/extras/fsdp_qlora/llama3_lora_sft.yaml",
+  "doc_heading": "examples/extras/fsdp_qlora/llama3_lora_sft.yaml",
+  "doc_text": "### model\nmodel_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct\nquantization_bit: 4\ntrust_remote_code: true\n\n### method\nstage: sft\ndo_train: true\nfinetuning_type: lora\nlora_rank: 8\nlora_target: all\n\n### dataset\ndataset: identity,alpaca_en_demo\ntemplate: llama3\ncutoff_len: 2048\nmax_samples: 1000\noverwrite_cache: true\npreprocessing_num_workers: 16\ndataloader_num_workers: 4\n\n### output\noutput_dir: saves/llama3-8b/lora/sft\nlogging_steps: 10\nsave_steps: 500\nplot_loss: true\noverwrite_output_dir: true\nsave_only_model: false\nreport_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]\n\n### train\nper_device_train_batch_size: 1\ngradient_accumulation_steps: 8\nlearning_rate: 1.0e-4\nnum_trai",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 8,
+  "rank_score": 66.4,
+  "body": "### model\r\nmodel_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct\r\nquantization_bit: 4\r\n\r\n### method\r\nstage: sft\r\ndo_train: true\r\nfinetuning_type: lora\r\nlora_target: q_proj,v_proj\r\n\r\n### dataset\r\ndataset: identity,alpaca_en_demo\r\ntemplate: llama3\r\ncutoff_len: 1024\r\nmax_samples: 1000\r\noverwrite_cache: true\r\npreprocessing_num_workers: 16\r\n\r\n### output\r\noutput_dir: saves/llama3-8b/lora/sft\r\nlogging_steps: 10\r\nsave_steps: 500\r\nplot_loss: true\r\noverwrite_output_dir: true\r\n\r\n### train\r\nper_device_train_batch_size: 1\r\ngradient_accumulation_steps: 8\r\nlearning_rate: 0.0001\r\nnum_train_epochs: 3.0\r\nlr_scheduler_type: cosine\r\nwarmup_steps: 0.1\r\nfp16: true\r\n\r\n### eval\r\nval_size: 0.1\r\nper_device_eval_batch_size: 1\r\nevaluation_strategy: steps\r\neval_steps: 500"
+ },
+ {
+  "number": 2771,
+  "title": "LORA参数融合前后，推理的效果差距较大",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2771",
+  "comments": 6,
+  "created": "2024-03-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 45.7,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 文档导航",
+  "doc_text": "- [功能指南](feature-guide/index.md)：训练、推理、分布式训练、模型保存与融合算子加速\n- [参数说明](configuration/index.md)：数据、模型、训练和推理参数\n- [开发者指南](developer-guide/index.md)：v1 架构、Core 与 Plugin\n- [多后端](multi-backend/npu/index.md)：昇腾 NPU 的环境安装与功能说明",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 64.8,
+  "body": "@hiyouga 如题。我在使用qwen训练出对话模型以后，在将LORA参数融合前多次使用“模型验证”脚本得到的结果都是一致的。但一旦将LORA参数融合进原始参数，虽然预测的结果有些参考性，但多次预测的结果完全不同，且差距很大，实在没办法只能找来作者问一下。说实话如果不用融合后参数来推理，皆大欢喜，但毕竟已经出了这个融合的功能，并且对于后续使用vllm和llama-cpp等来加速的工作还是帮助蛮大的。\r\n\r\n第一部分，模型do_predict的验证脚本（多次验证结果相同，稳定性很好）：\r\nCUDA_VISIBLE_DEVICES=0 python src/train_bash.py \\\r\n    --stage sft \\\r\n    --do_predict \\\r\n    --model_name_or_path /root/autodl-tmp/common_models/qwen1.5-14b-chat \\\r\n    --adapter_name_or_path /path/to/LLaMA-Factory/output/qwen1.5-14b-chat/checkpoint-2000 \\\r\n    --dataset email_valid \\\r\n    --template default \\\r\n    --finetuning_type lora \\\r\n    --output_dir ./output/qwen1.5-14b-chat_predict_2000 \\\r\n    --per_device_eval_batch_size 4 \\\r\n    --predict_with_generate \\\r\n    --quantization_bit 4\r\n\r\n第二部分，融合后的数据进行推理的脚本，结果差异巨大\r\n\r\n```python\r\nimport torch\r\nfrom transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig\r\n\r\nclass Predictor"
+ },
+ {
+  "number": 3635,
+  "title": "微调完成后使用llama_factory的vllm和qwen官方的vllm部署方式启动返回的不一样",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3635",
+  "comments": 6,
+  "created": "2024-05-08",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 69.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 利用 vLLM 部署 OpenAI API",
+  "doc_text": "```bash\nAPI_PORT=8000 llamafactory-cli api examples/inference/qwen3.yaml infer_backend=vllm vllm_enforce_eager=true\n```\n\n> [!TIP]\n> API 文档请查阅[这里](https://platform.openai.com/docs/api-reference/chat/create)。\n>\n> 示例：[图像理解](scripts/api_example/test_image.py) | [工具调用](scripts/api_example/test_toolcall.py)",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 64.8,
+  "body": "### Reminder\r\n\r\n- [X] I have read the README and searched the existing issues.\r\n\r\n### Reproduction\r\n\r\n大佬 有两个问题\r\n1 使用llama_factory 微调成功后 \r\n使用 CUDA_VISIBLE_DEVICES=0,1 API_PORT=7864 nohup python src/api_demo.py --model_name_or_path /data/model/Qwen1.5-14B-Chat-test --template qwen --infer_backend vllm  --vllm_enforce_eager & 部署 \r\n与使用qwen官方文档推荐的vllm方式部署\r\n![image](https://github.com/hiyouga/LLaMA-Factory/assets/50564015/3d0ad3e2-2a99-412d-918e-7196b76dbe3f)\r\n 返回不一样 \r\nllama_factory vllm部署的返回都很正常 从没出过问题\r\n千问官方vllm部署的 总是有些问题 回复的效果很差 几乎乱回答 如下图 \r\n![image](https://github.com/hiyouga/LLaMA-Factory/assets/50564015/52cd32f6-b322-4a12-bf2b-f232a8d9c7e3)\r\n\r\n这是部署哪里有区别吗 还是因为微调的原因\r\n2 使用llama_factory vllm私有离线部署 vllm=0.3.3 一段时间后 模型突然发现没反应 查看显存还在\r\n就是请求没有响应回来 启动日志啥错也没报 请求后还是显示200 nvidia-smi显示如下 多了个execute_method  \r\n![image](https://github.com/hiyouga/LLaMA-Factory/assets/50564015/20f14954-1484-4487-9be9-6f7a97"
+ },
+ {
+  "number": 9522,
+  "title": "qwen3 function calling除了支持reasoning content之外，还能否支持content",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9522",
+  "comments": 4,
+  "created": "2025-11-21",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 55.3,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 61.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nhttps://github.com/hiyouga/LLaMA-Factory/blob/main/src/llamafactory/data/formatter.py#L98\n这里的逻辑只支持reasoning content，但是qwen3的template.jinja是支持content的。例如：\n```\n            {\n                \"role\": 'assistant',\n                \"content\": \"<think>\\nThe user is asking about the weather in New York. I should use the weather tool to get this information.\\n</think>\\nI'll check the current weather in New York for you.\",\n                \"tool_calls\": [\n                    {\n                        \"function\": {\n                            \"name\": 'get_weather',\n                            \"arguments\": {\n                                \"location\": 'New York',\n                                \"unit\": 'celsius'\n                            }\n                        }\n                    },\n             "
+ },
+ {
+  "number": 10148,
+  "title": "Feature Request: Add freeze_audio_tower support for multimodal models (e.g. Qwen3-Omni)",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10148",
+  "comments": 2,
+  "created": "2026-01-30",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 59.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "freeze_audio_tower"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 59.9,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nHi LLaMA-Factory team,\n\nThanks for the great work on multimodal training support 🙌\n\nCurrently, LLaMA-Factory provides `freeze_vision_tower` for multimodal models, which is very helpful when fine-tuning vision-language models. However, for newer **audio-vision-language models** such as **Qwen3-Omni**, there is no corresponding option to freeze the **audio tower**.\n\n### Motivation\n\nQwen3-Omni and similar models typically consist of:\n- LLM backbone\n- Vision tower\n- Audio tower\n- Multimodal projector / adapters\n\nIn most fine-tuning scenarios:\n- The audio encoder is heavily pretrained\n- Downstream audio data is limited\n- We usually want to **freeze audio & vision towers** and only train:\n  - LLM (often via LoRA)\n  - multimodal projector / adapters\n\nWithout a `freeze_audio_tower` option, users c"
+ },
+ {
+  "number": 1665,
+  "title": "请问--cutoff_len这个参数如果不想让文本被截断的话应该如何设置比较好",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/1665",
+  "comments": 6,
+  "created": "2023-11-28",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 51.1,
+  "doc_path": "docs/zh/feature-guide/batching.md",
+  "doc_heading": "批处理策略",
+  "doc_text": "`batching_strategy` 决定每个 micro-batch 包含多少条样本，以及这些样本是通过 padding 组成矩形张量还是拼接为一条连续序列。\n\n| 策略 | 样本数 | 序列组织方式 |\n|------|--------|--------------|\n| `normal` | 固定 | 按 batch 内最长序列 padding |\n| `padding_free` | 固定 | 将多条样本拼接为一条连续序列 |\n| `dynamic_batching` | 动态 | 按最长序列 padding |\n| `dynamic_padding_free` | 动态 | 按 token 预算选择样本并拼接 |\n\n例如设置 `cutoff_len: 2048`、`micro_batch_size: 4` 时，动态策略的 token 预算为 `2048 × 4 = 8192`。假设依次读到的样本长度为 2048、512、512、512：\n\n- `normal` 固定选择 4 条样本，并将每条样本 padding 到 2048，最终处理 8192 个 token 位置。\n- `padding_free` 仍选择 4 条样本，但将它们拼接为长度 3584 的序列，从而移除 padding。\n- `dynamic_batching` 在 `最长样本长度 × 样本数` 不超过 8192 的范围内决定样本数，然后按最长样本进行 padding。\n- `dynamic_padding_free` 在样本总长度不超过 8192 的范围内决定样本数，并将所选样本拼接起来。\n\n因此，",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 59.6,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n我看到datasets_info中把prompt和response分开了，那么在后续处理时是否是把这两个文本拼接起来。另外加上template这个参数的话。那么一个完整的sample应该是prompt_tempale + prompt + response。所以不想被截断的话长度应该至少等于所有样本里len(prompt_tempale + prompt + response)的最大值。不知道我理解的对不对，请指教。感谢。\n\n### Expected behavior\n\n我看到datasets_info中把prompt和response分开了，那么在后续处理时是否是把这两个文本拼接起来。另外加上template这个参数的话。那么一个完整的sample应该是prompt_tempale + prompt + response。所以不想被截断的话长度应该至少等于所有样本里len(prompt_tempale + prompt + response)的最大值。不知道我理解的对不对，请指教。感谢。\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 2822,
+  "title": "有一个40G的数据集，但是由于他太大，所以跑sft出很多问题。如果把数据集拆成多个小数据集，如何配置训练？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2822",
+  "comments": 3,
+  "created": "2024-03-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 43.3,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备",
+  "doc_text": "关于数据集文件的格式，请参考 [data/README_zh.md](data/README_zh.md) 的内容。你可以使用 HuggingFace / ModelScope / Modelers 上的数据集或加载本地数据集。\n\n> [!NOTE]\n> 使用自定义数据集时，请更新 `data/dataset_info.json` 文件。\n\n您也可以使用 **[Easy Dataset](https://github.com/ConardLi/easy-dataset)**、**[DataFlow](https://github.com/OpenDCAI/DataFlow)** 和 **[GraphGen](https://github.com/open-sciencelab/GraphGen)** 构建用于微调的合成数据。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 59.6,
+  "body": "### Reminder\r\n\r\n- [x] I have read the README and searched the existing issues.\r\n\r\n### Reproduction\r\n\r\n<img width=\"494\" alt=\"image\" src=\"https://github.com/hiyouga/LLaMA-Factory/assets/24523981/8157fceb-ee57-4b10-85e4-51e07209b5a5\">\r\n\r\n目前已经拆分成了多个小数据集，请问如何配置参数以及dataset_info.json可以达到跟直接加载40G数据集训练同样的效果？\r\n目前的dataset_info.json为：\r\n{\r\n  \"data-128k\": {\r\n    \"file_name\": \"data-128k.jsonl\"\r\n  }\r\n}\r\n\r\n训练命令为：\r\ndeepspeed --include localhost:0,1 --master_port 29000 src/train_bash.py \\\r\n    --stage sft \\\r\n    --do_train \\\r\n    --model_name_or_path $path_to_llama_model \\\r\n    --dataset $dataset \\\r\n    --template default \\\r\n    --finetuning_type lora \\\r\n    --lora_target q_proj,v_proj \\\r\n    --output_dir $path_to_checkpoint \\\r\n    --overwrite_output_dir \\\r\n    --overwrite_cache \\\r\n    --per_device_train_batch_size 4 \\\r\n    --gradient_accumulation_steps 8 \\\r\n    --lr_scheduler_type cosine \\\r\n    --logging_"
+ },
+ {
+  "number": 6737,
+  "title": "请问：是否支持微调 DeepSeek-R1-Distill 系列模型？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6737",
+  "comments": 17,
+  "created": "2025-01-22",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 50.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "quay.io > 安装 BitsAndBytes",
+  "doc_text": "如果要在 Ascend NPU 上进行基于 bitsandbytes 的 QLoRA 量化微调，请执行如下步骤：\n\n1. 手动编译 bitsandbytes：请参考[安装文档](https://huggingface.co/docs/bitsandbytes/installation?backend=Ascend+NPU&platform=Ascend+NPU)完成 NPU 版的 bitsandbytes 安装，编译要求环境 cmake 版本不低于 3.22.1，g++ 版本不低于 12.x。\n\n```bash",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 59.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n您好！\n\n感谢开发并维护这个优秀的开源项目！我对 DeepSeek-R1-Distill 系列模型非常感兴趣。根据描述，DeepSeek-R1-Distill 系列模型是基于 DeepSeek-R1 生成的数据进行微调的模型，并在多个基准测试中表现优异。目前开源的模型包括基于 Qwen2.5 和 Llama3 系列的 1.5B、7B、8B、14B、32B 和 70B 版本。\n\n我想了解以下问题：\n\n- 当前项目是否支持对 DeepSeek-R1-Distill 系列模型进行微调？如果有，是否有相关的文档或示例可以参考？\n\n- 如果目前不支持，未来是否有计划添加对 DeepSeek-R1-Distill 系列模型的微调支持？\n\n- 在微调 DeepSeek-R1-Distill 系列模型时，是否有需要注意的事项或限制（例如数据集格式等）？\n\n非常感谢您的解答！期待您的回复！\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 10841,
+  "title": "新手提问：微调 Qwen2.5-0.5B 最低需要什么显卡配置？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10841",
+  "comments": 3,
+  "created": "2026-09-17",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 32.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "quay.io > 安装 BitsAndBytes",
+  "doc_text": "如果要在 Ascend NPU 上进行基于 bitsandbytes 的 QLoRA 量化微调，请执行如下步骤：\n\n1. 手动编译 bitsandbytes：请参考[安装文档](https://huggingface.co/docs/bitsandbytes/installation?backend=Ascend+NPU&platform=Ascend+NPU)完成 NPU 版的 bitsandbytes 安装，编译要求环境 cmake 版本不低于 3.22.1，g++ 版本不低于 12.x。\n\n```bash",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 58.4,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n您好！我是刚接触大模型微调的新手，感谢维护这么好用的开源项目。\n\n我想在自己的电脑上用 LLaMA-Factory 微调 Qwen2.5-0.5B 这种小模型练手，\n想请教一下：\n1. 显卡最低需要多少显存？（比如 6GB 够不够）\n2. 如果显存不够，可以用 LoRA + 4bit 量化来降低要求吗？\n\n希望能得到指导，谢谢！\n\n\n### Reproduction\n\n尚未安装，暂无环境信息。\n\n\n\n\n### Others\n\n尚未安装，暂无环境信息。\n"
+ },
+ {
+  "number": 6580,
+  "title": "增量）预训练、（多模态）指令监督微调、奖励模型训练、PPO 训练、DPO 训练、KTO 训练、ORPO 训练，经常提到的rlhf指的是哪几种训练方法",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6580",
+  "comments": 0,
+  "created": "2025-01-09",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 67.8,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 选择运行命令",
+  "doc_text": "v1 当前支持以下命令：\n\n| 命令 | 用途 |\n|------|------|\n| `sft` | 监督微调 |\n| `dpo` | 偏好优化 |\n| `rm` | 奖励模型训练 |\n| `chat` | 交互式推理 |\n| `merge` | 合并 LoRA adapter 并导出模型 |",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 57.9,
+  "body": "### Description\n\n增量）预训练、（多模态）指令监督微调、奖励模型训练、PPO 训练、DPO 训练、KTO 训练、ORPO 训练，经常提到的rlhf指的是哪几种训练方法\n\n### Pull Request\n\n增量）预训练、（多模态）指令监督微调、奖励模型训练、PPO 训练、DPO 训练、KTO 训练、ORPO 训练，经常提到的rlhf指的是哪几种训练方法"
+ },
+ {
+  "number": 6579,
+  "title": "如何使用CPU进行推理？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6579",
+  "comments": 1,
+  "created": "2025-01-09",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 38.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 利用 vLLM 部署 OpenAI API",
+  "doc_text": "```bash\nAPI_PORT=8000 llamafactory-cli api examples/inference/qwen3.yaml infer_backend=vllm vllm_enforce_eager=true\n```\n\n> [!TIP]\n> API 文档请查阅[这里](https://platform.openai.com/docs/api-reference/chat/create)。\n>\n> 示例：[图像理解](scripts/api_example/test_image.py) | [工具调用](scripts/api_example/test_toolcall.py)",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 57.0,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n当使用llamafactory-cli api xxx_vllm.yaml进行部署推理时，如何使用CPU环境进行推理？有没有什么参数进行设置？感谢\r\n当我增加环境变量运行命令后  CUDA_VISIBLE_DEVICES=\"\" llamafactory-cli api inference/xxx_vllm.yaml\r\n似乎vllm不支持cpu操作\n\n### Reproduction\n\n```text\r\nFile \"/usr/local/lib/python3.10/dist-packages/vllm/attention/selector.py\", line 108, in get_attn_backend\r\n    backend = which_attn_to_use(num_heads, head_size, num_kv_heads,\r\n  File \"/usr/local/lib/python3.10/dist-packages/vllm/attention/selector.py\", line 215, in which_attn_to_use\r\n    if current_platform.get_device_capability()[0] < 8:\r\n  File \"/usr/local/lib/python3.10/dist-packages/vllm/platforms/cuda.py\", line 101, in get_device_capability\r\n    physical_device_id = device_id_to_physical_device_id(device_id)\r\n  File \"/usr/local/lib/python3.10/dist-packages/vllm/platforms/cuda.py\", line 88, i"
+ },
+ {
+  "number": 5423,
+  "title": "[Question]support for quantization algorithms that are not performed on-the-fly",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5423",
+  "comments": 3,
+  "created": "2024-09-12",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 45.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 56.9,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nNone\n\n### Reproduction\n\nNone\n\n### Expected behavior\n\nNone\n\n### Others\n\nHi, Thank you for the fantastic work on LLaMA Factory! I’ve noticed that the repository supports both quantized models generated by various algorithms and on-the-fly quantization.\r\n\r\nI am curious if LLaMA Factory is open to contributions of quantization algorithms that are not performed on-the-fly. We have  open-source AutoRound that serves as a strong alternative to existing methods. We could contribute if it's ok to you.\r\n\r\n[github](https://github.com/intel/auto-round)\r\n\r\n[User experience on Finetuning](https://substack.com/@bnjmnmarie/p-147609171)"
+ },
+ {
+  "number": 10321,
+  "title": "【Help】Qwen3 推理和非推理数据混合SFT应该怎么准备数据集和yaml文件？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10321",
+  "comments": 4,
+  "created": "2026-03-26",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 28.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备",
+  "doc_text": "关于数据集文件的格式，请参考 [data/README_zh.md](data/README_zh.md) 的内容。你可以使用 HuggingFace / ModelScope / Modelers 上的数据集或加载本地数据集。\n\n> [!NOTE]\n> 使用自定义数据集时，请更新 `data/dataset_info.json` 文件。\n\n您也可以使用 **[Easy Dataset](https://github.com/ConardLi/easy-dataset)**、**[DataFlow](https://github.com/OpenDCAI/DataFlow)** 和 **[GraphGen](https://github.com/open-sciencelab/GraphGen)** 构建用于微调的合成数据。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 56.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n请教下大家，如果是混合推理和非推理数据，数据集案例应该怎么构造？yaml文件的template和enable_think 应该怎么设置哈？\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6350,
+  "title": "如何在 llama factory 中使用多个不同难度数据集实现课程式训练（Curriculum Learning）",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6350",
+  "comments": 2,
+  "created": "2024-12-16",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 57.2,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > 配置训练数据集",
+  "doc_text": "训练 YAML 的 `train_dataset` 指定数据来源。数据文件路径或 Hub ID 对应单个 Messages 格式数据集；数据集 YAML 则通过条目描述数据路径、split、converter 和采样配置，并支持组合多个数据集。\n\n训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。下文“组合多个数据集”展示数据集 YAML 的结构。\n\n`train_dataset` 接受以下形式：\n\n- 本地数据集 YAML，例如 `data/v1_sft_demo.yaml`\n- 本地数据文件或目录\n- Hugging Face Hub 数据集 ID\n- Hub 数据集仓库中的 YAML\n\n`eval_dataset` 字段已定义，评估流程尚未实现。完整字段见[数据参数](../configuration/data.md#dataarguments)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 54.6,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n.\n\n### Reproduction\n\n我目前有三个代表不同难度级别的数据集（A、B、C），希望在 llama factory 中实现课程式学习（Curriculum Learning）的训练流程，即先用难度较低的数据集 A 进行训练，然后再依序使用难度较高的数据集 B 和 C，在同一个训练脚本中完成这一系列步骤。\r\n\r\n想请教您以下问题：\r\n\t1.\t如何在同一次训练过程中按顺序加载和训练多个数据集（A → B → C）？\r\n\t2.\t是否有建议的实现方案或代码示例，让我可以在 llama factory 的训练流程中实现分阶段训练，并在达到一定停留条件后切换到下一个难度数据集？\r\n\t3.\tllama factory 中是否有针对课程式学习（Curriculum Learning）的内置功能或最佳实践推荐？\r\n\r\n如果能够提供范例、代码片段或相关参考资料，将非常感谢！谢谢您的协助！\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6071,
+  "title": "推理的cutoff len 设置为8092，但预测输出被限制在1024tokens",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6071",
+  "comments": 6,
+  "created": "2024-11-19",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 46.4,
+  "doc_path": "examples/extras/nlg_eval/llama3_lora_predict.yaml",
+  "doc_heading": "examples/extras/nlg_eval/llama3_lora_predict.yaml",
+  "doc_text": "# The batch generation can be SLOW using this config.\n# For faster inference, we recommend to use `scripts/vllm_infer.py`.\n\n### model\nmodel_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct\nadapter_name_or_path: saves/llama3-8b/lora/sft\ntrust_remote_code: true\n\n### method\nstage: sft\ndo_predict: true\nfinetuning_type: lora\n\n### dataset\neval_dataset: identity,alpaca_en_demo\ntemplate: llama3\ncutoff_len: 2048\nmax_samples: 50\noverwrite_cache: true\npreprocessing_num_workers: 16\ndataloader_num_workers: 4\n\n### output\noutput_dir: saves/llama3-8b/lora/predict\noverwrite_output_dir: true\nreport_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]\n\n### eval\nper_device_eval_batch_size: 1\npredic",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 53.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nCUDA_VISIBLE_DEVICES=5 \\\r\nllamafactory-cli train \\\r\n    --stage sft \\\r\n    --do_predict \\\r\n    --model_name_or_path /public/hutianyi/hf_hub/models/meta-llama-Meta-Llama-3-8B-Instruct \\\r\n    --adapter_name_or_path ./saves/LLaMA3-8B/lora/sft  \\\r\n    --eval_dataset gag_mini \\\r\n    --dataset_dir ./data \\\r\n    --template llama3 \\\r\n    --finetuning_type lora \\\r\n    --output_dir ./saves/LLaMA3-8B/lora/predict \\\r\n    --overwrite_cache \\\r\n    --overwrite_output_dir \\\r\n    --cutoff_len 8192\\\r\n    --preprocessing_num_workers 16 \\\r\n    --per_device_eval_batch_size 1 \\\r\n    --max_samples 20 \\\r\n    --predict_with_generate\n\n### Reproduction\n\n![image](https://github.com/user-attachments/assets/bc8e3c48-fe41-4017-85f2-e8a11d590abc)\r\n\n\n### Expected behavior\n\n在推理过程中，cutoff_len对prompt/predict是否均进行截断？\r\n在训练过程中，instr"
+ },
+ {
+  "number": 6558,
+  "title": "【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6558",
+  "comments": 1,
+  "created": "2025-01-08",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 22.0,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 选择运行命令",
+  "doc_text": "v1 当前支持以下命令：\n\n| 命令 | 用途 |\n|------|------|\n| `sft` | 监督微调 |\n| `dpo` | 偏好优化 |\n| `rm` | 奖励模型训练 |\n| `chat` | 交互式推理 |\n| `merge` | 合并 LoRA adapter 并导出模型 |",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 53.0,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\r\n- Platform: Linux-5.15.0-105-generic-x86_64-with-glibc2.31\r\n- Python version: 3.11.11\r\n- PyTorch version: 2.5.1+cu124 (GPU)\r\n- Transformers version: 4.46.1\r\n- Datasets version: 3.1.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA RTX A6000\r\n\n\n### Reproduction\n\n这是训练的推理文件\r\n``` yaml\r\n### model\r\nmodel_name_or_path: mergd_llama2_7b\r\n# trust_remote_code: true\r\n\r\n### method\r\nstage: dpo\r\ndo_train: true\r\nfinetuning_type: lora\r\nlora_target: q_proj,v_proj\r\npref_beta: 0.1\r\npref_loss: sigmoid  # choices: [sigmoid (dpo), orpo, simpo]\r\n\r\n### dataset\r\ndataset: dataset\r\ntemplate: llama2\r\n# cutoff_len: 2048\r\n# max_samples: 1000\r\noverwrite_cache: true\r\npreprocessing_num_workers: 16\r\n\r\n### output\r\noutput_dir: new_path\r\nlogging_st"
+ },
+ {
+  "number": 10389,
+  "title": "Gemma4 needs transformers 5.5.0 but version check doesn't support it.",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10389",
+  "comments": 8,
+  "created": "2026-04-14",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 45.3,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装",
+  "doc_text": "cmake -DCOMPUTE_BACKEND=npu -S .\nmake\npip install .\n```\n\n2. 安装 transformers 的 main 分支版本。\n\n```bash\ngit clone -b main https://github.com/huggingface/transformers.git\ncd transformers\npip install .\n```\n\n3. 在训练参数中设置 `double_quantization: false`，可参考[示例](examples/train_qlora/qwen3_lora_sft_bnb_npu.yaml)。\n\n</details>",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 52.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nImportError: transformers>=4.55.0,<=5.2.0 is required for a normal functioning of this module, but found transformers==5.5.0.\nTo fix: run `pip install transformers>=4.55.0,<=5.2.0` or set `DISABLE_VERSION_CHECK=1` to skip this check.\n\nGemma4 needs transformers 5.5.0 but version check doesn't support it. \n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6484,
+  "title": "如何指定只冻结 LLM 进行多模态模型的训练？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6484",
+  "comments": 1,
+  "created": "2024-12-30",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 44.7,
+  "doc_path": "docs/zh/feature-guide/sft.md",
+  "doc_heading": "监督微调（SFT） > Freeze",
+  "doc_text": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。以下 `peft_config` 替换 LoRA 配置，模型、数据与训练字段沿用全参示例：\n\n```yaml\npeft_config:\n  name: freeze\n  freeze_trainable_layers: 2\n  freeze_trainable_modules: all\n  freeze_extra_modules: null\n  cast_trainable_params_to_fp32: true\n```\n\n正数表示最后 N 层，负数表示最前 N 层。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 52.4,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n我目前在使用 qwen-vl2 2B 模型，并在我的数据集上进行 LoRA 训练。\r\n\r\n现在我想进行不同架构的冻结后性能测试。\r\n\r\n根据文档，目前我已知可以使用 freeze_vision_tower 和 train_mm_proj_only 来指定冻结 vision tower，或者冻结 vision tower 和 LM（如图中的 stage 2 和 stage 3）。\r\n\r\n但我想请教的是，有没有方法可以指定只冻结 LM 进行 LoRA 训练？（就像图中的 stage 1 那样）\r\n\r\n![image](https://github.com/user-attachments/assets/c85a2145-e8b5-48fa-9873-680de9fe0c3e)\r\n\n\n### Reproduction\n\n-\n\n### Expected behavior\n\n-\n\n### Others\n\n-"
+ },
+ {
+  "number": 5240,
+  "title": "请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5240",
+  "comments": 2,
+  "created": "2024-08-22",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 52.6,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 运行 SFT",
+  "doc_text": "仓库提供数据配置 `data/v1_sft_demo.yaml` 和可运行示例。以下训练配置已经通过 `train_dataset` 引用该数据配置，可以直接运行：\n\n```bash\nllamafactory-cli sft examples/v1/train_full/train_full_fsdp2.yaml\n```\n\n检测到多个设备时，CLI 会自动通过 `torchrun` 重启；单设备需要强制走该入口时可以设置 `FORCE_TORCHRUN=1`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 52.3,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?\n\n### Reproduction\n\n请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6824,
+  "title": "求助：如何对 DeepSeek R1 进行 SFT",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6824",
+  "comments": 10,
+  "created": "2025-02-05",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 28.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 52.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\n- Platform: Linux-5.15.0-101-generic-x86_64-with-glibc2.35\n- Python version: 3.10.12\n- PyTorch version: 2.5.1+cu124 (GPU)\n- Transformers version: 4.48.2\n- Datasets version: 3.2.0\n- Accelerate version: 1.2.1\n- PEFT version: 0.12.0\n- TRL version: 0.9.6\n- GPU type: NVIDIA H800\n- DeepSpeed version: 0.16.2\n- Bitsandbytes version: 0.45.1\n- vLLM version: 0.6.5\n\n### Reproduction\n\n使用最新的 llama-factory 代码进行训练，报错如下。看起来是 DeepSeek 模型文件中的 `modeling_deepseek.py` 报错了，不知道有没有大佬成功对 DeepSeek R1 671B 成功进行过 SFT。\n\n训练命令：\n```text\nllamafactory-cli train --model_name_or_path /model/DeepSeek-R1-bf16 \\\n--stage sft --do_train true --finetuning_type lora --lora_target all --deepspeed examples/deepspeed/ds_z3_config.json \\\n--dataset_dir /dataset \\\n--dataset train_data \\\n--template deep"
+ },
+ {
+  "number": 6458,
+  "title": "相同dpo数据，相同训练配置和训练参数，在safe-rlhf框架训练完成以后回复正常，在llama-factory训练以后模型重复输出",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6458",
+  "comments": 12,
+  "created": "2024-12-27",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 28.2,
+  "doc_path": "docs/zh/feature-guide/rm.md",
+  "doc_heading": "奖励模型训练（RM）",
+  "doc_text": "`rm` 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答。\n\nRM 与 [DPO](dpo.md) 使用相同的偏好对数据结构，输出模型用于回答评分，不作为普通聊天模型使用。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 52.1,
+  "body": "### Reminder\r\n\r\n- [X] I have read the README and searched the existing issues.\r\n\r\n### System Info\r\n\r\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-5.10.101-1.el8.ssai.x86_64-x86_64-with-glibc2.31\r\n- Python version: 3.11.10\r\n- PyTorch version: 2.5.1+cu124 (GPU)\r\n- Transformers version: 4.46.1\r\n- Datasets version: 3.1.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA A100-SXM4-80GB\r\n- vLLM version: 0.6.5\r\n\r\n### Reproduction\r\n\r\n这个是两个框架下面dpo微调时的参数配置\r\n![image](https://github.com/user-attachments/assets/127d0173-d6cf-4172-860e-f037cd41b2ea)\r\n\r\n同时对数据token进行了统计，能确保所有数据都没有出现超过截断长度。\r\n\r\n\r\n### Expected behavior\r\n\r\n_No response_\r\n\r\n### Others\r\n\r\n_No response_"
+ },
+ {
+  "number": 5753,
+  "title": "Does llama factory support fine-tuning for binary classification tasks?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5753",
+  "comments": 1,
+  "created": "2024-10-20",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 35.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 51.9,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nDoes llama factory support fine-tuning for binary classification tasks? I don't see any data format examples for binary classification (such as text classification, sentiment classification) in the dataset examples.\n\n### Reproduction\n\n![image](https://github.com/user-attachments/assets/2a084cb5-85e5-4c25-9170-b0d5cf97b530)\r\n\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5512,
+  "title": "How to train the mm_proj and the LLM part with lora of Qwen2-VL",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5512",
+  "comments": 7,
+  "created": "2024-09-22",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 51.2,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "mm_proj"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 51.6,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nHave installed all the requirements for Qwen2-vl\n\n### Reproduction\n\ntrain_mm_proj_only:True\r\nHello, I want to train the vision adapter and the LLM part with lora. Do I set the train_mm_proj_only as True like this:\r\n\r\n### model\r\nmodel_name_or_path: Qwen/Qwen2-VL-72B-Instruct\r\n\r\n### method\r\nstage: sft\r\ndo_train: true\r\nfinetuning_type: lora\r\nlora_target: all\r\n\r\n### dataset\r\ndataset: mllm_demo,identity  # video: mllm_video_demo\r\ntemplate: qwen2_vl\r\ncutoff_len: 8900\r\nmax_samples: 1000\r\noverwrite_cache: true\r\npreprocessing_num_workers: 16\r\n\r\n### output\r\noutput_dir: saves/qwen2_vl-7b/lora/sft\r\nlogging_steps: 10\r\nsave_steps: 500\r\nplot_loss: true\r\noverwrite_output_dir: true\r\n\r\n### train\r\nper_device_train_batch_size: 1\r\ngradient_accumulation_steps: 16\r\nlearning_rate: 1.0e-4\r\nnum_train_epochs: 1.0\r\nlr_sch"
+ },
+ {
+  "number": 6109,
+  "title": "求助：模型qwen2.5-7b-instruct全量sft的时候，训练过程中loss突然变为0。",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6109",
+  "comments": 10,
+  "created": "2024-11-22",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 34.4,
+  "doc_path": "docs/zh/feature-guide/distributed_training.md",
+  "doc_heading": "分布式训练 > 配置多机启动",
+  "doc_text": "CLI 读取 `NNODES`、`NODE_RANK`、`NPROC_PER_NODE`、`MASTER_ADDR` 和 `MASTER_PORT`。例如使用 4 台机器、每台机器 8 个设备时，在每台机器上执行：\n\n```bash\nNNODES=4 \\\nNODE_RANK=<0到3，各节点不同> \\\nNPROC_PER_NODE=8 \\\nMASTER_ADDR=<rank 0 节点的 IP> \\\nMASTER_PORT=29500 \\\nllamafactory-cli sft config.yaml\n```\n\n4 个节点需要使用相同的 `NNODES`、`NPROC_PER_NODE`、`MASTER_ADDR` 和 `MASTER_PORT`，并分别设置 `NODE_RANK=0`、`1`、`2`、`3`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 51.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-3.10.0-1160.el7.x86_64-x86_64-with-glibc2.35\r\n- Python version: 3.10.0\r\n- PyTorch version: 2.2.0+cu121 (GPU)\r\n- Transformers version: 4.43.4\r\n- Datasets version: 2.18.0\r\n- Accelerate version: 0.32.0\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.8.6\r\n- GPU type: NVIDIA H800 PCIe\r\n- DeepSpeed version: 0.14.0\r\n- Bitsandbytes version: 0.43.1\n\n### Reproduction\n\n'''\r\nNPROC_PER_NODE=4\r\nNNODES=1\r\nRANK=0\r\nMASTER_ADDR=127.0.0.1\r\nMASTER_PORT=29500\r\n\r\nCUDA_VISIBLE_DEVICES=4,5,6,7 torchrun \\\r\n    --nproc_per_node $NPROC_PER_NODE \\\r\n    --nnodes $NNODES \\\r\n    --node_rank $RANK \\\r\n    --master_addr $MASTER_ADDR \\\r\n    --master_port $MASTER_PORT \\\r\n    src/train.py examples/train_full/qwen2_sft.yaml\r\n'''\r\n\r\n![1732238904746](https://github.com/user-attachment"
+ },
+ {
+  "number": 6552,
+  "title": "How to Qwen2-vl dataset batched inference",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6552",
+  "comments": 4,
+  "created": "2025-01-07",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 16.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 50.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\r\n- Platform: Linux-5.4.0-204-generic-x86_64-with-glibc2.31\r\n- Python version: 3.12.4\r\n- PyTorch version: 2.5.1+cu124 (GPU)- Transformers version: 4.47.0\r\n- Datasets version: 2.20.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA A100-SXM4-40GB- DeepSpeed version: 0.15.1\r\n- Bitsandbytes version: 0.43.3\r\n- vLLM version: 0.6.6.post1\n\n### Reproduction\n\nThank you for your wonderful work. \r\n\r\nI can successfully inference the trained model in api mode by calling\r\n\r\n```\r\nllamafactory-cli api examples/inference/qwen2_vl.yaml \r\n```\r\n\r\nHowever, when I try to inference in datasets by\r\n```\r\npython scripts/vllm_infer.py --model_name_or_path Qwen/Qwen2-VL-7B-Instruct --adapter_nam\r\ne_or_path saves/qwen2_vl-7b/lora/sft --datase"
+ },
+ {
+  "number": 10673,
+  "title": "Feature Request: Support semantic-aware sequence packing for improved training efficiency",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10673",
+  "comments": 1,
+  "created": "2026-07-23",
+  "labels": [],
+  "doc_score": 40.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 50.4,
+  "body": "### Feature Request: Support semantic-aware sequence packing for improved training efficiency\n\n## Problem Description\n\nThe current `greedy_knapsack` algorithm in `src/llamafactory/data/processor/processor_utils.py` packs sequences based solely on length optimization, without considering semantic relationships between sequences. This can lead to suboptimal training dynamics where unrelated sequences are packed together, potentially reducing the effectiveness of attention mechanisms and gradient updates.\n\n## Source Code Analysis\n\nIn `src/llamafactory/data/processor/processor_utils.py`, the `greedy_knapsack` function:\n\n```python\ndef greedy_knapsack(numbers: list[int], capacity: int) -> list[list[int]]:\n    r\"\"\"Implement efficient greedy algorithm with binary search for the knapsack problem.\"\"\"\n    numbers.sort()  # sort numbers in ascending order for binary search\n    knapsacks = []\n\n    wh"
+ },
+ {
+  "number": 6549,
+  "title": "是否支持multi-turn dpo",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6549",
+  "comments": 2,
+  "created": "2025-01-07",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 48.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 协议",
+  "doc_text": "使用模型权重时，请遵循对应的模型协议：[BLOOM](https://huggingface.co/spaces/bigscience/license)/ [DeepSeek](https://github.com/deepseek-ai/DeepSeek-LLM/blob/main/LICENSE-MODEL) / [Falcon](https://huggingface.co/tiiuae/falcon-180B/blob/main/LICENSE.txt) / [Gemma](https://ai.google.dev/gemma/terms) / [GLM-4](https://huggingface.co/THUDM/glm-4-9b/blob/main/LICENSE) / [GPT-2](https://github.com/openai/gpt-2/blob/master/LICENSE) / [Granite](LICENSE) / [InternLM](https://github.com/InternLM/InternLM#license) / [Llama](https://github.com/facebookresearch/llama/blob/main/MODEL_CARD.md) / [Llama 2](https://ai.meta.com/llama/license/) / [Llama 3](https://llama.meta.com/llama3/license/) / [Llama 4](https://github.com/met",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 50.3,
+  "body": "### Description\n\nhttps://github.com/hiyouga/LLaMA-Factory/blob/main/data/README_zh.md#%E5%81%8F%E5%A5%BD%E6%95%B0%E6%8D%AE%E9%9B%86-1\r\n在做DPO时，其中\"chosen\"和“rejected”字段允许是多轮对话么？\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 2837,
+  "title": "UserWarning('`do_sample` is set to `False`. However, `temperature` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.'), UserWarning('`do_sample` is set to `False`. However, `top_p` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.')]",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2837",
+  "comments": 8,
+  "created": "2024-03-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 40.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "do_sample",
+   "top_p"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 50.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\nfrom llmtuner import export_model\r\nexport_model(dict(\r\n  model_name_or_path=\"NousResearch/Llama-2-7b-chat-hf\",\r\n  adapter_name_or_path=\"/content/LLaMA-Factory/saves/LLaMA2-7B-Chat/lora/train_2024-03-13-20-49-08\",\r\n  finetuning_type=\"lora\",\r\n  template=\"llama2\",\r\n  export_dir=\"test_exported\",\r\n  export_hub_model_id=\"GSalimp/TesteExport\",\r\n))\r\n\r\n\r\nValueError: The generation config instance is invalid -- `.validate()` throws warnings and/or exceptions. Fix these issues to save the configuration.\r\n\r\nThrown during validation:\r\n[UserWarning('`do_sample` is set to `False`. However, `temperature` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.'), UserWarning('`do_sample` is set to `False`. However, `top_p` is set to `0"
+ },
+ {
+  "number": 6759,
+  "title": "全参数微调的结果如何作为后续LoRA微调的base model",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6759",
+  "comments": 2,
+  "created": "2025-01-25",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 32.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 50.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n```\n- `llamafactory` version: 0.9.1.dev0\n- Platform: Linux-5.4.241-1-tlinux4-0017.4-x86_64-with-glibc2.35\n- Python version: 3.11.10\n- PyTorch version: 2.3.0+cu121 (GPU)\n- Transformers version: 4.45.2\n- Datasets version: 2.21.0\n- Accelerate version: 0.34.2\n- PEFT version: 0.12.0\n- TRL version: 0.9.6\n- GPU type: NVIDIA A100-SXM4-40GB\n- vLLM version: 0.5.0\n```\n\n### Reproduction\n\n当配置model_name_or_path: saves/my_model/checkpoint-500时，执行train命令报错，猜测是模型文件结构不符合标准。但是全参数微调得到的checkpoint又不支持导出\n\n\n### Others\n\n使用full方式微调后，输出了多个ckpt，在选定某个ckpt后，如何将其作为后续LoRA微调的base model\n1. 无法export。查看其他issue得知full方式微调后不需要导出，adapter_name_or_path参数也不适用于finetuning_type:full的情况\n2. 选定的ckpt无法直接作为model_name_or_path参数。如果直接将ckpt目录作为model_name_or_path参数，构建lora sft的yaml配置文件，训练会报错：\n```\nValueError: Unrecognized model in saves/my_model/"
+ },
+ {
+  "number": 10320,
+  "title": "Support for IQuestCoder model",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10320",
+  "comments": 1,
+  "created": "2026-03-25",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 40.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 50.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nOS: Linux (Ubuntu 22.04)\nPython: 3.10\nTransformers: latest\nLLaMA-Factory: latest\n\n### Reproduction\n\n```text\nI'm currently working with a code model called IQuestCoder, which uses a custom modeling implementation (via auto_map in HuggingFace).\n\nCurrently, the model can be loaded with Transformers, but it is not directly supported in LLaMA-Factory.\n\nI was wondering:\n- Is there any plan to support IQuestCoder?\n- Or is there a recommended way to integrate custom models like this?\n\nThanks!\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 3420,
+  "title": "如何在sft llama时 添加special token？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3420",
+  "comments": 6,
+  "created": "2024-04-24",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 24.3,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 利用 vLLM 部署 OpenAI API > 使用 SwanLab 面板",
+  "doc_text": "若要使用 [SwanLab](https://github.com/SwanHubX/SwanLab) 记录实验数据，请在 yaml 文件中添加下面的参数。\n\n```yaml\nuse_swanlab: true\nswanlab_run_name: test_run # 可选\n```\n\n在启动训练任务时，登录SwanLab账户有以下三种方式：\n\n方式一：在 yaml 文件中添加 `swanlab_api_key=<your_api_key>` ，并设置为你的 [API 密钥](https://swanlab.cn/settings)。\n方式二：将环境变量 `SWANLAB_API_KEY` 设置为你的 [API 密钥](https://swanlab.cn/settings)。\n方式三：启动前使用 `swanlab login` 命令完成登录。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 50.1,
+  "body": "### Reminder\r\n\r\n- [X] I have read the README and searched the existing issues.\r\n\r\n### Reproduction\r\n\r\n我在用oaast_sft.json模板的数据集 sft llama2 ,根据任务，需要在tokenizer里添加上自己设置的special tokens，比如\"[Strat]\", 并希望这个special token 不被分解。  我在训练和预测阶段都需要用到这个special token， 请问我应该在哪个文件里添加相关代码？ 应该怎么写？ 谢谢。\r\n我的训练脚本为：\r\nCUDA_VISIBLE_DEVICES=2 python src/train_bash.py \\\r\n--stage sft \\\r\n--do_train \\\r\n--model_name_or_path / Llama-2-7b-hf \\\r\n--dataset  oaast_sft _trainSet \\\r\n--template default \\\r\n--finetuning_type lora \\\r\n--lora_target q_proj,v_proj \\\r\n--output_dir /data/ Checkpoint  \\\r\n--overwrite_cache \\\r\n--per_device_train_batch_size 2 \\\r\n--gradient_accumulation_steps 4 \\\r\n--lr_scheduler_type cosine \\\r\n--logging_steps 10 \\\r\n--learning_rate 5e-5 \\\r\n--num_train_epochs 6.0 \\\r\n--plot_loss \\\r\n--fp16 \\\r\n--save_steps 2 \\\r\n--cutoff_len 10000 \\\r\n--overwrite_output_dir \r\n\r\n我的预测脚本为：\r\nCUDA_VISIBLE_DEVICES=5 python src/train_bash.py"
+ },
+ {
+  "number": 6352,
+  "title": "Can you support fast resume with streaming option?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6352",
+  "comments": 1,
+  "created": "2024-12-16",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 48.2,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 50.1,
+  "body": "### Reminder\r\n\r\n- [X] I have read the README and searched the existing issues.\r\n\r\n### System Info\r\n\r\nNo response\r\n\r\n### Reproduction\r\n\r\nThe problem is too slow resume when using data with streaming option.\r\n  - This is mainly because streaming option makes the data as iterable dataset.\r\n  - Then, resume with iterable dataset requires the data skip process (until the saved last iterations) that takes a lot of times.\r\n  - Actually, this is an known issue and there are some efforts to address this issue:\r\n    -  [discussion](https://discuss.huggingface.co/t/would-it-be-possible-to-implement-and-iterable-dataset-with-streaming-and-fast-resume-no-need-to-skip-batches/56119)\r\n    - One possible solution with [Stream](https://huggingface.co/docs/datasets/v3.0.1/en/stream#save-a-dataset-checkpoint-and-resume-iteration)\r\n    - Another solution of using [StatefulDataLoader](https://huggingface.co/"
+ },
+ {
+  "number": 4756,
+  "title": "如何指定加载推理模型时的显卡",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4756",
+  "comments": 2,
+  "created": "2024-07-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 23.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 49.9,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.8.3.dev0\r\n- Platform: Linux-5.15.0-112-generic-x86_64-with-glibc2.35\r\n- Python version: 3.11.9\r\n- PyTorch version: 2.0.1+cu117 (GPU)\r\n- Transformers version: 4.42.3\r\n- Datasets version: 2.18.0\r\n- Accelerate version: 0.31.0\r\n- PEFT version: 0.11.1\r\n- TRL version: 0.9.4\r\n- GPU type: NVIDIA GeForce RTX 3090\r\n- DeepSpeed version: 0.14.4\r\n- Bitsandbytes version: 0.42.0\n\n### Reproduction\n\n```bash\r\nexport CUDA_VISABLE_DEVICES=1,2\r\nllamafactory-cli webui\r\n```\r\n\r\n点击chat模块的加载模型，仍然把模型加载到所有GPU上。\r\n\r\n推理时如下图所示有一张卡被他人占用，llamafactory会报OOM错误\r\n![Snipaste_2024-07-10_19-07-54](https://github.com/hiyouga/LLaMA-Factory/assets/55451844/4676766d-18a8-479c-8883-f2dc5a1da4e3)\r\n\n\n### Expected behavior\n\n如上所述，希望llamafactory在chat模块加载模型时，把模型自动分片仅加载到GPU1和GPU2上。\n\n### Others\n\n注意到llamafactory用了deepspee"
+ },
+ {
+  "number": 9760,
+  "title": "推理接口（API/CLI）是否支持返回生成的 Logits 或 Scores？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9760",
+  "comments": 0,
+  "created": "2026-01-13",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 43.1,
+  "doc_path": "docs/zh/configuration/index.md",
+  "doc_heading": "参数说明 > 参数分类",
+  "doc_text": "| 页面 | 参数 |\n|------|------|\n| [数据参数](data.md) | `DataArguments`、`DatasetInfo` |\n| [模型参数](model.md) | `ModelArguments`、PEFT、量化、初始化和 Kernel |\n| [训练参数](training.md) | `TrainingArguments`、分布式和优化器 |\n| [推理参数](inference.md) | `SampleArguments` |\n\n功能指南中的示例只列出完成对应任务所需的字段。字段类型、默认值和可用选项以本目录为准。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 49.6,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n我目前正在使用 LLaMA-Factory 对 Qwen2.5-VL 进行 LoRA 微调。我的任务是一个视频多分类任务（例如 8 分类），我希望在推理阶段不仅能获得模型生成的最终类别文本（Text），还能获得该 Token 对应的 Logits 或 Probabilities，以便后续计算加权置信度或进行不确定性分析。\n\n目前的 cli 的输出文件似乎只返回解码后的字符串（decoded string）。\n\n请问：\n1. 目前的推理框架是否支持通过传入参数来获取生成 Token 的 Logits？\n2. 如果目前不支持，是否建议直接使用 `transformers` + `peft` 手动加载 `adapter_model` 进行推理，还是说有计划在未来版本中通过 API 暴露 Logits？\n\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 10604,
+  "title": "[Feature] Add support for Tencent Hunyuan Hy-MT2-1.8B/7B",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10604",
+  "comments": 0,
+  "created": "2026-06-24",
+  "labels": [],
+  "doc_score": 58.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 49.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nLLaMA-Factory main branch.\n\n### Reproduction\n\nCurrently `tencent/Hy-MT2-1.8B` and `tencent/Hy-MT2-7B` are not present in the model registry, and the required chat templates `hy_dense_1_8b` / `hy_dense_7b` are not defined in `src/llamafactory/data/template.py`. As a result, users cannot select Hy-MT2 models in the WebUI/CLI or use the official LLaMA-Factory training configs from the Hy-MT2 repository.\n\n### Expected behavior\n\nLLaMA-Factory should ship built-in entries for Hy-MT2-1.8B and Hy-MT2-7B, along with their official dense chat templates, so they can be fine-tuned out-of-the-box.\n\nOfficial reference: https://github.com/Tencent-Hunyuan/Hy-MT2/blob/main/train/llama_factory_support/hy_dense_template.py\n\n### Others\n\nI would like to send a PR that:\n1. Registers `Hy-MT2-1.8B-Instruct` and `"
+ },
+ {
+  "number": 9550,
+  "title": "Support Tool calls datasets with thinking traces",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9550",
+  "comments": 4,
+  "created": "2025-11-28",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 46.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 49.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nIs there a way to add the thinking traces before the tool calls when training with the function role?\nAs far as I see, the tool calls are placed in the content with a special role tag `function`. This prevents us from training models to think before tool calls.\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 5540,
+  "title": "用llamafactory chat加载qwen2-vl-72b模型推理视频效果很差的原因是什么？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5540",
+  "comments": 2,
+  "created": "2024-09-25",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 29.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 49.0,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-5.15.0-119-generic-x86_64-with-glibc2.31\r\n- Python version: 3.10.14\r\n- PyTorch version: 2.4.0+cu121 (GPU)\r\n- Transformers version: 4.45.0.dev0\r\n- Datasets version: 2.21.0\r\n- Accelerate version: 0.34.2\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA A800 80GB PCIe\r\n- vLLM version: 0.6.0\n\n### Reproduction\n\nllamafactory-cli chat examples/inference/qwen2_vl.yaml\r\nqwen2_vl.yaml内容是：\r\nmodel_name_or_path: /home/huangjun/.cache/modelscope/hub/qwen/Qwen2-VL-72B-Instruct\r\ntemplate: qwen2_vl\n\n### Expected behavior\n\n我输入视频的分辨率是1280*720或者1920*1080，用llamafactory加载qwen2-vl-72b模型推理视频的结果与使用qwen2-vl官方提供推理视频的代码的推理视频结果相比，llamafactory推理的结果很离谱，qwen2-vl官方提供的方法的推理结果很正常。原因是啥呢？\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10894,
+  "title": "CIG-SFT support",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10894",
+  "comments": 0,
+  "created": "2026-10-14",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 65.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 48.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n- Paper: https://arxiv.org/abs/2610.12995\n- Reference implementation: https://github.com/NiuKequan/CIG-SFT-public\n\nCIG-SFT is a token-level supervised fine-tuning method based on task-conditioned information gain. Under teacher forcing, a frozen reference model produces next-token probability distributions for the original task input and an erased-input view, while keeping the gold prefix fixed. For each gold response token, we extract its conditional probability from these distributions and compare the corresponding log probabilities. This contrast is converted into a detached token credit that weights the ordinary SFT loss.\n\nWe have a public reference implementation and would like to discuss whether and how CIG-SFT could fit into LLaMA-Factory. Our current implementation targets ordinary"
+ },
+ {
+  "number": 459,
+  "title": "LLaMA-2-70B在load时出现了mismatch问题，该如何解决呢？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/459",
+  "comments": 4,
+  "created": "2023-08-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 37.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 48.7,
+  "body": "具体报错如下\r\n```\r\nFile \"/usr/local/lib/python3.9/dist-packages/transformers/modeling_utils.py\", line 3278, in _load_pretrained_model\r\nraise RuntimeError(f\"Error(s) in loading state_dict for {model.__class__.__name__}:\\n\\t{error_msg}\")\r\nRuntimeError: Error(s) in loading state_dict for LlamaForCausalLM:\r\nsize mismatch for model.layers.0.self_attn.k_proj.weight: copying a param with shape torch.Size([1024, 8192]) from checkpoint, the shape in current model is torch.Size([8192, 8192]).\r\nsize mismatch for model.layers.0.self_attn.v_proj.weight: copying a param with shape torch.Size([1024, 8192]) from checkpoint, the shape in current model is torch.Size([8192, 8192]).\r\n...\r\n```\r\n我注意到这些都是attention的k、v size不match，是llama2 70b的GQA导致的嘛？应该要怎么解决呢？\r\n\r\n"
+ },
+ {
+  "number": 5266,
+  "title": "如何增加模型评估指标",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5266",
+  "comments": 4,
+  "created": "2024-08-26",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 21.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "克隆 bitsandbytes 仓库, Ascend NPU 目前在 multi-backend-refactor 中支持",
+  "doc_text": "git clone -b multi-backend-refactor https://github.com/bitsandbytes-foundation/bitsandbytes.git\ncd bitsandbytes/",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 48.7,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n目前llama_factory的evaluate和predict部分的评估指标主要是文本相似度的指标。我现在做二分类任务，需要recall、accuracy、precision、F1等指标，请问在哪个函数中进行修改，能够让他输出这些指标？     \r\n目前我查看了LLaMA-Factory/tree/main/src/llamafactory/train/sft\r\n/metric.py文件，发现已经有了accuracy指标的定义\r\n![image](https://github.com/user-attachments/assets/9b1f9e37-3188-4e96-98d7-2009b06705e3)\r\n\r\n但是在evaluate模块执行后，发现只输出bleu和rouge指标：\r\n\"predict_bleu-4\": 19.833460975609754,\r\n\"predict_rouge-1\": 56.09756097560975,\r\n\"predict_rouge-2\": 0.0,\r\n\"predict_rouge-l\": 56.09756097560975,\r\n\"predict_runtime\": 13.7136,\r\n\"predict_samples_per_second\": 5.979,\r\n\"predict_steps_per_second\": 2.99\n\n### Reproduction\n\n目前llama_factory的evaluate和predict部分的评估指标主要是文本相似度的指标。我现在做二分类任务，需要recall、accuracy、precision、F1等指标，请问在哪个函数中进行修改，能够让他输出这些指标？     \n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6795,
+  "title": "qwen_7B ppo reward 呈现下降趋势，该如何调参？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6795",
+  "comments": 2,
+  "created": "2025-02-02",
+  "labels": [
+   "invalid"
+  ],
+  "doc_score": 21.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [
+   "qwen_7b"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 48.6,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\n- Platform: Linux-5.15.0-78-generic-x86_64-with-glibc2.35\n- Python version: 3.10.8\n- PyTorch version: 2.1.2+cu118 (GPU)\n- Transformers version: 4.46.1\n- Datasets version: 3.1.0\n- Accelerate version: 1.0.1\n- PEFT version: 0.12.0\n- TRL version: 0.9.6\n- GPU type: NVIDIA GeForce RTX 4090\n\n### Reproduction\n\nbase_model: qwen2_7B，在hh-rllhf数据训练reward，并从中抽取4k条数据作为ppo训练数据。结果如下：\n![Image](https://github.com/user-attachments/assets/b604b539-992d-4bb4-ae74-bb4413df96f6)\n\n```python\n# model\nmodel_name_or_path: ../../autodl-tmp/models/qwen2_7B\nreward_model:  ../../autodl-tmp/saves/qwen2_7B_reward\nreward_model_type: lora\ntrust_remote_code: true\n\n\n### method\nstage: ppo\ndo_train: true\nfinetuning_type: lora\nlora_rank: 8\nlora_target: all\n\n### dataset\ndataset: helpful_RL_trai"
+ },
+ {
+  "number": 3504,
+  "title": "full finetune问题：每次输出都会在json字段中带\"human\", 请问是系统提示词的原因啊嘛？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3504",
+  "comments": 3,
+  "created": "2024-04-29",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 53.0,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 48.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n我训练的提示词如下：\r\n\r\n\"根据数据曲线名称联想需要使用的数据,以json格式输出，格式为{\"type\": \"数据类型data\",\"data\":[{\"id\":\"数据中提及的原始数据id\",\"title\":\"原始数据名称\"]}\"\r\n\r\n\r\nQuestion: 上海房屋价格变化\r\n正确输出: {'type': 'data', 'data': [{'id': 23372, 'title': '上海房屋价格变化'}]}\r\n模型输出: {'type': 'data', 'data': [{'id': 23372, 'title': 'Human: 上海房屋价格变化'}]}\r\n\r\n请问这个问题产生的可能原因是什么？ 怎么解决比较好？ 谢谢您的宝贵时间~\n\n### Expected behavior\n\n_No response_\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 973,
+  "title": "PT和SFT的区别是什么？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/973",
+  "comments": 10,
+  "created": "2023-09-20",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 36.4,
+  "doc_path": "docs/zh/feature-guide/index.md",
+  "doc_heading": "功能指南 > 训练任务",
+  "doc_text": "| 页面 | 内容 |\n|------|------|\n| [数据准备](data_preparation.md) | Messages 格式、数据集 YAML 和 converter |\n| [SFT](sft.md) | 全参、LoRA、Freeze、QLoRA |\n| [DPO](dpo.md) | DPO、ORPO、SimPO 与偏好数据 |\n| [RM](rm.md) | 奖励模型训练 |",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 48.2,
+  "body": "我仔细看了作者的pt和sft的方法，发现pt和sft，都可以通过全参，部分参，Lora和Qlora来做。\r\n我有几个疑惑。\r\n1. pt和sft都可以通过上述4个方法实现，pt和sft都能改变权重矩阵，是不是就只有 输入语料 的格式是不同的？\r\n2. pt给的语料样例，有的是txt，有的json，是不是格式无所谓，只要是一大段的文本就可以？\r\n3. Lora我理解也能实现全参和部分参的微调，那 上述全参，部分参和Lora区别是什么啊？\r\n4. 如果我想做一个行业大模型，比如金融或者医疗，那是不是用pt就可以？\r\n\r\n总的来说，就是不太懂pt和sft的全参，部分参，Lora的原理。望解答。谢谢。"
+ },
+ {
+  "number": 4261,
+  "title": "命令行如何中断训练及其恢复训练",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4261",
+  "comments": 8,
+  "created": "2024-06-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 28.3,
+  "doc_path": "docs/zh/feature-guide/model_saving.md",
+  "doc_heading": "模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "doc_text": "`resume_from_checkpoint` 恢复训练状态。以下配置从当前 `output_dir` 中自动查找 checkpoint：\n\n```yaml\nresume_from_checkpoint: auto\n```\n\n`auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 48.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n我使用命令行需要将该训练进行终止，然后将其恢复，需要加什么参数呢？终止是不是直接将该进程给kill就好了，还是说需要做额外的操作呢？然后恢复的时候又如何操作呢？\n\n### Reproduction\n\nllamafactory-cli train     --stage sft     --do_train True     --model_name_or_path /root/models/qwen1.5-0.5b/     --preprocessing_num_workers 16     --finetuning_type lora     --template qwen     --flash_attn auto     --dataset_dir data     --dataset identity     --cutoff_len 1024     --learning_rate 5e-05     --num_train_epochs 3.0     --max_samples 100000     --per_device_train_batch_size 2     --gradient_accumulation_steps 8     --lr_scheduler_type cosine     --max_grad_norm 1.0     --logging_steps 5     --save_steps 100     --warmup_steps 0     --optim adamw_torch     --packing False     --report_to none     --output_dir saves/Qwen1.5-0.5B/lora/train_2024-06-13-15-20-22     --fp16 True     -"
+ },
+ {
+  "number": 4763,
+  "title": "请问OpenAI风格的API支持 Llava 的调用吗",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4763",
+  "comments": 4,
+  "created": "2024-07-11",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 51.5,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 47.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nLLaMA Factory, version 0.7.2.dev0\r\nPython 3.10.13\n\n### Reproduction\n\n```\r\nclient = OpenAI(\r\n    api_key= \"0\",\r\n    base_url= api_base_url,\r\n)\r\n\r\nresponse = client.chat.completions.create(\r\n  model=\"llava\",\r\n  messages=[\r\n    {\r\n      \"role\": \"user\",\r\n      \"content\": [\r\n          {\r\n            \"type\": \"text\",\r\n            \"text\":\"What is it?\"\r\n          },\r\n          {\r\n            \"type\": \"image_url\",\r\n            \"image_url\": {\r\n                # \"url\": f\"data:image/jpeg;base64,{base64_image}\"\r\n                \"url\": \"https://img2.baidu.com/it/u=2189764989,4163170091&fm=253&fmt=auto&app=138&f=JPEG?w=650&h=342\"\r\n            }\r\n          }\r\n        ]\r\n    }\r\n  ],\r\n  max_tokens=300, \r\n  top_p=0.01,\r\n  temperature=0.01\r\n)\r\n\r\nprint(response.choices[0].message.content)\r\n```\r\n\r\n```\r\ndata = {\r\n  \"mo"
+ },
+ {
+  "number": 3945,
+  "title": "请问下当前cutoff_len是直接截断句子并加上eos_token还是直接丢弃该条数据呢？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3945",
+  "comments": 2,
+  "created": "2024-05-28",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 11.3,
+  "doc_path": "docs/zh/feature-guide/model_saving.md",
+  "doc_heading": "模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "doc_text": "`resume_from_checkpoint` 恢复训练状态。以下配置从当前 `output_dir` 中自动查找 checkpoint：\n\n```yaml\nresume_from_checkpoint: auto\n```\n\n`auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 6,
+  "rank_score": 47.6,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\nexamples/lora_multi_gpu/llama3_lora_sft.yaml\n\n### Expected behavior\n\n_No response_\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5759,
+  "title": "请教下作者，目前新版代码关于cutoff_len是怎么处理的？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5759",
+  "comments": 6,
+  "created": "2024-10-21",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 34.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 协议",
+  "doc_text": "使用模型权重时，请遵循对应的模型协议：[BLOOM](https://huggingface.co/spaces/bigscience/license)/ [DeepSeek](https://github.com/deepseek-ai/DeepSeek-LLM/blob/main/LICENSE-MODEL) / [Falcon](https://huggingface.co/tiiuae/falcon-180B/blob/main/LICENSE.txt) / [Gemma](https://ai.google.dev/gemma/terms) / [GLM-4](https://huggingface.co/THUDM/glm-4-9b/blob/main/LICENSE) / [GPT-2](https://github.com/openai/gpt-2/blob/master/LICENSE) / [Granite](LICENSE) / [InternLM](https://github.com/InternLM/InternLM#license) / [Llama](https://github.com/facebookresearch/llama/blob/main/MODEL_CARD.md) / [Llama 2](https://ai.meta.com/llama/license/) / [Llama 3](https://llama.meta.com/llama3/license/) / [Llama 4](https://github.com/met",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 47.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n无\n\n### Reproduction\n\n无\n\n### Expected behavior\n\nhttps://github.com/hiyouga/LLaMA-Factory/blob/main/src/llamafactory/data/processors/supervised.py#L56\r\n没看明白这里对超过cutoff的数据做了什么处理，哪个大佬帮忙解答下？\r\n![image](https://github.com/user-attachments/assets/f463a85d-c1b1-48fa-9eee-340a94bbdffe)\r\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 2749,
+  "title": "有计划支持LoRAMoE吗？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2749",
+  "comments": 15,
+  "created": "2024-03-08",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 50.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 47.4,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\nhttps://arxiv.org/pdf/2312.09979.pdf  《LoRAMoE: Alleviate World Knowledge Forgetting in Large Language Models via MoE-Style Plugin》\n\n### Expected behavior\n\n<img width=\"834\" alt=\"image\" src=\"https://github.com/hiyouga/LLaMA-Factory/assets/31723852/19e18767-0f20-468a-a87f-1c9017b29700\">\r\n看论文，效果好像挺不错的\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5844,
+  "title": "PISSA 训练完后如何进行推理",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5844",
+  "comments": 2,
+  "created": "2024-10-28",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 26.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 47.3,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-5.15.0-72-generic-x86_64-with-glibc2.35\r\n- Python version: 3.10.14\r\n- PyTorch version: 2.3.0+cu121 (GPU)\r\n- Transformers version: 4.41.2\r\n- Datasets version: 2.18.0\r\n- Accelerate version: 0.30.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.4\r\n- GPU type: NVIDIA A800-SXM4-80GB\r\n- DeepSpeed version: 0.14.0\r\n- Bitsandbytes version: 0.43.1\r\n- vLLM version: 0.4.3\n\n### Reproduction\n\n我使用PISSA的参数高效微调方式训练完后，想使用vllm进行推理，不知道有没有对应的脚本呀。\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6290,
+  "title": "多模态大模型训练完成后，如何不借助webUI而是使用命令行或其他方式进行推理",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6290",
+  "comments": 2,
+  "created": "2024-12-08",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 26.2,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 47.1,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\r\n- Platform: Linux-5.4.0-177-generic-x86_64-with-glibc2.35\r\n- Python version: 3.11.10\r\n- PyTorch version: 2.4.0+cu121 (GPU)\r\n- Transformers version: 4.46.1\r\n- Datasets version: 3.1.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: Tesla M40 24GB\n\n### Reproduction\n\n尝试指令如下：\r\n```\r\nCUDA_VISIBLE_DEVICES=0 llamafactory-cli chat --model_name_or_path llava-hf/llava-1.5-7b-hf --adapter_name_or_path saves/llava1_5-7b/lora/sft --template llava\r\n```\r\n![1733677267606](https://github.com/user-attachments/assets/380a4ca4-bdfa-4462-b078-d698782fcf22)\r\n\r\n根据报错，可能是缺少了图片输入，根据参数帮助\r\n![1733677551864](https://github.com/user-attachments/assets/3bbfc2b4-01a3-4247-9871-4a0cb29f888a)\r\n将指令改为\r\n```\r\nCUDA_VISIBLE_DEVICES=0 llamafactory-cli chat --mo"
+ },
+ {
+  "number": 3862,
+  "title": "请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3862",
+  "comments": 7,
+  "created": "2024-05-22",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 26.0,
+  "doc_path": "docs/zh/feature-guide/distributed_training.md",
+  "doc_heading": "分布式训练 > FSDPTurbo",
+  "doc_text": "FSDPTurbo 在 FSDP2 基础上提供 MoE 专家并行和专家参数分片。先安装 FSDPTurbo 依赖：\n\n```bash\npython -m pip install -r requirements/fsdpturbo.txt\n```\n\nFSDPTurbo 的配置入口为 `dist_config.name: fsdpturbo`：\n\n```yaml\ndist_config:\n  name: fsdpturbo\n  ep_size: 16\n  ep_dispatcher: eager\n```\n\n`ep_size` 必须能够整除 data parallel size。完整示例见 `examples/v1/train_full/train_full_qwen3_moe_fsdpturbo_ep_fsdp.yaml`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 47.0,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n目前运行的脚步貌似都是数据并行。计划两张24G的卡Lora微调Qwen-14B，但单张卡放不下，又不想量化降低性能。因此询问一下该仓库是否支持模型并行。\n\n### Expected behavior\n\n_No response_\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 3595,
+  "title": "如何用自定义数据集进行性能评估",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3595",
+  "comments": 15,
+  "created": "2024-05-06",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 25.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备",
+  "doc_text": "关于数据集文件的格式，请参考 [data/README_zh.md](data/README_zh.md) 的内容。你可以使用 HuggingFace / ModelScope / Modelers 上的数据集或加载本地数据集。\n\n> [!NOTE]\n> 使用自定义数据集时，请更新 `data/dataset_info.json` 文件。\n\n您也可以使用 **[Easy Dataset](https://github.com/ConardLi/easy-dataset)**、**[DataFlow](https://github.com/OpenDCAI/DataFlow)** 和 **[GraphGen](https://github.com/open-sciencelab/GraphGen)** 构建用于微调的合成数据。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 46.9,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n我将自己的数据集分成了train/val/test，用train微调了LLaMA3-8B-Instruct模型。\r\n想知道如何用test数据集来评估微调后的模型，看evaluate文件里面只能用三个指定的数据集进行评估？\n\n### Expected behavior\n\n_No response_\n\n### System Info\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5683,
+  "title": "ppo的数据集格式应该是怎样的",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5683",
+  "comments": 2,
+  "created": "2024-10-13",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 17.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 5,
+  "rank_score": 46.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n\r\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-5.15.0-94-generic-x86_64-with-glibc2.35\r\n- Python version: 3.10.14\r\n- PyTorch version: 2.4.1+cu121 (GPU)\r\n- Transformers version: 4.44.2\r\n- Datasets version: 2.21.0\r\n- Accelerate version: 0.34.2\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA GeForce RTX 4090 D\r\n- DeepSpeed version: 0.15.1\r\n- Bitsandbytes version: 0.43.3\n\n### Reproduction\n\nDuring handling of the above exception, another exception occurred:\r\n\r\nTraceback (most recent call last):\r\n  File \"/root/miniconda3/envs/llama_factory/bin/llamafactory-cli\", line 8, in <module>\r\n    sys.exit(main())\r\n  File \"/root/autodl-tmp/Fine-tuning/Simple-ex/LLaMA-Factory/src/llamafactory/cli.py\", line 111, in main\r\n    run_exp()\r\n  File \"/root/autodl-tmp/Fine-tuning/Simple-ex/LL"
+ },
+ {
+  "number": 6619,
+  "title": "webui参数加载、上传、推理处理速度很慢",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6619",
+  "comments": 2,
+  "created": "2025-01-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 25.5,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录",
+  "doc_text": "- [LoRA 微调](#lora-微调)\n- [QLoRA 微调](#qlora-微调)\n- [全参数微调](#全参数微调)\n- [合并 LoRA 适配器与模型量化](#合并-lora-适配器与模型量化)\n- [推理 LoRA 模型](#推理-lora-模型)\n- [杂项](#杂项)\n\n使用 `CUDA_VISIBLE_DEVICES`（GPU）或 `ASCEND_RT_VISIBLE_DEVICES`（NPU）选择计算设备。\n\nLLaMA-Factory 默认使用所有可见的计算设备。\n\n基础用法：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n高级用法：\n\n```bash\nCUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n    learning_rate=1e-5 \\\n    logging_steps=1\n```\n\n```bash\nbash examples/train_lora/qwen3_lora_sft.sh\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 46.7,
+  "body": "### Reminder\r\n\r\n- [X] I have read the above rules and searched the existing issues.\r\n\r\n### System Info\r\n\r\n- `llamafactory` version: 0.9.2.dev0\r\n- Platform: Linux-5.15.0-112-generic-x86_64-with-glibc2.31\r\n- Python version: 3.10.16\r\n- PyTorch version: 2.5.1 (GPU)\r\n- Transformers version: 4.45.0\r\n- Datasets version: 3.1.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA RTX A6000\r\n- Bitsandbytes version: 0.45.0\r\n\r\n### Reproduction\r\n\r\nllamafactory-cli webui\r\n使用webui上传、推理、参数加载等几乎所有操作的反应速度都非常慢（加载Qwen2VL-7B-Instruct），需要等待一分钟以上，使用CLI似乎无此问题。\r\n![image](https://github.com/user-attachments/assets/f0240e38-6fcc-4198-b17e-e4745cb46e7d)\r\n![image](https://github.com/user-attachments/assets/382796d6-a030-43dd-9dd4-618538c47be5)\r\n![image](https://github.com/user-attachments/assets/546a0fc3-b6e5-4574-8a92-a284ddcc06e7)\r\n由于是在服务器上部署，界面通过隧道转发访问，但看起来并不像是网速或是模型推理的问题"
+ },
+ {
+  "number": 9660,
+  "title": "多模态模型奖励模型以及强化学习的支持",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9660",
+  "comments": 0,
+  "created": "2025-12-24",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 45.2,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 选择运行命令",
+  "doc_text": "v1 当前支持以下命令：\n\n| 命令 | 用途 |\n|------|------|\n| `sft` | 监督微调 |\n| `dpo` | 偏好优化 |\n| `rm` | 奖励模型训练 |\n| `chat` | 交互式推理 |\n| `merge` | 合并 LoRA adapter 并导出模型 |",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 46.6,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n目前是否已经支持多模态模型的奖励学习模型以及强化学习的训练？目前我是用的模型是qwen2.5-omni-7B，可以进行SFT的训练，但是在运行rm训练时遇到了报错。已经搜索了issue中的相关话题，没有提到多模态模型和rm或者ppo的训练，如果支持能否给出相应的示例？\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 4960,
+  "title": "vllm inference \"Bfloat16 is only supported on GPUs with compute capability of at least 8.0\", is it possible to set dtype?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4960",
+  "comments": 5,
+  "created": "2024-07-24",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 25.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 46.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.8.2.dev0\r\n- Platform: Linux-5.14.0-284.43.1.el9_2.x86_64-x86_64-with-glibc2.27\r\n- Python version: 3.9.15\r\n- PyTorch version: 2.3.0+cu121 (GPU)\r\n- Transformers version: 4.41.2\r\n- Datasets version: 2.19.2\r\n- Accelerate version: 0.30.1\r\n- PEFT version: 0.11.1\r\n- TRL version: 0.9.4\r\n- GPU type: Tesla V100-SXM2-32GB\r\n- DeepSpeed version: 0.14.0\r\n- Bitsandbytes version: 0.43.1\r\n- vLLM version: 0.4.3\n\n### Reproduction\n\n```python\r\nfrom llamafactory.chat import ChatModel\r\nfrom llamafactory.extras.misc import torch_gc\r\n\r\nargs = dict(\r\n  model_name_or_path=\"Llama-3-8B-Instruct\", \r\n  template=\"llama3\",\r\n  infer_backend='vllm',\r\n  vllm_enforce_eager=True\r\n)\r\nchat_model = ChatModel(args)\r\n```\r\n\n\n### Expected behavior\n\nI received error: \r\n\r\n> ValueError: Bfloat16 is only supported "
+ },
+ {
+  "number": 6518,
+  "title": "如果对Qwen2-vl进行DPO，对混合数据(部分数据有图片，部分数据无图片)进行训练，请问有实现这一部分吗？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6518",
+  "comments": 3,
+  "created": "2025-01-03",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 24.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 46.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nTraceback (most recent call last):\r\n  File \"/home/myp/anaconda3/envs/llama-factory/lib/python3.11/site-packages/multiprocess/pool.py\", line 125, in worker\r\n    result = (True, func(*args, **kwds))\r\n                    ^^^^^^^^^^^^^^^^^^^\r\n  File \"/home/myp/anaconda3/envs/llama-factory/lib/python3.11/site-packages/datasets/utils/py_utils.py\", line 678, in _write_generator_to_queue\r\n    for i, result in enumerate(func(**kwargs)):\r\n  File \"/home/myp/anaconda3/envs/llama-factory/lib/python3.11/site-packages/datasets/arrow_dataset.py\", line 3458, in _map_single\r\n    batch = apply_function_on_filtered_inputs(\r\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n \r\n\r\n   \r\n    File \"/home/myp/anaconda3/envs/llama-factory/lib/python3.11/site-packages/datasets/arrow_dataset.py\", line 3320, in apply_function_"
+ },
+ {
+  "number": 9571,
+  "title": "希望支持 HunyuanOCR。Add support for fine-tuning HunyuanOCR.",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9571",
+  "comments": 4,
+  "created": "2025-12-04",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 48.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 协议",
+  "doc_text": "使用模型权重时，请遵循对应的模型协议：[BLOOM](https://huggingface.co/spaces/bigscience/license)/ [DeepSeek](https://github.com/deepseek-ai/DeepSeek-LLM/blob/main/LICENSE-MODEL) / [Falcon](https://huggingface.co/tiiuae/falcon-180B/blob/main/LICENSE.txt) / [Gemma](https://ai.google.dev/gemma/terms) / [GLM-4](https://huggingface.co/THUDM/glm-4-9b/blob/main/LICENSE) / [GPT-2](https://github.com/openai/gpt-2/blob/master/LICENSE) / [Granite](LICENSE) / [InternLM](https://github.com/InternLM/InternLM#license) / [Llama](https://github.com/facebookresearch/llama/blob/main/MODEL_CARD.md) / [Llama 2](https://ai.meta.com/llama/license/) / [Llama 3](https://llama.meta.com/llama3/license/) / [Llama 4](https://github.com/met",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 46.1,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nModel Card: https://huggingface.co/tencent/HunyuanOCR\n\n<img width=\"2604\" height=\"1968\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/dd77591e-9dcd-41fe-9db6-a7a7c50128f8\" />\n\nHuanyuanOCR跟其他模型（如QwenVL或dots.ocr）差别也太大了。\nHunyuanOCR is fundamentally different from other models (such as QwenVL or dots.ocr).\n\nhttps://huggingface.co/tencent/HunyuanOCR/blob/main/tokenizer_config.json\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6782,
+  "title": "Potential Support for Mistral Small 24B Models?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6782",
+  "comments": 1,
+  "created": "2025-01-31",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 40.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 46.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nHi there,\nI was wondering if it might be possible to consider adding support for the recently released Mistral Small 24B models in LLaMA Factory? Specifically:\n\nMistral-Small-24B-Instruct-2501\nMistral-Small-24B-Base-2501\n\nThank you so much for your time and for maintaining this wonderful project!\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 9540,
+  "title": "Dose vllm serve support Reward model trained by Llama Factory",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9540",
+  "comments": 2,
+  "created": "2025-11-26",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 32.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 46.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nHi guys, does anyone kown how to use vllm serve create a online server for reward model training by llama factory? Main details include vllm==0.9.1 + qwen3-32B.\n\nThe command for establish a online server is:\nvllm serve /model_path --trust-remote-code --gpu-memory-utilization 0.9 --tensor-parallel-size 2 --host 0.0.0.0 --port 2888 --dtype auto --task reward\n\nBut when I call it, an error occurs: score is not allowed for this model. \nrequests.post(url='http://localhost:8080/score', headers={\"User-Agent\": \"Test Client\"}, json={\"model\": './model', \"text_1\": '你好', \"text_2\": '你大爷'})\n{\"object\":\"error\",\"message\":\"The model does not support Score API\",\"type\":\"BadRequestError\",\"param\":null,\"code\":400}\n\nBesides, I also tried task like score, classify, but no one can work.\n### Reproduction\n\n```text\nPut"
+ },
+ {
+  "number": 5830,
+  "title": "如何同时使用yaml文件和命令行参数？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5830",
+  "comments": 3,
+  "created": "2024-10-25",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 31.6,
+  "doc_path": "docs/zh/configuration/training.md",
+  "doc_heading": "训练参数 > TrainingArguments > 训练过程与精度",
+  "doc_text": "`global_batch_size` 与 `micro_batch_size` 共同决定每次参数更新需要累积多少个 micro-batch。省略 `global_batch_size` 时，每个 DP 进程每次更新处理一个 micro-batch；显式设置时，它必须能被 `dp_size × micro_batch_size` 整除，每个进程的累积次数为 `global_batch_size / (dp_size × micro_batch_size)`。\n\n例如，`dp_size: 4`、`micro_batch_size: 2`、`global_batch_size: 32` 对应每个 DP 进程累积 4 个 micro-batch。固定样本数策略下，一次更新共使用 32 条样本；动态策略中的实际样本数随长度变化，`global_batch_size` 仍决定累积次数，token 预算见[批处理策略](../feature-guide/batching.md)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 45.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n我只想改用于训练的yaml文件中的某个参数，使每次训练输入的命令更灵活，比如每次使用的output_dir不同或者每次用的template不同。但是我发现yaml和命令行参数不能共存（全部用命令行的话又太多固定的内容了），并不能先导入所有的yaml，然后再根据命令行的输入进行修改。请问有什么好的办法吗？\n\n### Reproduction\n\n如上\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10322,
+  "title": "如何设置知道验证集数据是哪些",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10322",
+  "comments": 1,
+  "created": "2026-03-26",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 23.6,
+  "doc_path": "docs/zh/feature-guide/sft.md",
+  "doc_heading": "监督微调（SFT） > LoRA",
+  "doc_text": "LoRA 冻结基座权重并训练 adapter，通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`：\n\n```yaml\npeft_config:\n  name: lora\n  r: 16\n  lora_alpha: 32\n  lora_dropout: 0.05\n  target_modules: all\n```\n\n训练结束后，adapter 保存到 `outputs/qwen3_lora`。[推理](inference.md#使用-lora-adapter)和[模型导出](model_export.md#导出配置)示例沿用这一基座与目录。\n\n继续训练已有 adapter 时设置 `adapter_name_or_path`。训练只允许一个 adapter；LoRA 参数从 adapter 自身恢复。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 45.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n\nmodel_name_or_path: /root/.cache/modelscope/hub/models/Qwen/Qwen2___5-VL-7B-Instruct\ntemplate: qwen2_vl\ntrust_remote_code: true\nflash_attn: auto\nfreeze_vision_tower: true        \nfreeze_multi_modal_projector: true  \n\n# 训练阶段控制\nstage: sft\ndo_train: true\ndo_eval: true\n\n# LoRA 微调配置\nfinetuning_type: lora\nlora_rank: 8                    \nlora_alpha: 16                  \nlora_dropout: 0.0               \nlora_target: all                 \nenable_thinking: true            \n\n# 数据集配置\ndataset: football_video_dataset\ndataset_dir: data\ncutoff_len: 6000               \nmax_samples: 100000              \nval_size: 0.157                  \npreprocessing_num_workers: 16   \ndataloader_num_workers: 14\n# 多模态（视频/图片）参数优化\nimage_max_pixels: 589824        \nimage_min_pixels: 1024          \nvideo_max_pixels: 65536      "
+ },
+ {
+  "number": 10229,
+  "title": "how do you set nothink when using llamafactory's API",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10229",
+  "comments": 1,
+  "created": "2026-02-28",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 39.3,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 利用 vLLM 部署 OpenAI API > 从魔乐社区下载",
+  "doc_text": "您也可以通过下述方法，使用魔乐社区下载数据集和模型。\n\n```bash\nexport USE_OPENMIND_HUB=1 # Windows 使用 `set USE_OPENMIND_HUB=1`\n```\n\n将 `model_name_or_path` 设置为模型 ID 来加载对应的模型。在[魔乐社区](https://modelers.cn/models)查看所有可用的模型，例如 `TeleAI/TeleChat-7B-pt`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 45.6,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nExcuse me qwen3.5, after fine-tuning, how do you set nothink when using llamafactory's API for deployment to get a response?\n\n请问qwen3.5，微调后利用llamafactory的api进行部署，获取回复中怎么设置nothink？在api中，不是在chat页面。可以通过命令行调整吗？\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 2467,
+  "title": "Support for parquet datasets?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/2467",
+  "comments": 3,
+  "created": "2024-02-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 38.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 45.3,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\nI am trying to finetune with a parquet dataset like this one:\r\n\r\nhttps://huggingface.co/datasets/MadVoyager/stable_diffusion_instructional_dataset\n\n### Expected behavior\n\nwhen i put it into the /data folder i expected the dataset to show up in the list of datasets, but it didn't.\n\n### System Info\n\n- `transformers` version: 4.37.2\r\n- Platform: Linux-6.5.0-15-generic-x86_64-with-glibc2.35\r\n- Python version: 3.11.7\r\n- Huggingface_hub version: 0.20.3\r\n- Safetensors version: 0.4.2\r\n- Accelerate version: 0.27.0\r\n- Accelerate config:    - compute_environment: LOCAL_MACHINE\r\n        - distributed_type: NO\r\n        - mixed_precision: bf16\r\n        - use_cpu: False\r\n        - debug: False\r\n        - num_processes: 1\r\n        - machine_rank: 0\r\n        - num_machines: 1\r\n        - gpu_ids: 0\r\n        - r"
+ },
+ {
+  "number": 9761,
+  "title": "[Feature Request] Add support for Nanbeige4-3B-Base model",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9761",
+  "comments": 1,
+  "created": "2026-01-13",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 46.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 45.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nI would like to request support for fine-tuning Nanbeige4-3B-Base, a recently released state-of-the-art 3B parameter model from Nanbeige LLM Lab that demonstrates exceptional reasoning and coding capabilities.\nMotivation\nExceptional Performance on Reasoning Benchmarks\nNanbeige4-3B-Base outperforms models with up to 10× more parameters.\nFull Transformers Compatibility\n\nAvailable on HuggingFace: \nhttps://huggingface.co/Nanbeige/Nanbeige4-3B-Base\n\n\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6614,
+  "title": "训练完之后，最后一个checkpoint和上一级目录的最终模型是否相同？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6614",
+  "comments": 1,
+  "created": "2025-01-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 30.1,
+  "doc_path": "docs/zh/feature-guide/model_saving.md",
+  "doc_heading": "模型保存与恢复 > 不同后端的保存格式",
+  "doc_text": "| 训练后端 | 默认 checkpoint | `save_ckpt_as_hf: true` |\n|----------|-------------------|--------------------------|\n| FSDP2 / FSDPTurbo | 保存用于续训的分布式 checkpoint | 额外在 checkpoint 中生成 `hf_model` 目录 |\n| DeepSpeed | 保存 DeepSpeed 训练状态 | 额外在 checkpoint 中生成 `hf_model` 目录 |\n| 单设备 / DDP | 模型权重使用 HF 格式保存 | 不生成额外的 `hf_model` 目录 |\n\nFSDP2、FSDPTurbo 和 DeepSpeed 启用 `save_ckpt_as_hf` 后，仍会保留用于恢复训练的原始 checkpoint，同时额外保存 HF 格式模型。聚合完整模型权重会提高保存时的内存占用。\n\n`save_ckpt_as_hf: false` 是默认值，保存中间 checkpoint 时不额外聚合 HF 格式权重。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 45.1,
+  "body": "### Reminder\n\n- [X] I have read the above rules and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\r\n- Platform: Linux-4.18.0-425.10.1.el8_7.x86_64-x86_64-with-glibc2.28\r\n- Python version: 3.10.15\r\n- PyTorch version: 2.5.1 (GPU)\r\n- Transformers version: 4.46.2\r\n- Datasets version: 3.1.0\r\n- Accelerate version: 1.0.1\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA L40S\r\n- DeepSpeed version: 0.15.4\r\n- Bitsandbytes version: 0.45.0\r\n- vLLM version: 0.6.6.post1\n\n### Reproduction\n\nHi~\r\n我想问下lora/full训练完之后，最后一个checkpoint和上一级目录的模型是否相同？\r\n即，假设我训练完之后得到如下结果目录`sft_pixtral-12B`：\r\n```bash\r\n├── all_results.json\r\n├── chat_template.json\r\n├── checkpoint-1000\r\n│   ├── chat_template.json\r\n│   ├── config.json\r\n│   ├── generation_config.json\r\n│   ├── latest\r\n│   ├── model-00001-of-00006.safetensors\r\n│   ├── model-00002-of-00006.safetensors\r\n│   ├── model-000"
+ },
+ {
+  "number": 10679,
+  "title": "Can anybody explain what is v1?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10679",
+  "comments": 5,
+  "created": "2026-07-24",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 45.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 44.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n## TL;DR\n\nQuestion about the scope and release plan for v1\n\n## Full Body\n\nThank you for maintaining LlamaFactory.\n\nI have recently noticed many commits and pull requests related to `v1`, as well as directories and examples such as:\n\n* `src/llamafactory/v1`\n* `tests_v1`\n* `examples/v1`\n* `USE_V1=1`\n\nHowever, I could not find much documentation explaining the current status or intended scope of v1, so I wanted to ask a few questions.\n\n1. What is the main goal of v1?\n\n   Is it intended to eventually replace the current implementation, or will both implementations continue to be maintained separately?\n\n2. What is the current support scope of v1?\n\n   For example, which of the following are currently supported or planned?\n\n   * SFT, DPO, RM, PPO, KTO, and other training stages\n   * Full fine-tun"
+ },
+ {
+  "number": 10675,
+  "title": "_calculate_timestamps参数使用",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10675",
+  "comments": 3,
+  "created": "2026-07-23",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 20.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 44.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.6.dev0\n- Platform: Linux-6.1.52-9-x86_64-with-glibc2.35\n- Python version: 3.12.13\n- PyTorch version: 2.11.0+cu130 (GPU)\n- Transformers version: 5.6.0\n- Datasets version: 3.5.0\n- Accelerate version: 1.11.0\n- PEFT version: 0.18.1\n- GPU type: NVIDIA L20\n- GPU number: 2\n- GPU memory: 44.53GB\n- TRL version: 0.24.0\n- DeepSpeed version: 0.19.2\n- Bitsandbytes version: 0.49.2\n- vLLM version: 0.20.2\n- Git commit: 8a43588d3ea6cafe755713bb9fcc3bd04604a232\n- Default data directory: detected\n\n\n### Reproduction\n\n我正在尝试用\n```\n    \"temporal_patch_size\": 1,\n    \"merge_size\": 2,\n```\n的参数不使用预训练权重对 Qwen3-VL 模型做debug来理解源码，我发现在/src/llamafactory/data/mm_plugin.py的_calculate_timestamps为什么使用的是merge_size传入而不是temporal_patch_size, 这里做的应该是时间维度的压缩，我认为应该使用temporal_patch_size，因为merge_size是用于Patc"
+ },
+ {
+  "number": 6147,
+  "title": "Does it support fine-tuning the PaliGemma model for object detection and segmentation?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6147",
+  "comments": 2,
+  "created": "2024-11-26",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 28.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 44.1,
+  "body": "In the paper about PaliGemma, it is indicated that it supports tasks such as Image Captioning, Visual Question Answering, Detection, and Referring Expression Segmentation. \r\n\r\nCan Llama-Factory support fine-tuning for these tasks?"
+ },
+ {
+  "number": 6240,
+  "title": "请问如何用vscode中的运行与调试对llama_factory进行debug呢，以sft阶段为例，应该怎么配置launch.json文件以及从哪个py文件开始debug？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6240",
+  "comments": 2,
+  "created": "2024-12-04",
+  "labels": [
+   "duplicate"
+  ],
+  "doc_score": 35.8,
+  "doc_path": "docs/zh/quick_start.md",
+  "doc_heading": "快速开始 > 运行 SFT",
+  "doc_text": "仓库提供数据配置 `data/v1_sft_demo.yaml` 和可运行示例。以下训练配置已经通过 `train_dataset` 引用该数据配置，可以直接运行：\n\n```bash\nllamafactory-cli sft examples/v1/train_full/train_full_fsdp2.yaml\n```\n\n检测到多个设备时，CLI 会自动通过 `torchrun` 重启；单设备需要强制走该入口时可以设置 `FORCE_TORCHRUN=1`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 43.9,
+  "body": "### Reminder\r\n\r\n- [X] I have read the README and searched the existing issues.\r\n\r\n### System Info\r\n\r\n请问如何用vscode中的运行与调试对llama_factory进行debug呢，以sft阶段为例，应该怎么配置launch.json文件以及从哪个py文件开始debug？\r\n\r\n### Reproduction\r\n\r\n请问如何用vscode中的运行与调试对llama_factory进行debug呢，以sft阶段为例，应该怎么配置launch.json文件以及从哪个py文件开始debug？\r\n\r\n### Expected behavior\r\n\r\n_No response_\r\n\r\n### Others\r\n\r\n_No response_"
+ },
+ {
+  "number": 5951,
+  "title": "[Help] 关于添加自定义模型训练支持",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5951",
+  "comments": 2,
+  "created": "2024-11-07",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 19.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "如果您有项目希望添加至下述列表，请通过邮件联系或者创建一个 PR。\n\n<details><summary>点击显示</summary>",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 43.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n您好，我想使用LLaMA-Factory框架训练推理自定义的大模型，比如一部分数据先过encoder网络再和tokenize之后的prompt组合送进llm（或者比如我想从头复现Qwen-VL的三步训练过程，分阶段冻结和训练不同的部分）。不知道是否有可以参考的代码或者文档呢，非常感谢！\n\n### Reproduction\n\n无\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10153,
+  "title": "tokenzied_path 和 dataset 数据集参数的优先级",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10153",
+  "comments": 1,
+  "created": "2026-02-02",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 27.4,
+  "doc_path": "examples/README_zh.md",
+  "doc_heading": "目录 > 示例 > LoRA 微调 > 预处理数据集",
+  "doc_text": "对于大数据集有帮助，在配置中使用 `tokenized_path` 以加载预处理后的数据集。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_preprocess.yaml\n```",
+  "params_asked": [
+   "tokenzied_path"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 43.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n当训练的参数里，tokenized_path和dataset都设置了，似乎tokenized_path的优先级会更高？即使我用的dataset和tokenized_path里的metadata指向的dataset完全不一样，开始训练前也不会重新tokenize dataset。是不是说明只要设置了tokenized_path，而且这个位置保存有一个tokenized完的dataset，就会直接忽略dataset名字这个参数？\n\n### Reproduction\n\n``\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5467,
+  "title": "如何自动保存checkpoint?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5467",
+  "comments": 3,
+  "created": "2024-09-18",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 26.9,
+  "doc_path": "docs/zh/feature-guide/model_saving.md",
+  "doc_heading": "模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "doc_text": "`resume_from_checkpoint` 恢复训练状态。以下配置从当前 `output_dir` 中自动查找 checkpoint：\n\n```yaml\nresume_from_checkpoint: auto\n```\n\n`auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 43.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n```\r\n- `llamafactory` version: 0.9.1.dev0\r\n- Platform: Linux-5.19.0-0_fbk12_zion_11583_g0bef9520ca2b-x86_64-with-glibc2.34\r\n- Python version: 3.12.5\r\n- PyTorch version: 2.4.1+cu121 (GPU)\r\n- Transformers version: 4.44.2\r\n- Datasets version: 2.21.0\r\n- Accelerate version: 0.34.2\r\n- PEFT version: 0.12.0\r\n- TRL version: 0.9.6\r\n- GPU type: NVIDIA H100\r\n```\n\n### Reproduction\n\n```\r\nllamafactory-cli train examples/train_lora/my_data.yaml\r\n```\r\n\r\n我发现我在整个训练过程中，yaml 中设置的 output_dir 里，没有任何checkpoint文件被save过，只有一个trainer_log.jsonl.\r\n\r\n然后训练不小心中断之后，没有save，那也没办法resume from checkpoint 啊？\r\n\r\n我想在yaml 里设置 自动save checkpoint each XXX step之类的，也似乎没有这个argument？ \n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10524,
+  "title": "Support of higher vllm versions",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10524",
+  "comments": 0,
+  "created": "2026-05-29",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 46.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 43.4,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nCurrently, llamafactory only supports vllm<=0.11.0. \nFor newer models, such as QwenOmni 3, higher vllm versions are necessary (in the case of QwenOmni 3 at least 0.17.0).\nIt would be very nice if in the future, higher versions of vllm could be supported by llamafactory, so that e.g. scripts/vllm_infer.py can also be used for these models.\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6481,
+  "title": "如何进行API批量推理，batch interface",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6481",
+  "comments": 4,
+  "created": "2024-12-30",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 34.5,
+  "doc_path": "docs/zh/feature-guide/inference.md",
+  "doc_heading": "推理",
+  "doc_text": "v1 已实现基于 Hugging Face 后端的 `chat` 入口，可以在命令行中进行流式对话。模型对话格式来自 tokenizer 自带的 Hugging Face chat template；没有模板时回退到内置 ChatML。\n\n当前 `chat` 入口支持 `sample_backend: hf` 的交互式单条推理。批量推理和 `vllm` 采样后端尚未接入该入口；交互式配置中不设置 `train_dataset`。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 43.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nLinux 8张A100\n\n### Reproduction\n\n请问如何使用API进行批量推理，\r\n输入格式的要求是什么？\r\n\r\n目前如果输入是\r\nmessages=[{role: user},{role:assisitant}]\r\n只能每次输入一条message，不知该如何一次输入一个batch的问题进行推理\r\n\r\n求朋友们指导\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5603,
+  "title": "How to implement weight decay towards the pre-trained model?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5603",
+  "comments": 1,
+  "created": "2024-10-03",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 42.2,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 43.1,
+  "body": "Hello, let me one question.\r\n\r\nIf using LLaMA-Factory for supervised fune-tuning, how do I implement penalizing the distance between starting and current weights? This was shown to be effective in https://arxiv.org/abs/1706.03610"
+ },
+ {
+  "number": 5661,
+  "title": "【询问】在SFT&DPO训练中，是否可以自定义训练的special_tokens",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5661",
+  "comments": 4,
+  "created": "2024-10-11",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 18.2,
+  "doc_path": "docs/zh/feature-guide/kernel_acceleration.md",
+  "doc_heading": "融合算子加速",
+  "doc_text": "`kernel_config` 统一配置模型侧的融合算子加速。它可以替换单个算子，也可以像 Liger Kernel 一样同时应用多个融合实现和训练优化。\n\n`kernel_config.name` 接受一个加速实现名称，也接受逗号分隔的多个名称。未设置 `kernel_config` 或设为 `null` 时，此入口不替换算子。以下为算子配置片段，完整训练配置见 [SFT](sft.md)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 43.1,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n最新版本\n\n### Reproduction\n\n比如：我使用的是llama3.1的其他分支模型，end_token和meta的不一样，在llama工厂中只有llama3的模板，我是否可以自定义停止符，否则训练后的模型会出现停不下来的情况\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10614,
+  "title": "[Feature] Add support for Qwen-AgentWorld-35B-A3B",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10614",
+  "comments": 0,
+  "created": "2026-06-30",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 46.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 43.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nLLaMA-Factory main branch.\n\n### Reproduction\n\nCurrently `Qwen/Qwen-AgentWorld-35B-A3B` is not present in the model registry of `src/llamafactory/extras/constants.py`, so it cannot be selected from the WebUI/CLI model list out-of-the-box.\n\n### Expected behavior\n\nLLaMA-Factory should ship a built-in entry for **Qwen-AgentWorld-35B-A3B** so users can fine-tune it directly.\n\nQwen-AgentWorld-35B-A3B is a native **language world model** released by the Qwen team, based on Qwen3.5-35B-A3B (MoE, 35B total / 3B active, 256K context). The official repo explicitly recommends LLaMA-Factory as one of the supported fine-tuning frameworks. Since the model shares the Qwen3 chat template (its inference uses `--reasoning-parser qwen3`), no new template is required — only a model registration entry that bind"
+ },
+ {
+  "number": 4898,
+  "title": "关于运用llama-factory中的deepseed全参数微调qwen2-7b-instruct面临问题",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4898",
+  "comments": 4,
+  "created": "2024-07-19",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 25.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler",
+  "doc_text": "docker run -dit --ipc=host \\\n    -p 7860:7860 \\\n    -p 8000:8000 \\\n    --device /dev/kfd \\\n    --device /dev/dri \\\n    --name llamafactory \\\n    llamafactory:latest\n\ndocker exec -it llamafactory bash\n```\n\n</details>\n\n<details><summary>使用数据卷</summary>\n\n您可以通过移除 Dockerfile 中 `VOLUME [ \"/root/.cache/huggingface\", \"/app/shared_data\", \"/app/output\" ]` 的注释来使用数据卷。\n\n在构建 Docker 时使用参数 `-v ./hf_cache:/root/.cache/huggingface` 来挂载数据卷。各个数据卷的含义表示如下。\n\n- `hf_cache`：使用宿主机的 Hugging Face 缓存文件夹。\n- `shared_data`：宿主机中存放数据集的文件夹路径。\n- `output`：将导出目录设置为该路径后，即可在宿主机中访问导出后的模型。\n\n</details>",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 42.8,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n torch/distributed/elastic/multiprocessing/api.py:826] failed (exitcode: 1) local_rank: 0 (pid: 1077) of binary: /root/.conda/envs/factory-6.17/bin/python\r\nTraceback (most recent call last):\r\n  File \"/root/.conda/envs/factory-6.17/bin/torchrun\", line 8, in <module>\r\n    sys.exit(main())\r\n  File \"/root/.conda/envs/factory-6.17/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py\", line 347, in wrapper\r\n    return f(*args, **kwargs)\r\n  File \"/root/.conda/envs/factory-6.17/lib/python3.10/site-packages/torch/distributed/run.py\", line 879, in main\r\n    run(args)\r\n  File \"/root/.conda/envs/factory-6.17/lib/python3.10/site-packages/torch/distributed/run.py\", line 870, in run\r\n    elastic_launch(\r\n  File \"/root/.conda/envs/factory-6.17/lib/python3.10/site-packages/t"
+ },
+ {
+  "number": 6869,
+  "title": "Support for finetuning the convolutional layers of VLMs with lora",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6869",
+  "comments": 2,
+  "created": "2025-02-08",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 33.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 42.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nCurrently, attempting to fine-tune all layers of a VLM results in:\n\n```ValueError: Target module Conv3d(3, 1280, kernel_size=(2, 14, 14), stride=(2, 14, 14), bias=False) is not supported. Currently, only the following modules are supported: `torch.nn.Linear`, `torch.nn.Embedding`, `torch.nn.Conv2d`, `transformers.pytorch_utils.Conv1D```\n\n\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 9743,
+  "title": "训练多模态模型function_call能力，如何构建数据集进行训练",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9743",
+  "comments": 4,
+  "created": "2026-01-09",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 25.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 42.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n[2026-01-09 08:48:54,284] [INFO] [real_accelerator.py:254:get_accelerator] Setting ds_accelerator to cuda (auto detect)\n\n- `llamafactory` version: 0.9.4.dev0\n- Platform: Linux-4.18.0-193.6.3.el8_2.v1.5.x86_64-x86_64-with-glibc2.17\n- Python version: 3.10.16\n- PyTorch version: 2.6.0+cu124 (GPU)\n- Transformers version: 4.57.1\n- Datasets version: 3.2.0\n- Accelerate version: 1.7.0\n- PEFT version: 0.15.2\n- GPU type: NVIDIA L20\n- GPU number: 8\n- GPU memory: 44.53GB\n- TRL version: 0.9.6\n- DeepSpeed version: 0.16.9\n- Git commit: efb13b7483249ca2cc0149d7b99d33ae0ba514b8\n- Default data directory: not detected\n\n### Reproduction\n\n有如下格式的数据\n```\n<think>检查道路方向角以确认是否有街景</think>\n<tool_call>{\"name\":\"get_road_heading\",\"arguments\":{\"lat\":\"-23.54974153985822\",\"lng\":\"-46.63543576456156\"}}</tool_call>\n<tool_respon"
+ },
+ {
+  "number": 6927,
+  "title": "现在LlamaFactory可以支持蒸馏训练吗？有计划支持吗？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6927",
+  "comments": 3,
+  "created": "2025-02-13",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 24.8,
+  "doc_path": "docs/zh/feature-guide/batching.md",
+  "doc_heading": "批处理策略 > 使用约束",
+  "doc_text": "- `dynamic_batching` 必须设置正数 `max_steps`。\n- `dynamic_batching` 不支持 `save_epochs`，应使用 `save_steps`。\n- `padding_free` 和 `dynamic_padding_free` 需要设置 `flash_attn: flash_attention_2`。\n- `normal` 以外的策略仅支持纯文本数据；使用其他策略处理多模态数据时，BatchGenerator 会在生成 batch 时抛出 `NotImplementedError`。\n\n内部 collate 和状态恢复流程见[BatchGenerator](../developer-guide/core/batch_generator.md)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 42.4,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n\n### Reproduction\n\n想参考DeepSeek，把R1生成的私有数据集蒸馏给小模型，现在支持模型蒸馏训练吗？如果不支持的话有计划支持吗？\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 4543,
+  "title": "how to authenticate to access huggingface",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/4543",
+  "comments": 6,
+  "created": "2024-06-26",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 24.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 42.3,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.8.3.dev0\r\n- Platform: Windows-10-10.0.22631-SP0\r\n- Python version: 3.10.9\r\n- PyTorch version: 2.1.2+cu118 (GPU)\r\n- Transformers version: 4.41.2\r\n- Datasets version: 2.19.1\r\n- Accelerate version: 0.31.0\r\n- PEFT version: 0.11.1\r\n- TRL version: 0.9.4\r\n- GPU type: NVIDIA GeForce RTX 4090\n\n### Reproduction\n\nOSError: You are trying to access a gated repo.\r\nMake sure to have access to it at https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3.\r\n401 Client Error. (Request ID: Root=1-667b6dfd-1c6c2b614e98fb274bc60659;2dab17cc-7a80-46b3-910b-257fe25c0467)\r\n\r\nCannot access gated repo for url https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3/resolve/main/config.json.\r\nAccess to model mistralai/Mistral-7B-Instruct-v0.3 is restricted. You must be authenticated to acce"
+ },
+ {
+  "number": 10568,
+  "title": "Feature Proposal: Add FunASR ASR Support for Multimodal Training Data",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10568",
+  "comments": 0,
+  "created": "2026-06-12",
+  "labels": [],
+  "doc_score": 36.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 42.3,
+  "body": "LLaMA-Factory supports multimodal training but currently lacks built-in ASR preprocessing for audio-to-text datasets. FunASR (17.8K+ stars, https://github.com/modelscope/FunASR) offers:\n\n- **SenseVoice**: Ultra-fast multilingual ASR (50x faster than Whisper-large)\n- **Paraformer**: Production-grade ASR with timestamp and punctuation\n- **Fun-ASR-Nano**: Lightweight streaming ASR for real-time use\n- **OpenAI-compatible API**: POST /v1/audio/transcriptions\n\nFor LLaMA-Factory users working on speech understanding or audio-conditioned LLM training, FunASR could serve as:\n1. A data preprocessing tool — transcribe audio datasets before training\n2. A real-time inference backend — integrate ASR into multimodal inference pipelines\n3. A CLI tool —  for batch transcription of training data\n\nSince FunASR exposes an OpenAI-compatible API, it can be used alongside LLaMA-Factory without any code changes"
+ },
+ {
+  "number": 5822,
+  "title": "Qwen2-VL 微调不支持同时输入video和image么",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5822",
+  "comments": 6,
+  "created": "2024-10-25",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 16.4,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 42.2,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\ntransformers==4.45.1\n\n### Reproduction\n\n### 输入同时包含video和image在进行tokenizer时具体报错如下\r\n\r\nConverting format of dataset (num_proc=128): 100%|_________________________________________________________________________| 49996/49996 [00:02<00:00, 20519.51 examples/s]\r\nRunning tokenizer on dataset (num_proc=128):   0%|                                                                                        | 0/49996 [02:06<?, ? examples/s]\r\n\r\n[rank0]:     result = (True, func(*args, **kwds))\r\n[rank0]:   File \"/usr/local/lib/python3.8/dist-packages/datasets/utils/py_utils.py\", line 678, in _write_generator_to_queue\r\n[rank0]:     for i, result in enumerate(func(**kwargs)):\r\n[rank0]:   File \"/usr/local/lib/python3.8/dist-packages/datasets/arrow_dataset.py\", line 3558, in _map_single\r\n[rank0]:     batch = apply_f"
+ },
+ {
+  "number": 6852,
+  "title": "预测时，如果不想量化，怎么把权重分配到指定GPU上？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6852",
+  "comments": 1,
+  "created": "2025-02-08",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 24.4,
+  "doc_path": "docs/zh/feature-guide/inference.md",
+  "doc_heading": "推理 > 启动 CLI 对话",
+  "doc_text": "`model` 指定模型 Hub ID 或包含完整权重的 HF 模型目录。LoRA adapter 的加载方式见下文。\n\n以下对话配置保存为 `chat.yaml`，使用与 [SFT 示例](sft.md)相同的基座：\n\n```yaml\nmodel: Qwen/Qwen3-0.6B\nsample_backend: hf\nmax_new_tokens: 512\n```\n\n```bash\nllamafactory-cli chat chat.yaml\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 42.2,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n预测都是把数据分布到GPU上，而不是分配权重。\n这样推理是很快，但是只能加载单个GPU大小的模型。\n我现在要跑72B，如何将权重分布加载到指定的CUDA01234567上？速度慢点就慢点吧\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6724,
+  "title": "预训练格式和sft微调格式是否可以同时进行微调？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6724",
+  "comments": 1,
+  "created": "2025-01-21",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 32.2,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备",
+  "doc_text": "关于数据集文件的格式，请参考 [data/README_zh.md](data/README_zh.md) 的内容。你可以使用 HuggingFace / ModelScope / Modelers 上的数据集或加载本地数据集。\n\n> [!NOTE]\n> 使用自定义数据集时，请更新 `data/dataset_info.json` 文件。\n\n您也可以使用 **[Easy Dataset](https://github.com/ConardLi/easy-dataset)**、**[DataFlow](https://github.com/OpenDCAI/DataFlow)** 和 **[GraphGen](https://github.com/open-sciencelab/GraphGen)** 构建用于微调的合成数据。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 42.1,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n无\n\n### Reproduction\n\n我有如下场景数据：\n- 预训练数据，如Text2SQL场景，我只有SQL没有SQL对应的问题；\n- QA对，如Text2SQL场景的Text-SQL对数据；\n目前本框架是否支持，两个数据放到一起进行训练，而不是我先拿预训练的微调之后再sft进行微调？\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 10416,
+  "title": "loader.py does not support ignore_mismatched_sizes → breaks loading valid checkpoints (GLM-OCR / GQA models)",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10416",
+  "comments": 0,
+  "created": "2026-04-22",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 35.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [
+   "ignore_mismatched_sizes"
+  ],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 41.9,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n## Description\n\nWhen loading certain models (e.g. GLM-OCR / GLM4V variants with GQA),\n`from_pretrained` fails due to shape mismatches even though the checkpoint is valid.\n\nRoot cause:\n- `ignore_mismatched_sizes=True` is not passed in LLaMA-Factory's loader\n- transformers>=5.0 defaults to strict shape checking\n\n## Error\n\nRuntimeError: size mismatch for ...\n(occurs during AutoModel.from_pretrained)\n\n## Minimal Fix\n\nIn `llamafactory/model/loader.py`, before calling:\n\n    model = load_class.from_pretrained(**init_kwargs)\n\nadd:\n\n    init_kwargs.setdefault(\"ignore_mismatched_sizes\", True)\n\n## Why this matters\n\n- Many modern models (GQA, MoE, multimodal variants) legitimately differ in shapes\n- Transformers already supports safe loading via ignore_mismatched_sizes\n- Current behavior prevents usin"
+ },
+ {
+  "number": 5337,
+  "title": "如何去打断点调试SFT, DPO流程",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5337",
+  "comments": 18,
+  "created": "2024-09-03",
+  "labels": [
+   "good first issue",
+   "solved"
+  ],
+  "doc_score": 23.6,
+  "doc_path": "README_zh.md",
+  "doc_heading": "编译 & 安装 > 数据准备 > 快速开始",
+  "doc_text": "下面三行命令分别对 Qwen3-4B-Instruct 模型进行 LoRA **微调**、**推理**和**合并**。\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\nllamafactory-cli chat examples/inference/qwen3_lora_sft.yaml\nllamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml\n```\n\n高级用法请参考 [examples/README_zh.md](examples/README_zh.md)（包括多 GPU 微调）。\n\n> [!TIP]\n> 使用 `llamafactory-cli help` 显示帮助信息。\n>\n> 遇到报错请先看[常见问题](https://github.com/hiyouga/LlamaFactory/issues/4614)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 41.8,
+  "body": "大佬你好,\r\n我觉得所有LLM入门的人都会有的问题, 就是**如何去在vscode里面打断点调试SFT和DPO的流程**\r\n我整了一整天也没搞通, 所以特来求助.\r\n\r\n首先是llamafactory-cli这个命令, 我看setup.py里面是运行的llamafactory.cli:main, 所以我就直接从这个cli.py文件的main函数开始\r\n但是一直得到相对路径解析错误, 所有使用.进行的导入都会报错.\r\n\r\n**所以我想知道有没有一个简易的debug教程或者流程, 对新手来说很有帮助.**\r\n\r\n如果问题过于新手, 还请谅解.\r\n"
+ },
+ {
+  "number": 6521,
+  "title": "关于toolcall微调数据格式请教一下~",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6521",
+  "comments": 0,
+  "created": "2025-01-03",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 43.5,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > DPO/RM 数据格式",
+  "doc_text": "DPO 和 RM 使用 `chosen_messages` 与 `rejected_messages`：\n\n```json\n{\n  \"chosen_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"更优回答\"}], \"loss_weight\": 1.0}\n  ],\n  \"rejected_messages\": [\n    {\"role\": \"user\", \"content\": [{\"type\": \"text\", \"value\": \"问题\"}], \"loss_weight\": 0.0},\n    {\"role\": \"assistant\", \"content\": [{\"type\": \"text\", \"value\": \"较差回答\"}], \"loss_weight\": 1.0}\n  ]\n}\n```",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 41.7,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n*\n\n### Reproduction\n\n一条toolcall微调数据模板如下，来自于[ChatGLM4](https://zhipu-ai.feishu.cn/wiki/L1jpwBEqCiHocmkT3VzcQv5Znrg)：\r\n```\r\n{\r\n  \"messages\": [\r\n    {\r\n      \"role\": \"system\",\r\n      \"content\": \"\",\r\n      \"tools\": [\r\n        {\r\n          \"type\": \"function\",\r\n          \"function\": {\r\n            \"name\": \"get_recommended_books\",\r\n            \"description\": \"Get recommended books based on user's interests\",\r\n            \"parameters\": {\r\n              \"type\": \"object\",\r\n              \"properties\": {\r\n                \"interests\": {\r\n                  \"type\": \"array\",\r\n                  \"items\": {\r\n                    \"type\": \"string\"\r\n                  },\r\n                  \"description\": \"The interests to recommend books for\"\r\n                }\r\n              },\r\n              \"required\": [\r\n         "
+ },
+ {
+  "number": 9657,
+  "title": "为什么不使用tokenizer的apply_chat_template方法而是自定义一套template填充逻辑",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9657",
+  "comments": 1,
+  "created": "2025-12-24",
+  "labels": [
+   "wontfix"
+  ],
+  "doc_score": 23.4,
+  "doc_path": "docs/zh/feature-guide/inference.md",
+  "doc_heading": "推理 > 覆盖模型 Chat Template",
+  "doc_text": "`custom_chat_template` 接收一段 Jinja2 模板字符串，并覆盖 tokenizer 自带模板：\n\n```yaml\nmodel: path/to/model\ncustom_chat_template: >-\n  {% for message in messages %}\n  {{ message['role'] + ': ' + message['content'] }}\n  {% endfor %}\n```\n\nv1 使用模板字符串，不接受 `template: <name>` 字段。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 41.7,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n为什么不使用tokenizer的apply_chat_template方法而是自定义一套template填充逻辑\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5921,
+  "title": "如何取部分数据集训练",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5921",
+  "comments": 5,
+  "created": "2024-11-04",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 30.7,
+  "doc_path": "docs/zh/feature-guide/data_preparation.md",
+  "doc_heading": "数据准备 > 组合多个数据集",
+  "doc_text": "```yaml\nidentity:\n  path: data/identity.json\n  source: local\n  converter: alpaca\n\ndemo:\n  path: organization/dataset\n  source: hf_hub\n  split: train\n  size: 1000\n  weight: 0.5\n  streaming: false\n```\n\n同一个 YAML 中的 streaming 配置必须一致；当前训练路径不支持 streaming 数据集。多个条目会组成一个全局数据索引；`size` 与 `weight` 用于控制每个数据集的采样规模，计算顺序与有放回抽样的含义见[采样规模的计算](../configuration/data.md#采样规模的计算)。",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 41.3,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n如何取部分数据集训练呢，datasetinfo里有些数据太大了，怎么取一部分\n如果是多个数据集放进去，数据集是按顺序训练还是随机打乱呢，随机打乱顺序训练又该怎么做呢\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5891,
+  "title": "如何添加额外的可训练参数？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5891",
+  "comments": 2,
+  "created": "2024-11-01",
+  "labels": [
+   "pending"
+  ],
+  "doc_score": 29.6,
+  "doc_path": "docs/zh/configuration/model.md",
+  "doc_heading": "模型参数 > ModelArguments",
+  "doc_text": "| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `model` | `str` | `Qwen/Qwen3-4B-Instruct-2507` | 本地模型路径或 Hub ID |\n| `custom_chat_template` | `str \\| None` | `None` | 覆盖 tokenizer/processor 的 Jinja2 chat template |\n| `trust_remote_code` | `bool` | `false` | 是否加载 Hub 远端代码 |\n| `flash_attn` | `str` | `sdpa` | `eager`、`sdpa` 或 `flash_attention_2` |\n| `model_class` | `str` | `llm` | `llm`、`cls` 或 `other` |\n| `init_config` | `dict \\| None` | `None` | 模型初始化配置 |\n| `peft_config` | `dict \\| None` | `None` | LoRA 或 Freeze 配置 |\n| `kernel_config` | `dict \\| None` | `None` | 融合算子加速配置 |\n| `quant_config` | `dict \\| None` | `None` | 量化配置 |\n\n`llm` 加载因果语言模型或 image-to-text 模型，`cls` 加载单标签 token\nclassifi",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 40.8,
+  "body": "### Reminder\n\n- [x] I have read the README and searched the existing issues.\n\n### System Info\n\n我想要在代码中添加可训练参数，比如定义一个缩放参数scale_param，该参数用于在前向传播中暂时缩放模型参数（不合理但这里仅用作举例）\r\n我目前的做法是，在hiyouga/LLaMA-Factory/src/llamafactory/model/loader.py的load_model()中模型加载后添加：\r\n```\r\n    model.scale_param = nn.Parameter(torch.ones(1) * 2, requires_grad=True)  # 初始化为 2 \r\n```   \r\n之后对hiyouga/LLaMA-Factory/src/llamafactory/train/sft/trainer.py的CustomSeq2SeqTrainer类进行前向传播重写：\r\n```\r\n    @override\r\n    def training_step(\r\n        self,\r\n        model: \"torch.nn.Module\",\r\n        inputs: Dict[str, Union[\"torch.Tensor\", Any]],\r\n    ) -> torch.Tensor:        \r\n        print(f\"[training_step] model.scale_param:\\n{model.scale_param}\")\r\n        print(f\"[training_step] model.module.scale_param:\\n{model.module.scale_param}\")     \r\n\r\n        # 应用缩放\r\n        for name, param in model.named_parameters():\r\n            if param.require"
+ },
+ {
+  "number": 6733,
+  "title": "训练出错，参数参照的网上视频，工具也完整，请大佬帮忙看看问题，谢谢",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6733",
+  "comments": 6,
+  "created": "2025-01-22",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 37.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "",
+  "doc_text": "[![Twitter](https://img.shields.io/twitter/follow/llamafactory_ai)](https://twitter.com/llamafactory_ai)\n[![Discord](assets/thirdparty/discord.svg)](https://discord.gg/rKfvV9r9FK)\n[![WeChat](https://img.shields.io/badge/WeChat-User%20Group-blue?logo=wechat)](https://github.com/hiyouga/llamafactory-community)\n[![Blog](https://img.shields.io/badge/Hugo-Official%20Blog-blue?logo=hugo)](https://blog.llamafactory.net/)",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 1,
+  "rank_score": 40.8,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n下面是按照视频设置的参数\n\n![Image](https://github.com/user-attachments/assets/e9f80915-9c11-4d5f-8680-263a3d49eb5c)\n\n![Image](https://github.com/user-attachments/assets/1c6803f4-9919-4d0b-a13c-f86fc5cf9667)\n\n<!-- Failed to upload \"image.png\" -->\n\n![Image](https://github.com/user-attachments/assets/b8713863-7ccd-493c-a984-277dbc2c5eef)\n报错信息：训练出错。\n\n[WARNING|2025-01-21 11:43:17] logging.py:162 >> We recommend enable upcast_layernorm in quantized training.\n\n[INFO|2025-01-21 11:43:17] parser.py:355 >> Process rank: 0, device: cuda:0, n_gpu: 1, distributed training: False, compute dtype: torch.bfloat16\n\ncuda已安装\n\n![Image](https://github.com/user-attachments/assets/359b12a9-1725-4e4e-8d65-fae93c400209)\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 9713,
+  "title": "为什么vision_model_keys不包括pos_embed",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9713",
+  "comments": 1,
+  "created": "2026-01-04",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 29.1,
+  "doc_path": "README_zh.md",
+  "doc_heading": "",
+  "doc_text": "[![GitHub Repo stars](https://img.shields.io/github/stars/hiyouga/LlamaFactory?style=social)](https://github.com/hiyouga/LlamaFactory/stargazers)\n[![GitHub last commit](https://img.shields.io/github/last-commit/hiyouga/LlamaFactory)](https://github.com/hiyouga/LlamaFactory/commits/main)\n[![GitHub contributors](https://img.shields.io/github/contributors/hiyouga/LlamaFactory?color=orange)](https://github.com/hiyouga/LlamaFactory/graphs/contributors)\n[![GitHub workflow](https://github.com/hiyouga/LlamaFactory/actions/workflows/tests.yml/badge.svg)](https://github.com/hiyouga/LlamaFactory/actions/workflows/tests.yml)\n[![PyPI](https://img.shields.io/pypi/v/llamafactory)](https://pypi.org/project/",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 40.6,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nhttps://github.com/hiyouga/LlamaFactory/blob/main/src/llamafactory/model/model_utils/visual.py#L368\nvision_model_keys中不包含pos_embed，导致freeze_vision_tower后这部分参数没有冻结，请问这个是bug还是算法设计，以及为什么要放开这部分参数训练\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 5214,
+  "title": "请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5214",
+  "comments": 1,
+  "created": "2024-08-20",
+  "labels": [
+   "invalid"
+  ],
+  "doc_score": 28.9,
+  "doc_path": "examples/merge_lora/qwen3vl_lora_sft.yaml",
+  "doc_heading": "examples/merge_lora/qwen3vl_lora_sft.yaml",
+  "doc_text": "### Note: DO NOT use quantized model or quantization_bit when merging lora adapters\n\n### model\nmodel_name_or_path: Qwen/Qwen3-VL-4B-Instruct\nadapter_name_or_path: saves/qwen3-vl-4b/lora/sft\ntemplate: qwen3_vl_nothink\ntrust_remote_code: true\n\n### export\nexport_dir: saves/qwen3_vl_sft_merged\nexport_size: 5\nexport_device: cpu  # choices: [cpu, auto]\nexport_legacy_format: false\n",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 4,
+  "rank_score": 40.5,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\n*\n\n### Reproduction\n\n```\r\nmodel_name_or_path: /mnt/tenant-home_speed/model/qwen2_1.5B_chat/\r\nadapter_name_or_path: /mnt/tenant-home_speed/DistillKit-main/results/checkpoint-1000/\r\ntemplate: qwen\r\nfinetuning_type: full\r\n\r\n### export\r\nexport_dir: /mnt/tenant-home_speed/DistillKit-main/results/export-1000steps/\r\nexport_size: 2\r\nexport_device: cuda\r\nexport_legacy_format: false\r\n```\n\n### Expected behavior\n\n但代码报错似乎只支持lora合并权重。\r\n```\r\nTraceback (most recent call last):\r\n  File \"/mnt/tenant-home_speed/qxj/llama-factory/LLaMA-Factory-main/src/llamafactory/hparams/parser.py\", line 84, in _verify_model_args\r\n    raise ValueError(\"Adapter is only valid for the LoRA method.\")\r\nValueError: Adapter is only valid for the LoRA method.\r\n```\r\n看您在这个问题回复https://github.com/hiyouga/LLaMA-Factory/issues/2898，说用 --model"
+ },
+ {
+  "number": 6732,
+  "title": "How to jump a single sample？",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6732",
+  "comments": 4,
+  "created": "2025-01-21",
+  "labels": [
+   "bug",
+   "pending"
+  ],
+  "doc_score": 20.5,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler",
+  "doc_text": "docker run -dit --ipc=host \\\n    -v /usr/local/dcmi:/usr/local/dcmi \\\n    -v /usr/local/bin/npu-smi:/usr/local/bin/npu-smi \\\n    -v /usr/local/Ascend/driver:/usr/local/Ascend/driver \\\n    -v /etc/ascend_install.info:/etc/ascend_install.info \\\n    -p 7860:7860 \\\n    -p 8000:8000 \\\n    --device /dev/davinci0 \\\n    --device /dev/davinci_manager \\\n    --device /dev/devmm_svm \\\n    --device /dev/hisi_hdc \\\n    --name llamafactory \\\n    llamafactory:latest\n\ndocker exec -it llamafactory bash\n```\n\nAMD ROCm 用户：\n\n```bash\ndocker build -f ./docker/docker-rocm/Dockerfile \\\n    --build-arg PIP_INDEX=https://pypi.org/simple \\\n    --build-arg EXTRAS=metrics \\\n    -t llamafactory:latest .",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 40.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n- `llamafactory` version: 0.9.2.dev0\n- Platform: Linux-5.15.0-124-generic-x86_64-with-glibc2.35\n- Python version: 3.10.12\n- PyTorch version: 2.3.1+cu121 (GPU)\n- Transformers version: 4.45.2\n- Datasets version: 2.20.0\n- Accelerate version: 0.34.0\n- PEFT version: 0.11.1\n- TRL version: 0.9.6\n- GPU type: NVIDIA A100 80GB PCIe\n- DeepSpeed version: 0.14.4\n\n### Reproduction\n\n```text\n    train_result = trainer.train(resume_from_checkpoint=training_args.resume_from_checkpoint)\n  File \"/usr/local/lib/python3.10/dist-packages/transformers/trainer.py\", line 2052, in train\n    return inner_training_loop(\n  File \"/usr/local/lib/python3.10/dist-packages/transformers/trainer.py\", line 2388, in _inner_training_loop\n    tr_loss_step = self.training_step(model, inputs)\n  File \"/usr/local/lib/python3.10/dist-"
+ },
+ {
+  "number": 10411,
+  "title": "Support Training and Inference for audio-flamingo-next-think-hf",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10411",
+  "comments": 0,
+  "created": "2026-04-20",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 48.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 40.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nhello Author \nI am writing to request the integration of NVIDIA's latest model, audio-flamingo-next-think-hf, into this framework for both training and inference.\nReference: https://huggingface.co/nvidia/audio-flamingo-next-think-hf\n\nCould you please consider adding this to your roadmap? I am also willing to assist with testing or provide feedback during the implementation process.\n\nBest regards,\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6792,
+  "title": "结合 GRPO 支持 DeepSeek-R1 等推理模型的复现，达到 huggingface open-r1 的类似效果",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6792",
+  "comments": 60,
+  "created": "2025-02-02",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 27.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "克隆 bitsandbytes 仓库, Ascend NPU 目前在 multi-backend-refactor 中支持",
+  "doc_text": "git clone -b multi-backend-refactor https://github.com/bitsandbytes-foundation/bitsandbytes.git\ncd bitsandbytes/",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 39.5,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n支持在已有模型的基础上复现出 DeepSeek-R1 的效果，主要需要整合 GRPO 算法，GRPO 目前已在 `git+https://github.com/huggingface/trl.git` 中得到实现\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 9762,
+  "title": "Add support for ds4sd/SmolDocling-256M-preview",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/9762",
+  "comments": 0,
+  "created": "2026-01-13",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 47.0,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 39.5,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nI would like to request support for fine-tuning ds4sd/SmolDocling-256M-preview, a small (rather old) multimodal model capable of OCR task.\n\nMotivation:\n- Exceptional OCR Performance for such a small size model.\n- Full Transformers Compatibility.\n- Wish to finetune it for my native language text recognition task.\n\nAvailable on HuggingFace:\nhttps://huggingface.co/docling-project/SmolDocling-256M-preview\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6776,
+  "title": "Template deepseekr1 does not exist",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6776",
+  "comments": 2,
+  "created": "2025-01-29",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 26.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 39.4,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\n![Image](https://github.com/user-attachments/assets/31e4373e-e9ec-49f8-a090-bdc986afbdcb)\n\nIt seems the template of \"deepseekr1\" can not be used (but it has been shown in the README).\n\n### Reproduction\n\n```text\nPut your message here.\n```\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 6718,
+  "title": "please add bitune support",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6718",
+  "comments": 0,
+  "created": "2025-01-20",
+  "labels": [
+   "enhancement",
+   "pending"
+  ],
+  "doc_score": 38.7,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 39.3,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\nplease add support for bidirectonality of the prmopts tokens and save it in the kv_cache..\nfor reference https://github.com/dkopi/Bitune/blob/main/models/think_llama.py\n\n### Pull Request\n\n_No response_"
+ },
+ {
+  "number": 6677,
+  "title": "How to print train mfu?",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6677",
+  "comments": 3,
+  "created": "2025-01-17",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 25.9,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 39.0,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nI saw that MFU calculation is supported in #5388. How can I print MFU information during training?\n\n### Reproduction\n\nI saw that MFU calculation is supported in #5388. How can I print MFU information during training? thanks for the help.\n\n\n### Others\n\n_No response_"
+ },
+ {
+  "number": 3048,
+  "title": "修改模型结构后，如何训练新的层",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3048",
+  "comments": 3,
+  "created": "2024-03-29",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 17.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 3,
+  "rank_score": 38.9,
+  "body": "### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### Reproduction\n\n您好，我添加了线形层layer，并把layer传入微调参数addtional_target，但是在get_peft_model中报错**Only Tensors of floating point and complex dtype can require gradients**\r\n```\r\nclass MyLlama(LlamaForCausalLM):\r\n    def __init__(self, config):\r\n        super(MyLlama, self).__init__(config)\r\n        self.layer = nn.Linear(4096, 4096)\r\n        self.loss = nn.CrossEntropyLoss(ignore_index=-100)\r\n        \r\n    def forward(\r\n            self,\r\n            input_ids: Optional[torch.LongTensor] = None,\r\n            attention_mask: Optional[torch.FloatTensor] = None,\r\n            position_ids: Optional[torch.LongTensor] = None,\r\n            past_key_values: Optional[List[torch.FloatTensor]] = None,\r\n            labels: Optional[torch.LongTensor] = None,\r\n            inputs_embeds: Optional[torch.FloatTensor] = None,\r\n            ou"
+ },
+ {
+  "number": 10557,
+  "title": "[Feature] Add support for MiniCPM5-1B",
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/10557",
+  "comments": 0,
+  "created": "2026-06-10",
+  "labels": [
+   "solved"
+  ],
+  "doc_score": 45.8,
+  "doc_path": "README_zh.md",
+  "doc_heading": "A3 + openEuler > 使用了 LlamaFactory 的项目",
+  "doc_text": "1. Wang et al. ESRL: Efficient Sampling-based Reinforcement Learning for Sequence Generation. 2023. [[arxiv]](https://arxiv.org/abs/2308.02223)\n1. Yu et al. Open, Closed, or Small Language Models for Text Classification? 2023. [[arxiv]](https://arxiv.org/abs/2308.10092)\n1. Wang et al. UbiPhysio: Support Daily Functioning, Fitness, and Rehabilitation with Action Understanding and Feedback in Natural Language. 2023. [[arxiv]](https://arxiv.org/abs/2308.10526)\n1. Luceri et al. Leveraging Large Language Models to Detect Influence Campaigns in Social Media. 2023. [[arxiv]](https://arxiv.org/abs/2311.07816)\n1. Zhang et al. Alleviating Hallucinations of Large Language Models through Induced Halluci",
+  "params_asked": [],
+  "params_found": [],
+  "param_ratio": 0.0,
+  "topic_hits": 2,
+  "rank_score": 38.9,
+  "body": "### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### Description\n\n### Reminder\n\n- [x] I have read the above rules and searched the existing issues.\n\n### System Info\n\nLLaMA-Factory main branch (commit on top of 9ca4026e).\n\n### Reproduction\n\nCurrently `openbmb/MiniCPM5-1B` is not present in the model registry\n(`src/llamafactory/extras/constants.py`), so it does not appear in the\nWebUI / CLI model list and there is no default template binding.\n\n### Expected behavior\n\nLLaMA-Factory should ship a built-in entry for MiniCPM5-1B so users can\nfine-tune it out-of-the-box. MiniCPM5-1B is a vanilla `LlamaForCausalLM`\nand the OpenBMB team officially recommends LLaMA-Factory with\n`template: empty` (delegating to the tokenizer's built-in\n`chat_template.jinja`).\n\nReference: https://github.com/OpenBMB/MiniCPM/blob/main/docs/finetune/llamafactory.md\n\n### Others\n\nI'd like"
+ }
+]

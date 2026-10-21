@@ -1,0 +1,29 @@
+{
+  "_comment": "第 1 周正式配置：智谱（免费）+ 本机 Ollama（免费，不花额度）。满足第 11 节步骤 1「或在本机 Ollama 里下载一个开源模型」。API key 走环境变量，绝不写在这里。",
+  "_notes": {
+    "glm-5.3-flash": "智谱，永久免费。推理模型，token 先花在 reasoning 上，max_tokens 低于 2000 会出空回答。实测短答案约 9-10 秒",
+    "qwen3-4b-local": "本机 Ollama，Qwen3-4B-Q4_K_M，实测 0.3-5 秒，不花钱",
+    "为什么不用硅基流动": "Qwen3.5-4B 是推理模型，单次生成 3505 token、耗时 128 秒，太慢。见 configs/models-siliconflow.json 备用",
+    "成本": "零。两个模型都不花钱"
+  },
+  "models": [
+    {
+      "name": "glm-5.3-flash-智谱",
+      "kind": "openai",
+      "model": "glm-5.3-flash",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "api_key_env": "ZHIPU_API_KEY",
+      "temperature": 0.0,
+      "max_tokens": 4000
+    },
+    {
+      "name": "qwen3-4b-本地",
+      "kind": "ollama",
+      "model": "qwen3-4b-local",
+      "base_url": "http://127.0.0.1:11434",
+      "api_key_env": "",
+      "temperature": 0.0,
+      "max_tokens": 800
+    }
+  ]
+}

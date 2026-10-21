@@ -1,0 +1,29 @@
+[
+ {
+  "id": 1,
+  "issue": 9555,
+  "issue_url": "https://github.com/hiyouga/LlamaFactory/issues/9555",
+  "question": "Multimodal Image Dataset mllm_demo support system prompt？",
+  "answer": "（冒烟测试，未填标准答案）",
+  "doc_location": "docs/zh/feature-guide/data_preparation.md",
+  "split": "optimize"
+ },
+ {
+  "id": 2,
+  "issue": 3300,
+  "issue_url": "https://github.com/hiyouga/LlamaFactory/issues/3300",
+  "question": "微调参数learning_rate，num_train_epochs 不生效",
+  "answer": "（冒烟测试，未填标准答案）",
+  "doc_location": "examples/README_zh.md",
+  "split": "optimize"
+ },
+ {
+  "id": 3,
+  "issue": 6584,
+  "issue_url": "https://github.com/hiyouga/LlamaFactory/issues/6584",
+  "question": "How to set save_steps? I set a 15,000, and mine has more than 34,000 steps. I just trained 1.28epoch at first sight, and directly generated 57GB checkpoints for me to dry up the hard disk.",
+  "answer": "（冒烟测试，未填标准答案）",
+  "doc_location": "README_zh.md",
+  "split": "optimize"
+ }
+]

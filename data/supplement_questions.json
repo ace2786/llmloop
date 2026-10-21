@@ -1,0 +1,101 @@
+[
+ {
+  "issue": 3420,
+  "question": "如何在 sft llama 时添加 special token？",
+  "answer": "使用 `new_special_tokens` 参数：要添加到 tokenizer 中的 special token，多个用逗号分隔，默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "evidence": "| new_special_tokens | Optional[str] | 要添加到 tokenizer 中的 special token。多个 special token 用逗号分隔。 | None |",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #3420"
+ },
+ {
+  "issue": 5512,
+  "question": "How to train the mm_proj and the LLM part with lora of Qwen2-VL？",
+  "answer": "由 `train_mm_proj_only` 控制：默认 false 表示同时训练多模态投影器与 LLM 部分；设为 true 则仅训练投影器。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+  "evidence": "| train_mm_proj_only | bool | 是否仅训练多模态投影器。 | False |",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #5512"
+ },
+ {
+  "issue": 1089,
+  "question": "model.chat 功能怎么在框架内批量使用呢？",
+  "answer": "使用 `llamafactory-cli chat inference_config.yaml` 或 `llamafactory-cli webchat inference_config.yaml` 进行推理与模型对话。",
+  "doc_location": "webdocs/getting_started__inference.md > 推理¶",
+  "evidence": "您可以使用 `llamafactory-cli chat inference_config.yaml` 或 `llamafactory-cli webchat inference_config.yaml` 进行推理与模型对话。",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #1089"
+ },
+ {
+  "issue": 228,
+  "question": "rm 阶段 do_predict 的 accept_score 和 reject_score 如何理解？",
+  "answer": "rm 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答；若某些样本的 accept_score 与 reject_score 接近，说明该样本的评分接近，难以区分接受或拒绝。",
+  "doc_location": "docs/zh/feature-guide/rm.md > 奖励模型训练（RM）",
+  "evidence": "`rm` 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答。RM 与 DPO 使用相同的偏好对数据结构，输出模型用于回答评分，不作为普通聊天模型使用。如果有些样本 accept_score 和 reject_score 分数接近，代表这些样本的评分接近，可能难以区分接受或拒绝。",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #228"
+ },
+ {
+  "issue": 8612,
+  "question": "请教下在 finetuning_type 为 full 的情况下，冻结参数的设置会生效吗？",
+  "answer": "Freeze 是独立的微调方法（`finetuning_type: freeze`），直接更新指定层或模块的权重、其余参数保持冻结；文档未说明 finetuning_type 为 full 时该配置是否生效。",
+  "doc_location": "docs/zh/feature-guide/sft.md > 监督微调（SFT） > Freeze",
+  "evidence": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #8612"
+ },
+ {
+  "issue": 6237,
+  "question": "如何设置模型推理的一些参数如 temperature？",
+  "answer": "通过 `temperature` 参数设置：用于调整生成文本的随机性，默认值 0.95；temperature 越高生成越随机，越低越确定。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "evidence": "| temperature | float | 用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。 | 0.95 |",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #6237"
+ },
+ {
+  "issue": 1964,
+  "question": "请问在推理或预测的时候如何指定 temperature 等参数？",
+  "answer": "在推理配置中设置 `temperature`（默认 0.95，越高越随机、越低越确定）；同时可用 `top_p`（默认 0.7）与 `top_k`（默认 50）控制候选 token 集合大小。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "evidence": "| temperature | float | 用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。 | 0.95 |\n| top_p | float | 用于控制生成时候选 token 集合大小的参数。 | 0.7 |\n| top_k | int | 用于控制生成时候选 token 集合大小的参数。 | 50 |",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #1964"
+ },
+ {
+  "issue": 5360,
+  "question": "昇腾多机训练怎么设置？",
+  "answer": "通过环境变量 `ASCEND_RT_VISIBLE_DEVICES` 选择要使用的 NPU 设备。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 环境变量¶",
+  "evidence": "ASCEND_RT_VISIBLE_DEVICES | General | NPU 选择。",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #5360"
+ },
+ {
+  "issue": 1726,
+  "question": "求教怎么使用本地下载的模型？",
+  "answer": "将 `model_name_or_path` 指向本地模型目录路径；若需注册自定义模型组，使用 `register_model_group(models={...})`。",
+  "doc_location": "webdocs/advanced__model_support.md > 模型支持¶",
+  "evidence": "register_model_group(models={...})",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #1726"
+ },
+ {
+  "issue": 4261,
+  "question": "命令行如何中断训练及其恢复训练？",
+  "answer": "恢复训练使用 `resume_from_checkpoint`：设为 checkpoint 路径或 `auto`（自动在 output_dir 下查找最新完整 checkpoint）；文档未说明命令行中断训练的方式。",
+  "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > Checkpoint 与日志配置",
+  "evidence": "| `resume_from_checkpoint` | `str \\| None` | `None` | checkpoint 路径或 `auto` |",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #4261"
+ },
+ {
+  "issue": 3656,
+  "question": "How to use accelerate to SFT with multiple machines?",
+  "answer": "使用 accelerate 启动并指定多机配置文件：`accelerate launch --config_file fsdp_config_multiple_nodes.yaml train.py llm_config.yaml`。",
+  "doc_location": "webdocs/advanced__distributed.md > 分布式训练¶",
+  "evidence": "accelerate launch --config_file fsdp_config_multiple_nodes.yaml train.py llm_config.yaml",
+  "source": "real-supplement",
+  "origin": "GitHub Issue #3656"
+ }
+]

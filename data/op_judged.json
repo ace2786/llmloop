@@ -1,0 +1,1248 @@
+{
+ "3420": {
+  "ok": true,
+  "pick": 1,
+  "answer": "要添加到 tokenizer 中的 special token。",
+  "quote": "new_special_tokens | Optional[str] | 要添加到 tokenizer 中的 special token。多个 special token 用逗号分隔。 | None",
+  "reason": "段落1明确提到了添加 special token 的参数和用法。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "text": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| model_name_or_path | Optional[str] | 模型路径（本地路径或 Huggingface/ModelScope 路径）。 | None |\n| adapter_name_or_path | Optional[str] | 适配器路径（本地路径或 Huggingface/ModelScope 路径）。使用逗号分隔多个适配器路径。 | None |\n| adapter_folder | Optional[str] | 包含适配器权重的文件夹路径。 | None |\n| cache_dir | Optional[str] | 保存从 Hugging Face 或 ModelScope 下载的模型的本地路径。 | None |\n| use_fast_tokenizer | bool | 是否使用 fast_tokenizer 。 | True |\n| resize_vocab | bool | 是否调整词表和嵌入层的大小。 | False |\n| split_special_tokens | bool | 是否在分词时将 special token 分割。 | False |\n| new_special_tokens | Optional[str] | 要添加到 tokenizer 中的 special token。多个 special token 用逗号分隔。 | None |\n| model_revision | str | 所使用的特定模型版本。 | main |\n| low_cpu_mem_usage | bool | 是否使用节省内存的模型加载方式。 | True |\n| rope_scaling | Optional[Literal[“linear”, “dynamic”, “yarn”, “llama3”]] | RoPE Embedding 的缩放策略，支持 linear、dynamic、yarn 或 llama3。 | None |\n| flash_attn | Literal[“auto”, “disabled”, “sdpa”, “fa2”] | 是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。 | auto |\n| shift_attn | bool | 是否启用 Shift Short Attention (S^2-Attn)。 | False |\n| mixture_of_depths | Optional[Literal[“convert”, “load”]] | 需要将模型转换为 mixture_of_depths（MoD）模型时指定： convert 需要加载 mixture_of_depths（MoD）模型时指定： load。 | None |\n| use_unsloth | bool | 是否使用 unsloth 优化 LoRA 微调。 | False |\n| use_unsloth_gc | bool | 是否使用 unsloth 的梯度检查点。 | False |\n| enable_liger_kernel | bool | 是否启用 liger 内核以加速训练。 | False |\n| moe_aux_loss_coef | Optional[float] | MoE 架构中 aux_loss 系数。数值越大，各个专家负载越均衡。 | None |\n| di"
+ },
+ "5512": {
+  "ok": true,
+  "pick": 9,
+  "answer": "train_mm_proj_only: True",
+  "quote": "train_mm_proj_only: bool | 是否仅训练多模态投影器。 | False",
+  "reason": "用户提问中提到训练多模态投影器和LLM部分，文档中明确指出train_mm_proj_only参数用于控制是否仅训练多模态投影器，且默认值为False。用户提问中提到将其设置为True，文档中确实有这个参数及其说明。",
+  "path": "docs/zh/feature-guide/dpo.md",
+  "heading": "偏好优化（DPO） > 训练配置",
+  "text": "`peft_config.name: lora` 启用 LoRA，未配置 `peft_config` 时进行全参训练。以下是完整的 LoRA DPO 配置，保存为 `config.yaml` 后运行 `llamafactory-cli dpo config.yaml`：\n\n```yaml\nmodel: Qwen/Qwen3-4B\nmodel_class: llm\ntrain_dataset: data/v1_dpo_demo.yaml\n\npeft_config:\n  name: lora\n  r: 16\n  lora_alpha: 32\n  target_modules: all\n\npref_loss: sigmoid\npref_beta: 0.1\npref_ftx: 0.0\ndpo_label_smoothing: 0.0\n\ndist_config:\n  name: fsdp2\n\noutput_dir: outputs/qwen3_dpo\nmicro_batch_size: 1\ncutoff_len: 2048\nlearning_rate: 1.0e-5\nmax_steps: 10\n```"
+ },
+ "3395": {
+  "ok": true,
+  "pick": 15,
+  "answer": "启用 LoRA，未配置 peft_config 时进行全参训练。",
+  "quote": "未配置 peft_config 时进行全参训练。",
+  "reason": "直接回答了如何进行DPO训练，即启用LoRA，未配置peft_config时进行全参训练。",
+  "path": "docs/zh/feature-guide/dpo.md",
+  "heading": "偏好优化（DPO） > 训练配置",
+  "text": "`peft_config.name: lora` 启用 LoRA，未配置 `peft_config` 时进行全参训练。以下是完整的 LoRA DPO 配置，保存为 `config.yaml` 后运行 `llamafactory-cli dpo config.yaml`：\n\n```yaml\nmodel: Qwen/Qwen3-4B\nmodel_class: llm\ntrain_dataset: data/v1_dpo_demo.yaml\n\npeft_config:\n  name: lora\n  r: 16\n  lora_alpha: 32\n  target_modules: all\n\npref_loss: sigmoid\npref_beta: 0.1\npref_ftx: 0.0\ndpo_label_smoothing: 0.0\n\ndist_config:\n  name: fsdp2\n\noutput_dir: outputs/qwen3_dpo\nmicro_batch_size: 1\ncutoff_len: 2048\nlearning_rate: 1.0e-5\nmax_steps: 10\n```"
+ },
+ "4261": {
+  "ok": true,
+  "pick": 8,
+  "answer": "可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "quote": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "reason": "用户提问关于中断和恢复训练，该段落明确提到了使用 `resume_from_checkpoint` 来恢复训练，直接回答了问题。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+  "text": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nresume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000\n\n```\n通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。\n备注\n如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度。"
+ },
+ "6043": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何处理微调后的模型输出后不能正常停止的具体解决方案。"
+ },
+ "6165": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何得到每条数据的 loss。"
+ },
+ "102": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何让模型学到监督数据并给出准确回答的具体步骤或方法。"
+ },
+ "4012": {
+  "ok": false,
+  "reason": "文档中没有提供关于模型PPO之后已读乱回的具体解决方案。"
+ },
+ "1000": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to perform multi-card inference when `do_eval` is set and memory issues occur. The paragraphs mainly discuss various configurations and commands for training and inference, but do not specifically address the issue of memory overflow when using multiple GPUs."
+ },
+ "5876": {
+  "ok": false,
+  "reason": "没有提供关于如何实现API推荐分析文件的具体信息。"
+ },
+ "4103": {
+  "ok": true,
+  "pick": 8,
+  "answer": "finetuning_type: lora",
+  "quote": "finetuning_type: lora",
+  "reason": "用户提问中要求开启qlora训练，文档中明确指出finetuning_type设置为lora即可开启qlora训练。",
+  "path": "examples/train_qlora/llama3_lora_sft_gptq.yaml",
+  "heading": "examples/train_qlora/llama3_lora_sft_gptq.yaml",
+  "text": "### model\nmodel_name_or_path: TechxGenus/Meta-Llama-3-8B-Instruct-GPTQ\ntrust_remote_code: true\n\n### method\nstage: sft\ndo_train: true\nfinetuning_type: lora\nlora_rank: 8\nlora_target: all\n\n### dataset\ndataset: identity,alpaca_en_demo\ntemplate: llama3\ncutoff_len: 2048\nmax_samples: 1000\npreprocessing_num_workers: 16\ndataloader_num_workers: 4\n\n### output\noutput_dir: saves/llama3-8b/lora/sft\nlogging_steps: 10\nsave_steps: 500\nplot_loss: true\noverwrite_output_dir: true\nsave_only_model: false\nreport_to: none  # choices: [none, wandb, tensorboard, swanlab, mlflow]\n\n### train\nper_device_train_batch_size: 1\ngradient_accumulation_steps: 8\nlearning_rate: 1.0e-4\nnum_train_epochs: 3.0\nlr_scheduler_type: cosine\nwarmup_ratio: 0.1\nbf16: true\nddp_timeout: 180000000\n\n### eval\n# val_size: 0.1\n# per_device_eval_batch_size: 1\n# eval_strategy: steps\n# eval_steps: 500\n"
+ },
+ "5808": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific instruction on how to disable the validation set."
+ },
+ "5628": {
+  "ok": true,
+  "pick": 2,
+  "answer": "从训练 checkpoint 继续训练",
+  "quote": "从训练 checkpoint 继续训练",
+  "reason": "段落明确提到了从训练 checkpoint 继续训练的方法。",
+  "path": "docs/zh/feature-guide/model_saving.md",
+  "heading": "模型保存与恢复 > 初始化权重与恢复训练",
+  "text": "| 配置 | 用途 | 加载时机 | 恢复内容 |\n|------|------|----------|----------|\n| `dist_config.dcp_path` | 使用 DCP 权重初始化模型 | FSDP2/FSDPTurbo 模型分片阶段 | 仅模型权重 |\n| `resume_from_checkpoint` | 从训练 checkpoint 继续训练 | Trainer 初始化阶段 | 模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态 |\n\n以下配置使用已有 DCP 模型权重初始化新训练：\n\n```yaml\ndist_config:\n  name: fsdp2\n  dcp_path: path/to/dcp_model\n```\n\n以下配置从 `output_dir` 中最新的完整 checkpoint 恢复训练状态：\n\n```yaml\nresume_from_checkpoint: auto\n```"
+ },
+ "5392": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about parameters being overridden by configuration files during model training. The paragraphs mainly discuss different training configurations and commands, but do not specifically address the issue of parameter overriding."
+ },
+ "3644": {
+  "ok": true,
+  "pick": 15,
+  "answer": "微调参数包括 pure_bf16, stage, finetuning_type, use_llama_pro, use_adam_mini, freeze_vision_tower, freeze_multi_modal_projector, train_mm_proj_only, compute_accuracy, disable_shuffling, plot_loss, include_effective_tokens_per_second",
+  "quote": "微调参数包括 pure_bf16, stage, finetuning_type, use_llama_pro, use_adam_mini, freeze_vision_tower, freeze_multi_modal_projector, train_mm_proj_only, compute_accuracy, disable_shuffling, plot_loss, include_effective_tokens_per_second",
+  "reason": "段落中明确列出了所有微调参数及其介绍。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 微调参数¶ > 基本参数¶",
+  "text": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| pure_bf16 | bool | 是否以纯 bf16 精度训练模型（不使用 AMP）。 | False |\n| stage | Literal[“pt”, “sft”, “rm”, “ppo”, “dpo”, “kto”] | 训练阶段 | sft |\n| finetuning_type | Literal[“lora”, “freeze”, “full”] | 微调方法 | lora |\n| use_llama_pro | bool | 是否仅训练扩展块中的参数（LLaMA Pro 模式）。 | False |\n| use_adam_mini | bool | 是否使用 Adam-mini 优化器。 | False |\n| freeze_vision_tower | bool | MLLM 训练时是否冻结视觉塔。 | True |\n| freeze_multi_modal_projector | bool | MLLM 训练时是否冻结多模态投影器。 | True |\n| train_mm_proj_only | bool | 是否仅训练多模态投影器。 | False |\n| compute_accuracy | bool | 是否在评估时计算 token 级别的准确率。 | False |\n| disable_shuffling | bool | 是否禁用训练集的随机打乱。 | False |\n| plot_loss | bool | 是否保存训练过程中的损失曲线。 | False |\n| include_effective_tokens_per_second | bool | 是否计算有效的每秒 token 数。 | False |"
+ },
+ "5360": {
+  "ok": true,
+  "pick": 15,
+  "answer": "ASCEND_RT_VISIBLE_DEVICES",
+  "quote": "ASCEND_RT_VISIBLE_DEVICES | General | NPU 选择。",
+  "reason": "用户提问关于昇腾多机训练的设置，文档中明确提到了 ASCEND_RT_VISIBLE_DEVICES 参数用于 NPU 选择，这是设置昇腾多机训练的关键参数。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 环境变量¶",
+  "text": "| 名称 | 类型 | 介绍 |\n| API_HOST | API | API 服务器监听的主机地址 |\n| API_PORT | API | API 服务器监听的端口号 |\n| API_KEY | API | 访问 API 的密码。 |\n| API_MODEL_NAME | API | 指定 API 服务要加载和使用的模型名称 |\n| API_VERBOSE | API | 控制 API 日志的详细程度 |\n| FASTAPI_ROOT_PATH | API | 设置 FastAPI 应用的根路径 |\n| MAX_CONCURRENT | API | API 的最大并发请求数。 |\n| DISABLE_VERSION_CHECK | General | 是否禁用启动时的版本检查。 |\n| FORCE_CHECK_IMPORTS | General | 强制检查可选的导入 |\n| ALLOW_EXTRA_ARGS | General | 允许在命令行中传递额外参数 |\n| LLAMAFACTORY_VERBOSITY | General | 设置 LlamaFactory 的日志级别(“DEBUG”,”INFO”,”WARN”) |\n| USE_MODELSCOPE_HUB | General | 优先使用 ModelScope 下载模型/数据集或使用缓存路径中的模型/数据集 |\n| USE_OPENMIND_HUB | General | 优先使用 Openmind 下载模型/数据集或使用缓存路径中的模型/数据集 |\n| USE_RAY | General | 是否使用 Ray 进行分布式执行或任务管理。 |\n| RECORD_VRAM | General | 是否记录 VRAM 使用情况。 |\n| OPTIM_TORCH | General | 是否表示启用特定的 PyTorch 优化。 |\n| NPU_JIT_COMPILE | General | 是否为 NPU启用 JIT 编译。 |\n| CUDA_VISIBLE_DEVICES | General | GPU 选择。 |\n| ASCEND_RT_VISIBLE_DEVICES | General | NPU 选择。 |\n| FORCE_TORCHRUN | Torchrun | 是否强制使用 torchrun 启动脚本 |\n| MASTER_ADDR | Torchrun | Torchrun部署中主节点 (master node) 的网络地址 |\n| MASTER_PORT | Torchrun | Torchrun部署中主节点用于通信的端口号 |\n| NNODES | Torchrun | 参与分布式部署的总节点数量 |\n| NODE_RANK | Torchrun | 当前节点在所有节点中的 rank，通常从 0 到 NNODES-1。 |\n| NPROC_PER_NODE | Torchrun | 每个节点上的 GPU 数 |\n| WANDB_DISABLED | Log | 是否禁用 wandb |\n| WANDB_PROJECT | Log | 设置 wandb 中的项目名称。 |\n| WANDB_API_KEY | Log | 访问 wandb 的 api key |\n| GRADIO_SHARE | Web UI | 是否创建一个可共享的 webui 链接 |\n| GRADIO_SERVER_NAME | Web UI | 设置 Gradio 服务器 IP 地址（例如 "
+ },
+ "6759": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何将全参数微调的结果作为后续LoRA微调的base model。"
+ },
+ "79": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何确定训练超参数值的具体信息。"
+ },
+ "9218": {
+  "ok": false,
+  "reason": "没有提供关于如何组织带有 <think> 内容的 Qwen3 数据集的具体信息。"
+ },
+ "10322": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何设置知道验证集数据是哪些。"
+ },
+ "1880": {
+  "ok": false,
+  "reason": "文档中没有明确说明rm训练完成后如何使用新数据集继续训练rm。"
+ },
+ "7226": {
+  "ok": true,
+  "pick": 17,
+  "answer": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。",
+  "quote": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。",
+  "reason": "该段落明确说明了在多模态图像数据集中需要添加 `images` 列来包含输入图像的路径。",
+  "path": "webdocs/getting_started__data_preparation.md",
+  "heading": "数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶",
+  "text": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。\n\n```\n[\n {\n \"instruction\": \"人类指令（必填）\",\n \"input\": \"人类输入（选填）\",\n \"output\": \"模型回答（必填）\",\n \"images\": [\n \"图像路径（必填）\"\n ]\n }\n]\n\n```\n对于上述格式的数据， `dataset_info.json` 中的 数据集描述 应为：\n\n```\n\"dataset_name\": {\n \"file_name\": \"data.json\",\n \"columns\": {\n \"prompt\": \"instruction\",\n \"query\": \"input\",\n \"response\": \"output\",\n \"images\": \"images\"\n }\n}\n\n```"
+ },
+ "1949": {
+  "ok": true,
+  "pick": 6,
+  "answer": "设置 `name: lora`",
+  "quote": "设置 `name: lora`",
+  "reason": "用户提问关于LoRA训练的DeepSpeed配置，文档中明确指出需要设置`name: lora`。",
+  "path": "docs/zh/configuration/model.md",
+  "heading": "模型参数 > peft_config > LoRA",
+  "text": "设置 `name: lora`：\n\n| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `r` | `int` | `8` | LoRA rank |\n| `lora_alpha` | `int` | `16` | LoRA alpha |\n| `lora_dropout` | `float` | `0.05` | LoRA dropout |\n| `target_modules` | `list[str] \\| str` | `all` | 目标模块 |\n| `use_rslora` | `bool` | `false` | 是否启用 RS-LoRA |\n| `use_dora` | `bool` | `false` | 是否启用 DoRA |\n| `modules_to_save` | `list[str] \\| None` | `None` | 额外保存模块 |\n| `adapter_name_or_path` | `list[str] \\| str \\| None` | `None` | adapter 路径 |\n| `export_dir` | `str \\| None` | `None` | 合并导出目录 |\n| `export_size` | `int` | `5` | 导出分片大小，GB |\n| `export_hub_model_id` | `str \\| None` | `None` | Hub 仓库 ID |\n| `infer_dtype` | `str` | `auto` | `auto`、`float16`、`float32` 或 `bfloat16` |\n| `export_legacy_format` | `bool` | `false` | 是否使用旧式权重格式 |"
+ },
+ "3482": {
+  "ok": true,
+  "pick": 16,
+  "answer": "通过在指令 `python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。",
+  "quote": "同样，您也通过在指令 `pythonscripts/vllm_infer.py--model_name_or_pathpath_to_merged_model--datasetalpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。",
+  "reason": "该段落明确说明了如何使用 vllm 进行批量推理，并提供了具体的命令示例。",
+  "path": "webdocs/getting_started__eval.md",
+  "heading": "评估¶ > NLG 评估¶ > eval",
+  "text": "per_device_eval_batch_size: 1\npredict_with_generate: true\nddp_timeout: 180000000\n\n```\n同样，您也通过在指令 `pythonscripts/vllm_infer.py--model_name_or_pathpath_to_merged_model--datasetalpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。"
+ },
+ "1804": {
+  "ok": false,
+  "reason": "文档中没有明确说明SFT阶段和RM阶段选择full时，eval和cli推理的具体参数设置。"
+ },
+ "4350": {
+  "ok": false,
+  "reason": "没有找到具体的答案，只提到了关键词 'val_size' 和 'eval_loss'。"
+ },
+ "4297": {
+  "ok": false,
+  "reason": "文档中没有明确指出Qwen72b 910b280T需要多少节点进行微调。虽然提到了分布式微调的配置，但没有针对特定模型和硬件配置给出具体的节点数量。"
+ },
+ "3942": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何根据自定义的评估指标来保存最优模型。"
+ },
+ "3558": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information on how to modify the default download path for models from Huggingface."
+ },
+ "5588": {
+  "ok": false,
+  "reason": "没有提供关于如何确保结果完全可复现的具体信息。"
+ },
+ "6294": {
+  "ok": true,
+  "pick": 5,
+  "answer": "一个按 step 定期保存 checkpoint 的示例如下：",
+  "quote": "一个按 step 定期保存 checkpoint 的示例如下：",
+  "reason": "该段落提供了一个按 step 定期保存 checkpoint 的示例，暗示了可以通过配置来保存验证集的损失曲线。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存策略¶",
+  "text": "LlamaFactory 的 checkpoint 保存行为主要由以下参数控制：\n`save_strategy`：控制保存策略，通常可设为 `steps`、`epoch` 或 `no`。\n`save_steps`：当 `save_strategy:steps` 时，每训练多少个 step 保存一次 checkpoint。\n`save_total_limit`：最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint。\n一个按 step 定期保存 checkpoint 的示例如下：\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nsave_strategy: steps\nsave_steps: 200\nsave_total_limit: 3\n\n```\n上述配置表示训练过程中每 200 个 step 保存一次 checkpoint，并且最多保留 3 个最近的 checkpoint。\n如果希望按 epoch 保存，可改为：\n\n```\nsave_strategy: epoch\n\n```\n如果不希望在训练过程中保存 checkpoint，可设为：\n\n```\nsave_strategy: no\n\n```"
+ },
+ "5513": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在SFT微调训练过程中使用opacus加入差分隐私处理。虽然提到了opacus的使用方法，但没有具体说明在SFT训练中如何修改训练函数以加入差分隐私。"
+ },
+ "7891": {
+  "ok": false,
+  "reason": "没有提供关于加载tokenizer慢的具体解决方案或原因。文档中没有直接针对此问题的答案。"
+ },
+ "6234": {
+  "ok": true,
+  "pick": 10,
+  "answer": "可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "quote": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "reason": "用户提问中提到使用已有的最佳检查点进行新的训练，文档中明确提到了使用 `resume_from_checkpoint` 来恢复训练，符合用户需求。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+  "text": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nresume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000\n\n```\n通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。\n备注\n如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度。"
+ },
+ "8344": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何部署和调用reward model的具体步骤。虽然提供了训练reward model的配置示例，但没有提供部署和调用的信息。"
+ },
+ "9666": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何提高 LoRA 微调大模型效果的具体方法。"
+ },
+ "4086": {
+  "ok": false,
+  "reason": "没有提供使用CPU进行推理的具体步骤或命令。"
+ },
+ "1842": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在SFT freeze时仅保存adapter而不是整个model。"
+ },
+ "1726": {
+  "ok": true,
+  "pick": 1,
+  "answer": "register_model_group",
+  "quote": "register_model_group(models={...})",
+  "reason": "段落1中明确提到了register_model_group函数，这是用于注册模型组的函数，与用户提问中提到的如何使用本地下载的模型相关。",
+  "path": "webdocs/advanced__model_support.md",
+  "heading": "https://github.com/hiyouga/LlamaFactory/blob/da971c37640de20f97b4d774e77e6f8d5c00b40a/src/llamafactory/data/mm_plugin.py#L264 > 提供模型路径¶",
+  "text": "```\nregister_model_group(\nmodels={\n \"Llama-4-Scout-17B-16E\": {\n DownloadSource.DEFAULT: \"meta-llama/Llama-4-Scout-17B-16E\",\n DownloadSource.MODELSCOPE: \"LLM-Research/Llama-4-Scout-17B-16E\",\n },\n \"Llama-4-Scout-17B-16E-Instruct\": {\n DownloadSource.DEFAULT: \"meta-llama/Llama-4-Scout-17B-16E-Instruct\",\n DownloadSource.MODELSCOPE: \"LLM-Research/Llama-4-Scout-17B-16E-Instruct\",\n },\n \"Llama-4-Maverick-17B-128E\": {\n DownloadSource.DEFAULT: \"meta-llama/Llama-4-Maverick-17B-128E\",\n DownloadSource.MODELSCOPE: \"LLM-Research/Llama-4-Maverick-17B-128E\",\n },\n \"Llama-4-Maverick-17B-128E-Instruct\": {\n DownloadSource.DEFAULT: \"meta-llama/Llama-4-Maverick-17B-128E-Instruct\",\n DownloadSource.MODELSCOPE: \"LLM-Research/Llama-4-Maverick-17B-128E-Instruct\",\n },\n},\ntemplate=\"llama4\",\nmultimodal=True,\n)\n\n```"
+ },
+ "6387": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about reproducing paper results."
+ },
+ "6167": {
+  "ok": false,
+  "reason": "用户提问中提到的训练性能指标分析，文档中没有直接提供逐字对应的答案。文档中虽然提到了训练日志、样本数、tokens等信息，但没有明确说明如何分析训练日志中的性能指标。"
+ },
+ "5888": {
+  "ok": false,
+  "reason": "文档中没有提供关于二次预训练阶段全参微调时损失曲线是否正常以及如何优化的具体信息。"
+ },
+ "5436": {
+  "ok": false,
+  "reason": "没有提供关于微调后词表长度不一致的具体解决方案。"
+ },
+ "9291": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何量化（压缩）Qwen3-14B进行SFT后的模型。"
+ },
+ "8262": {
+  "ok": false,
+  "reason": "文档中没有明确说明Stream模式、epoch和steps的设置方法。"
+ },
+ "6581": {
+  "ok": false,
+  "reason": "The document does not provide a specific formula or method for calculating max_steps when training with multiple datasets in sft mode."
+ },
+ "3809": {
+  "ok": false,
+  "reason": "文档中没有提供7B模型全量微调60GB的执行脚本的具体编写方法。"
+ },
+ "6257": {
+  "ok": true,
+  "pick": 1,
+  "answer": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。",
+  "quote": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。",
+  "reason": "用户提问关于单机多卡训练，该段落明确指出可以使用 llamafactory-cli 启动 NativeDDP 引擎进行单机多卡训练。",
+  "path": "webdocs/advanced__distributed.md",
+  "heading": "分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactory-cli¶",
+  "text": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。\n\n```\nFORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n如果 `CUDA_VISIBLE_DEVICES` 没有指定，则默认使用所有GPU。如果需要指定GPU，例如第0、1个GPU，可以使用：\n\n```\nFORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```"
+ },
+ "3761": {
+  "ok": true,
+  "pick": 2,
+  "answer": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n也可以通过追加参数更新 yaml 文件中的参数:\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \n learning_rate=1e-5 \n logging_steps=1\n```\n",
+  "quote": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n也可以通过追加参数更新 yaml 文件中的参数:\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \n learning_rate=1e-5 \n logging_steps=1\n```\n",
+  "reason": "该段落提供了修改预览命令和添加训练参数的方法，包括使用 `llamafactory-cli` 命令和追加参数的方式。",
+  "path": "webdocs/getting_started__sft.md",
+  "heading": "SFT 训练¶ > 命令行¶",
+  "text": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n也可以通过追加参数更新 yaml 文件中的参数:\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n learning_rate=1e-5 \\\n logging_steps=1\n\n```\n备注\nLlamaFactory 默认使用所有可见的计算设备。根据需求可通过 `CUDA_VISIBLE_DEVICES` 或 `ASCEND_RT_VISIBLE_DEVICES` 指定计算设备。\n`examples/train_lora/qwen3_lora_sft.yaml` 提供了微调时的配置示例。该配置指定了模型参数、微调方法参数、数据集参数以及评估参数等。您需要根据自身需求自行配置。\n\n```"
+ },
+ "8605": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何设计数据集以避免量化后的模型输出叹号的具体信息。"
+ },
+ "5440": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain information about using beam search with OpenAI style deployment."
+ },
+ "3740": {
+  "ok": false,
+  "reason": "文档中没有明确提到'持续预训练'的概念，也没有提供在单机多卡上执行该操作的具体命令或步骤。"
+ },
+ "1462": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何使用8bit model做inference的具体步骤或参数配置。虽然提到了quantization_bit参数，但没有详细说明如何进行8bit量化以及如何使用量化后的模型进行推理。"
+ },
+ "3399": {
+  "ok": false,
+  "reason": "The document does not explicitly mention how to save weights as .safetensors. The closest related information is found in the 'export_hub_model_id' parameter description under '模型导出' (Model Export) section, which is about uploading models to Hugging Face Hub, but it does not specify the file format."
+ },
+ "3448": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何使用DPO对量化后的模型进行微调。虽然提到了量化技术，但没有提供关于DPO与量化模型结合的具体流程。"
+ },
+ "3048": {
+  "ok": false,
+  "reason": "用户提问中并未明确指出需要查找的答案，只是描述了遇到的问题和报错信息。提供的候选段落中也没有直接回答用户提问的内容。"
+ },
+ "5682": {
+  "ok": true,
+  "pick": 9,
+  "answer": "通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.",
+  "quote": "通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.",
+  "reason": "直接回答了如何找到模型对应的模板，包括通过观察输出和通过 huggingface repo 获取。",
+  "path": "webdocs/advanced__model_support.md",
+  "heading": "模型支持¶ > 注册 template¶",
+  "text": "首先，我们可以通过以下方法获取 LLaMA-4 模型的 template：\n\n```\nfrom transformers import AutoTokenizer, AutoProcessor\n\ntokenizer = AutoTokenizer.from_pretrained(\"unsloth/Llama-4-Scout-17B-16E-Instruct\")\nmessages = [\n {\"role\": \"user\", \"content\": r\"{{content}}\"},\n {\"role\": \"assistant\", \"content\": r\"{{content}}\"},\n {\"role\": \"system\", \"content\": r\"{{content}}\"},\n {\"role\": \"tool\", \"content\": r\"{{content}}\"}\n]\n\ntext = tokenizer.apply_chat_template(messages, tokenize=False,add_generation_prompt=True)\nprint(\"========== Template ==========\")\nprint(text)\n\n```\n输出如下。通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.\n\n```\n========== Template ==========\n<|begin_of_text|><|header_start|>user<|header_end|>\n\n{{content}}<|eot|><|header_start|>assistant<|header_end|>"
+ },
+ "6552": {
+  "ok": false,
+  "reason": "The user question asks about batched inference for the Qwen2-vl dataset, but the provided candidate paragraphs do not contain specific instructions or details on how to perform batched inference for this dataset."
+ },
+ "3982": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在训练中指定eval_steps定期评估，也没有提供关于如何修改源代码来构造train_dataset和eval_dataset的具体信息。"
+ },
+ "6186": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to fine-tune added special tokens only."
+ },
+ "5607": {
+  "ok": true,
+  "pick": 17,
+  "answer": "您可以运行以下指令进行推理。",
+  "quote": "对于多模态模型，您可以运行以下指令进行推理。",
+  "reason": "用户提问中提到了 'qwen2-vl how to inference from trained model'，而第17段明确提到了如何进行推理的指令。",
+  "path": "webdocs/getting_started__inference.md",
+  "heading": "推理¶ > 多模态模型¶",
+  "text": "对于多模态模型，您可以运行以下指令进行推理。\n\n```\nllamafactory-cli webchat examples/inference/qwen3vl.yaml\n\n```\n`examples/inference/qwen3vl.yaml` 的配置示例如下：\n\n```\nmodel_name_or_path: Qwen/Qwen3-VL-4B-Instruct\ntemplate: qwen3_vl\ninfer_backend: huggingface #choices： [huggingface, vllm]\ntrust_remote_code: true\n\n```"
+ },
+ "2822": {
+  "ok": true,
+  "pick": 3,
+  "answer": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。",
+  "quote": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。",
+  "reason": "该段落明确描述了训练 YAML 和数据集 YAML 的结构，包括必要的字段。",
+  "path": "docs/zh/feature-guide/data_preparation.md",
+  "heading": "数据准备 > 配置训练数据集",
+  "text": "训练 YAML 的 `train_dataset` 指定数据来源。数据文件路径或 Hub ID 对应单个 Messages 格式数据集；数据集 YAML 则通过条目描述数据路径、split、converter 和采样配置，并支持组合多个数据集。\n\n训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。下文“组合多个数据集”展示数据集 YAML 的结构。\n\n`train_dataset` 接受以下形式：\n\n- 本地数据集 YAML，例如 `data/v1_sft_demo.yaml`\n- 本地数据文件或目录\n- Hugging Face Hub 数据集 ID\n- Hub 数据集仓库中的 YAML\n\n`eval_dataset` 字段已定义，评估流程尚未实现。完整字段见[数据参数](../configuration/data.md#dataarguments)。"
+ },
+ "3777": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about estimating total steps and setting proper hyperparameters for LoRA or Full SFT. The paragraphs discuss various configurations and settings but do not provide a step-by-step guide or formula for estimating the total number of training steps."
+ },
+ "8447": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a clear answer to the user's question about how to use the LlamaFactory API with audio."
+ },
+ "81": {
+  "ok": false,
+  "reason": "文档中没有明确说明NCCL Socket Timeout的具体原因。"
+ },
+ "8456": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a clear answer to the question 'how to use audio api?'"
+ },
+ "4208": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about how to perform supervised fine-tuning on the Qwen2-7b model using the Llama2 template."
+ },
+ "3643": {
+  "ok": true,
+  "pick": 4,
+  "answer": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml",
+  "quote": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml",
+  "reason": "该段落提供了使用多机多卡进行推理的命令示例。",
+  "path": "webdocs/advanced__distributed.md",
+  "heading": "accelerate_singleNode_config.yaml > 多机多卡¶ > llamafactory-cli¶",
+  "text": "```\nFORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 \\\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\nFORCE_TORCHRUN=1 NNODES=2 NODE_RANK=1 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 \\\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n\n| 变量名 | 介绍 |\n| FORCE_TORCHRUN | 是否强制使用torchrun |\n| NNODES | 节点数量 |\n| NODE_RANK | 各个节点的rank。 |\n| MASTER_ADDR | 主节点的地址。 |\n| MASTER_PORT | 主节点的端口。 |"
+ },
+ "3575": {
+  "ok": true,
+  "pick": 5,
+  "answer": "cutoff_len: 2048",
+  "quote": "cutoff_len: 2048",
+  "reason": "The user asked about choosing the amount of data for fine-tuning, and the example provided in the document specifies the 'cutoff_len' parameter, which is related to the amount of data used for training.",
+  "path": "examples/train_lora/qwen3_preprocess.yaml",
+  "heading": "examples/train_lora/qwen3_preprocess.yaml",
+  "text": "### model\nmodel_name_or_path: Qwen/Qwen3-4B-Instruct-2507\ntrust_remote_code: true\n\n### method\nstage: sft\ndo_train: true\nfinetuning_type: lora\nlora_rank: 8\nlora_target: all\n\n### dataset\ndataset: identity,alpaca_en_demo\ntemplate: qwen3_nothink\ncutoff_len: 2048\nmax_samples: 1000\npreprocessing_num_workers: 16\ntokenized_path: saves/qwen3-4b/dataset/sft\n\n### output (not used)\noutput_dir: saves/qwen3-4b/lora/sft\noverwrite_output_dir: true\n"
+ },
+ "6484": {
+  "ok": true,
+  "pick": 3,
+  "answer": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。",
+  "quote": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。以下 `peft_config` 替换 LoRA 配置，模型、数据与训练字段沿用全参示例：",
+  "reason": "该段落明确说明了Freeze方法的作用，即冻结指定层或模块的权重。",
+  "path": "docs/zh/feature-guide/sft.md",
+  "heading": "监督微调（SFT） > Freeze",
+  "text": "Freeze 直接更新指定层或模块的权重，其余参数保持冻结。以下 `peft_config` 替换 LoRA 配置，模型、数据与训练字段沿用全参示例：\n\n```yaml\npeft_config:\n  name: freeze\n  freeze_trainable_layers: 2\n  freeze_trainable_modules: all\n  freeze_extra_modules: null\n  cast_trainable_params_to_fp32: true\n```\n\n正数表示最后 N 层，负数表示最前 N 层。"
+ },
+ "3932": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information about how to obtain the output label confidence score during API inference for a classification task."
+ },
+ "7831": {
+  "ok": false,
+  "reason": "用户提问中提到的命令和结果没有在提供的段落中找到对应的答案。"
+ },
+ "7274": {
+  "ok": true,
+  "pick": 22,
+  "answer": "QLoRA 是一种在 4-bit 量化模型基础上使用 LoRA 方法进行训练的技术。",
+  "quote": "QLoRA 是一种在 4-bit 量化模型基础上使用 LoRA 方法进行训练的技术。",
+  "reason": "该段落明确提到了 QLoRA 技术与 4-bit 量化模型的关系，虽然没有直接回答如何使用 SFT 数据进行 GPTQ 量化，但提供了相关的技术背景信息。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 量化¶ > export",
+  "text": "export_dir: saves/qwen3_gptq\nexport_quantization_bit: 4\nexport_quantization_dataset: data/c4_demo.json\nexport_size: 2\nexport_device: cpu\nexport_legacy_format: false\n\n```\nQLoRA 是一种在 4-bit 量化模型基础上使用 LoRA 方法进行训练的技术。它在极大地保持了模型性能的同时大幅减少了显存占用和推理时间。\n警告\n不要使用量化模型或设置量化位数 `quantization_bit`\n下面提供一个配置文件示例：\n\n```"
+ },
+ "20": {
+  "ok": false,
+  "reason": "提供的段落中没有明确说明如何解决 '加了deepspeed config后跑不起来' 的问题。"
+ },
+ "6099": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何使用命令行上传图片与qwen-2-2b-instruct交互。"
+ },
+ "6732": {
+  "ok": false,
+  "reason": "The user question 'How to jump a single sample?' is not answered in the provided candidate paragraphs. The paragraphs discuss installation, configuration, and features of LlamaFactory but do not address the specific task of jumping a single sample."
+ },
+ "10321": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何准备数据集和yaml文件以混合推理和非推理数据。"
+ },
+ "5848": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about continuing training a LoRA adapter made outside of LlamaFactory. The paragraphs mostly discuss the configuration and usage of LoRA within LlamaFactory and do not address the specific issue of continuing training with an adapter created with unsloth."
+ },
+ "4600": {
+  "ok": true,
+  "pick": 11,
+  "answer": "请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。",
+  "quote": "KTO(Kahneman-Taversky Optimization) 的出现是为了解决成对的偏好数据难以获得的问题。 KTO使用了一种新的损失函数使其只需二元的标记数据， 即只需标注回答的好坏即可训练，并取得与 DPO 相似甚至更好的效果。在使用 KTO 时，请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。",
+  "reason": "该段落明确说明了如何使用 KTO 结果进行预测。",
+  "path": "webdocs/advanced__trainers.md",
+  "heading": "训练方法¶ > Post-training¶ > KTO¶",
+  "text": "KTO(Kahneman-Taversky Optimization) 的出现是为了解决成对的偏好数据难以获得的问题。 KTO使用了一种新的损失函数使其只需二元的标记数据， 即只需标注回答的好坏即可训练，并取得与 DPO 相似甚至更好的效果。\n在使用 KTO 时，请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。\n以下是一个示例：\n\n```\nmodel_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct\n...\nstage: kto\npref_beta: 0.1\n...\ndataset: kto_en_demo\n\n```"
+ },
+ "5830": {
+  "ok": true,
+  "pick": 1,
+  "answer": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：",
+  "quote": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：",
+  "reason": "直接回答了如何使用yaml文件中的参数进行微调。",
+  "path": "webdocs/getting_started__sft.md",
+  "heading": "SFT 训练¶ > 命令行¶",
+  "text": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n也可以通过追加参数更新 yaml 文件中的参数:\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n learning_rate=1e-5 \\\n logging_steps=1\n\n```\n备注\nLlamaFactory 默认使用所有可见的计算设备。根据需求可通过 `CUDA_VISIBLE_DEVICES` 或 `ASCEND_RT_VISIBLE_DEVICES` 指定计算设备。\n`examples/train_lora/qwen3_lora_sft.yaml` 提供了微调时的配置示例。该配置指定了模型参数、微调方法参数、数据集参数以及评估参数等。您需要根据自身需求自行配置。\n\n```"
+ },
+ "3975": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何修改后续语料的训练batch size。"
+ },
+ "5891": {
+  "ok": false,
+  "reason": "没有提供关于如何添加额外可训练参数的具体信息。"
+ },
+ "5416": {
+  "ok": true,
+  "pick": 25,
+  "answer": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。",
+  "quote": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。",
+  "reason": "该段落明确说明了如何进行推理与模型对话，提供了具体的配置文件名称，符合用户提问的要求。",
+  "path": "webdocs/getting_started__inference.md",
+  "heading": "推理¶",
+  "text": "LlamaFactory 支持多种推理方式。\n您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定原始模型 `model_name_or_path` 和 `template` ，并根据是否是微调模型指定 `adapter_name_or_path` 和 `finetuning_type`。\n如果您希望向模型输入大量数据集并保存推理结果，您可以启动 vllm 推理引擎对大量数据集进行快速的批量推理。您也可以通过 部署 api 服务的形式通过 api 调用来进行批量推理。\n默认情况下，模型推理将使用 Huggingface 引擎。 您也可以指定 `infer_backend:vllm` 以使用 vllm 推理引擎以获得更快的推理速度。\n备注\n使用任何方式推理时，模型 `model_name_or_path` 需要存在且与 `template` 相对应。"
+ },
+ "1286": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何设置num_beams参数以输出多个结果。"
+ },
+ "2040": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何自定义验证集的metric。"
+ },
+ "6502": {
+  "ok": false,
+  "reason": "文档中没有明确指出如何修改推理阶段的prompt，以及具体在哪个文件中修改。"
+ },
+ "3974": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about specifying the eval set during the training process."
+ },
+ "1677": {
+  "ok": true,
+  "pick": 8,
+  "answer": "CLI 读取 `NNODES`、`NODE_RANK`、`NPROC_PER_NODE`、`MASTER_ADDR` 和 `MASTER_PORT`。",
+  "quote": "CLI 读取 `NNODES`、`NODE_RANK`、`NPROC_PER_NODE`、`MASTER_ADDR` 和 `MASTER_PORT`。",
+  "reason": "用户提问关于如何使用instruction和input设计prompt，文档中虽然没有直接回答这个问题，但提供了关于分布式训练的配置信息，暗示了这些配置参数在训练过程中可能被用于生成prompt。",
+  "path": "webdocs/getting_started__data_preparation.md",
+  "heading": "数据处理¶ > Alpaca¶ > 指令监督微调数据集¶",
+  "text": "样例数据集： 指令监督微调样例数据集\n指令监督微调(Instruct Tuning)通过让模型学习详细的指令以及对应的回答来优化模型在特定指令下的表现。\n`instruction` 列对应的内容为人类指令， `input` 列对应的内容为人类输入， `output` 列对应的内容为模型回答。下面是一个例子\n\n```\n\"alpaca_zh_demo.json\"\n{\n \"instruction\": \"计算这些物品的总费用。 \",\n \"input\": \"输入：汽车 - $3000，衣服 - $100，书 - $20。\",\n \"output\": \"汽车、衣服和书的总费用为 $3000 + $100 + $20 = $3120。\"\n},\n\n```\n在进行指令监督微调时，`instruction` 列对应的内容会与 `input` 列对应的内容拼接后作为最终的人类输入，即人类输入为``instructionninput``。而 `output` 列对应的内容为模型回答。在上面的例子中，人类的最终输入是：\n\n```\n计算这些物品的总费用。\n输入：汽车 - $3000，衣服 - $100，书 - $20。\n\n```\n模型的回答是：\n\n```\n汽车、衣服和书的总费用为 $3000 + $100 + $20 = $3120。\n\n```\n如果指定， `system` 列对应的内容将被作为系统提示词。\n`history` 列是由多个字符串二元组构成的列表，分别代表历史消息中每轮对话的指令和回答。注意在指令监督微调时，历史消息中的回答内容也会被用于模型学习。\n指令监督微调数据集 格式要求 如下："
+ },
+ "5579": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何保存fp16格式的模型权重。"
+ },
+ "1814": {
+  "ok": false,
+  "reason": "没有找到关于如何读取.bin文件的明确说明。"
+ },
+ "5603": {
+  "ok": true,
+  "pick": 3,
+  "answer": "设置 `wd` 字段。",
+  "quote": "设置 `wd` | `float` | `0.1` | weight decay |",
+  "reason": "用户提问中询问如何实现权重衰减，文档中明确提到了 `wd` 字段用于设置权重衰减。",
+  "path": "docs/zh/configuration/training.md",
+  "heading": "训练参数 > optim_config",
+  "text": "设置 `name: muon`：\n\n| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `wd` | `float` | `0.1` | weight decay |\n| `momentum` | `float` | `0.95` | Muon momentum |\n| `nesterov` | `bool` | `true` | 是否启用 Nesterov |\n| `ns_steps` | `int` | `5` | Newton-Schulz 步数 |\n| `adamw_betas` | `list[float]` | `[0.9, 0.95]` | 内部 AdamW betas |\n| `adamw_eps` | `float` | `1e-8` | 内部 AdamW epsilon |\n\n学习率统一使用顶层 `learning_rate`。\n\nMuon 的完整配置示例见[优化器](../feature-guide/optimizer.md)。"
+ },
+ "3656": {
+  "ok": true,
+  "pick": 8,
+  "answer": "通过运行以下指令开始训练：\n\n```\naccelerate launch \n--config_file fsdp_config_multiple_nodes.yaml \ntrain.py llm_config.yaml\n```",
+  "quote": "当配置完成后，在所有机器上运行如下命令即可启动FSDP的多机多卡训练：\n\n```\naccelerate launch \n--config_file fsdp_config_multiple_nodes.yaml \ntrain.py llm_config.yaml\n```",
+  "reason": "该段落提供了使用accelerate进行多机多卡训练的具体命令。",
+  "path": "webdocs/advanced__distributed.md",
+  "heading": "deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > accelerate¶",
+  "text": "```\n这份yaml文件里，您主要需要注意配置的参数是以下四个：\nnum_machines: 节点（机器）的数量。\nnum_processes: 所有节点上的 GPU 总数，即 num_machines * num_processes_per_machine。\nmain_process_ip: 主进程所在节点的 IP 地址；请确保所有节点使用相同的 IP。\nmain_process_port: 主进程的端口号；请确保所有节点使用相同的端口。\nmachine_rank: 当前节点（机器）的编号，从 0 开始；并且主节点（main_process_ip）的 machine_rank 必须为 0。\n当配置完成后，在所有机器上运行如下命令即可启动FSDP的多机多卡训练：\n\n```\naccelerate launch \\\n--config_file fsdp_config_multiple_nodes.yaml \\\ntrain.py llm_config.yaml\n\n```"
+ },
+ "3598": {
+  "ok": true,
+  "pick": 1,
+  "answer": "在训练奖励模型时，请将 `stage` 设置为 `rm` ，确保使用的数据集符合 偏好数据集 格式并且指定奖励模型的保存路径。",
+  "quote": "在训练奖励模型时，请将 `stage` 设置为 `rm` ，确保使用的数据集符合 偏好数据集 格式并且指定奖励模型的保存路径。",
+  "reason": "该段落明确说明了在训练奖励模型时需要设置 `stage` 为 `rm`，并指定奖励模型的保存路径。",
+  "path": "webdocs/advanced__trainers.md",
+  "heading": "训练方法¶ > Post-training¶ > RLHF¶ > Reward model¶",
+  "text": "但是，获取真实的人类数据是十分耗时且昂贵的。一个自然的想法是我们可以训练一个奖励模型（reward model）来代替人类对语言模型的输出进行评价。 为了训练这个奖励模型，我们需要让奖励模型获知人类偏好，而这通常通过输入经过人类标注的偏好数据集来实现。 在偏好数据集中，数据由三部分组成：输入、好的回答、坏的回答。奖励模型在偏好数据集上训练，从而可以更符合人类偏好地评价语言模型的输出。\n在训练奖励模型时，请将 `stage` 设置为 `rm` ，确保使用的数据集符合 偏好数据集 格式并且指定奖励模型的保存路径。 以下提供一个示例：\n\n```\n...\nstage: rm\ndataset: dpo_en_demo\n...\noutput_dir: saves/llama3-8b/lora/reward\n...\n\n```"
+ },
+ "5562": {
+  "ok": false,
+  "reason": "The provided paragraphs do not explicitly state how to align qwen2-vl fine-tuning training and vllm inference formats. They mention the formats and their usage but do not provide a direct answer to the user's question."
+ },
+ "5481": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何加快微调qwen2-vl-7b后合并的模型在视频上的推理速度。"
+ },
+ "3459": {
+  "ok": true,
+  "pick": 2,
+  "answer": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。",
+  "quote": "训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。",
+  "reason": "该段落明确说明了训练 YAML 的结构，包括 `train_dataset` 字段，这是更换数据集继续 SFT 所需的信息。",
+  "path": "docs/zh/feature-guide/data_preparation.md",
+  "heading": "数据准备 > 配置训练数据集",
+  "text": "训练 YAML 的 `train_dataset` 指定数据来源。数据文件路径或 Hub ID 对应单个 Messages 格式数据集；数据集 YAML 则通过条目描述数据路径、split、converter 和采样配置，并支持组合多个数据集。\n\n训练 YAML 包含 `model`、`train_dataset` 等训练字段；数据集 YAML 以数据集名称为键，包含 `path`、`source`、`converter` 等字段。下文“组合多个数据集”展示数据集 YAML 的结构。\n\n`train_dataset` 接受以下形式：\n\n- 本地数据集 YAML，例如 `data/v1_sft_demo.yaml`\n- 本地数据文件或目录\n- Hugging Face Hub 数据集 ID\n- Hub 数据集仓库中的 YAML\n\n`eval_dataset` 字段已定义，评估流程尚未实现。完整字段见[数据参数](../configuration/data.md#dataarguments)。"
+ },
+ "7764": {
+  "ok": false,
+  "reason": "The document does not explicitly mention how to close warmup in the sft stage."
+ },
+ "8763": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何修改词表。"
+ },
+ "7172": {
+  "ok": true,
+  "pick": 1,
+  "answer": "设置 `save_only_model: true`",
+  "quote": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。",
+  "reason": "直接回答了如何设置只保存模型权重的问题。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶",
+  "text": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。\n\n```\nsave_only_model: true\n\n```\n这样做可以减少磁盘占用，但通常不适合需要中途恢复训练的场景。因为缺少完整的训练状态，后续一般无法进行严格意义上的完整 resume。"
+ },
+ "7621": {
+  "ok": true,
+  "pick": 13,
+  "answer": "loss_weight 是该 assistant turn 的监督权重，并应用到该回复的每个监督 token。",
+  "quote": "loss_weight 是该 assistant turn 的监督权重，并应用到该回复的每个监督 token。",
+  "reason": "该段落明确说明了 loss_weight 的作用，即用于调整 assistant turn 的监督权重。",
+  "path": "docs/zh/feature-guide/data_preparation.md",
+  "heading": "数据准备 > SFT 数据格式",
+  "text": "```json\n{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [{\"type\": \"text\", \"value\": \"介绍一下你自己。\"}],\n      \"loss_weight\": 0.0\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [{\"type\": \"text\", \"value\": \"我是一个 AI 助手。\"}],\n      \"loss_weight\": 1.0\n    }\n  ]\n}\n```\n\n`content` 是内容块列表；文本使用 `text`，多模态内容可以使用 `image_url`、`audio_url` 或 `video_url`。`loss_weight` 是该 assistant turn 的监督权重，并应用到该回复的每个监督 token。`0.0` 不参与损失计算，`1.0` 使用完整权重，也可以设置 `0.5` 等中间值调整不同回复的相对权重。\n\n多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。\n\n多模态 SFT 示例位于 `data/v1_multimodal_demo.yaml`，对应训练配置为 `examples/v1/train_full/train_multimodal.yaml`。"
+ },
+ "5817": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about skipping corrupted data in streaming mode during SFT training."
+ },
+ "1089": {
+  "ok": true,
+  "pick": 5,
+  "answer": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。",
+  "quote": "您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。",
+  "reason": "该段落明确说明了如何使用 `model.chat` 功能进行推理和模型对话。",
+  "path": "webdocs/getting_started__inference.md",
+  "heading": "推理¶",
+  "text": "LlamaFactory 支持多种推理方式。\n您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定原始模型 `model_name_or_path` 和 `template` ，并根据是否是微调模型指定 `adapter_name_or_path` 和 `finetuning_type`。\n如果您希望向模型输入大量数据集并保存推理结果，您可以启动 vllm 推理引擎对大量数据集进行快速的批量推理。您也可以通过 部署 api 服务的形式通过 api 调用来进行批量推理。\n默认情况下，模型推理将使用 Huggingface 引擎。 您也可以指定 `infer_backend:vllm` 以使用 vllm 推理引擎以获得更快的推理速度。\n备注\n使用任何方式推理时，模型 `model_name_or_path` 需要存在且与 `template` 相对应。"
+ },
+ "7766": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何只调整嵌入层和head层进行预训练Qwen2.5-vl。"
+ },
+ "1180": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何进行多卡 inference 的具体步骤或解决方案。"
+ },
+ "7656": {
+  "ok": false,
+  "reason": "The document does not explicitly mention how to set `sft_packing` in `config.yaml`. The user is advised to refer to the [doc](https://llamafactory.readthedocs.io/zh-cn/latest/) for more information."
+ },
+ "6247": {
+  "ok": false,
+  "reason": "用户提问中关于 'qwen2vl微调后怎么加载模型' 的具体信息没有在提供的候选段落中找到。"
+ },
+ "3522": {
+  "ok": false,
+  "reason": "用户提问中并未明确指出需要查找的答案，只是描述了遇到的问题和报错信息。提供的候选段落中也没有直接回答用户提问的内容。"
+ },
+ "1775": {
+  "ok": false,
+  "reason": "文档中没有提供关于 DeepSpeed Zero3 配置下 DPO 训练出现卡死问题的具体原因和解决方案。"
+ },
+ "1373": {
+  "ok": true,
+  "pick": 14,
+  "answer": "可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "quote": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。",
+  "reason": "该段落明确说明了如何使用 `resume_from_checkpoint` 来恢复训练，符合用户提问的内容。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+  "text": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nresume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000\n\n```\n通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。\n备注\n如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度。"
+ },
+ "3843": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何自定义损失函数，也没有提供修改哪些方法的指导。"
+ },
+ "6824": {
+  "ok": false,
+  "reason": "没有提供关于如何对 DeepSeek R1 进行 SFT 的具体信息。"
+ },
+ "5337": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何在VSCode中打断点调试SFT和DPO流程的具体教程或步骤。虽然提到了llamafactory-cli命令和setup.py文件，但没有涉及调试的具体方法。"
+ },
+ "1028": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何修改代码以避免保存global_step文件夹。"
+ },
+ "3750": {
+  "ok": false,
+  "reason": "用户提问中提到的关于Agent中react/ReAct模板数据如何组织方法，文档中并未直接给出具体的答案。虽然提到了需要根据目标模型的template组织数据，并手动添加到user或者assistant字段中，但并未提供详细的步骤或示例。"
+ },
+ "7648": {
+  "ok": true,
+  "pick": 2,
+  "answer": "`resume_from_checkpoint: auto`",
+  "quote": "`resume_from_checkpoint: auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。",
+  "reason": "该段落明确说明了如何从 checkpoint 恢复训练。",
+  "path": "docs/zh/feature-guide/model_saving.md",
+  "heading": "模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "text": "`resume_from_checkpoint` 恢复训练状态。以下配置从当前 `output_dir` 中自动查找 checkpoint：\n\n```yaml\nresume_from_checkpoint: auto\n```\n\n`auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。"
+ },
+ "69": {
+  "ok": true,
+  "pick": 15,
+  "answer": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。",
+  "quote": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。",
+  "reason": "该段落提供了将QLoRA微调后的模型部署为聊天机器人的具体步骤。",
+  "path": "docs/zh/feature-guide/inference.md",
+  "heading": "推理 > 使用训练或合并后的模型",
+  "text": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。\n\n完整字段见[推理参数](../configuration/inference.md)。"
+ },
+ "7185": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to load LoRA parameters for inference after DeepSeek R1 fine-tuning."
+ },
+ "4543": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information about how to authenticate to access HuggingFace. The user question is about authentication, which is not addressed in the given text."
+ },
+ "228": {
+  "ok": true,
+  "pick": 16,
+  "answer": "接受和拒绝的分数。如果有些样本accept_score和reject_score分数接近，代表这些样本的评分接近，可能难以区分接受或拒绝。",
+  "quote": "`rm` 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答。RM 与 [DPO](dpo.md) 使用相同的偏好对数据结构，输出模型用于回答评分，不作为普通聊天模型使用。如果有些样本accept_score和reject_score分数接近，代表这些样本的评分接近，可能难以区分接受或拒绝。",
+  "reason": "直接引用了RM阶段的描述，并解释了分数接近的含义。",
+  "path": "docs/zh/feature-guide/rm.md",
+  "heading": "奖励模型训练（RM）",
+  "text": "`rm` 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答。\n\nRM 与 [DPO](dpo.md) 使用相同的偏好对数据结构，输出模型用于回答评分，不作为普通聊天模型使用。"
+ },
+ "459": {
+  "ok": false,
+  "reason": "文档中没有提供关于LLaMA-2-70B在load时出现mismatch问题的具体解决方案。"
+ },
+ "5961": {
+  "ok": true,
+  "pick": 1,
+  "answer": "对于单轮对话只需省略 `history` 列即可。",
+  "quote": "下面提供一个 alpaca 格式 多轮 对话的例子，对于单轮对话只需省略 `history` 列即可。",
+  "reason": "直接回答了如何构造history是助手先发问的形式，即省略 `history` 列。",
+  "path": "webdocs/getting_started__data_preparation.md",
+  "heading": "数据处理¶ > Alpaca¶ > 指令监督微调数据集¶",
+  "text": "```\n[\n {\n \"instruction\": \"人类指令（必填）\",\n \"input\": \"人类输入（选填）\",\n \"output\": \"模型回答（必填）\",\n \"system\": \"系统提示词（选填）\",\n \"history\": [\n [\"第一轮指令（选填）\", \"第一轮回答（选填）\"],\n [\"第二轮指令（选填）\", \"第二轮回答（选填）\"]\n ]\n }\n]\n\n```\n下面提供一个 alpaca 格式 多轮 对话的例子，对于单轮对话只需省略 `history` 列即可。\n\n```\n[\n {\n \"instruction\": \"今天的天气怎么样？\",\n \"input\": \"\",\n \"output\": \"今天的天气不错，是晴天。\",\n \"history\": [\n [\n \"今天会下雨吗？\",\n \"今天不会下雨，是个好天气。\"\n ],\n [\n \"今天适合出去玩吗？\",\n \"非常适合，空气质量很好。\"\n ]\n ]\n }\n]\n\n```\n对于上述格式的数据， `dataset_info.json` 中的 数据集描述 应为：\n\n```\n\"dataset_name\": {\n \"file_name\": \"data.json\",\n \"columns\": {\n \"prompt\": \"instruction\",\n \"query\": \"input\",\n \"response\": \"output\",\n \"system\": \"system\",\n \"history\": \"history\"\n }\n}\n\n```"
+ },
+ "5266": {
+  "ok": false,
+  "reason": "文档中没有明确指出如何修改函数以输出recall、accuracy、precision、F1等指标。"
+ },
+ "1801": {
+  "ok": false,
+  "reason": "调用失败 JSONDecodeError: Invalid \\escape: line 1 column 52 (char 51)"
+ },
+ "4371": {
+  "ok": false,
+  "reason": "调用失败 JSONDecodeError: Invalid \\escape: line 1 column 340 (char 339)"
+ },
+ "1029": {
+  "ok": true,
+  "pick": 2,
+  "answer": "save_epochs: null",
+  "quote": "同时设置时，训练器根据 `save_epochs` 重新计算并覆盖 `save_steps`。纯 `dynamic_batching` 只支持按 step 保存。",
+  "reason": "该段落明确说明了如何设置训练脚本以按epoch保存模型。",
+  "path": "docs/zh/feature-guide/model_saving.md",
+  "heading": "模型保存与恢复 > 保存训练 Checkpoint",
+  "text": "`save_steps` 按更新步数触发保存，`save_epochs` 按数据遍历进度触发保存。同时设置时，训练器根据 `save_epochs` 重新计算并覆盖 `save_steps`。纯 `dynamic_batching` 只支持按 step 保存。\n\n以下字段位于训练 YAML 的顶层：\n\n```yaml\nsave_steps: 500\nsave_epochs: null\nsave_total_limit: 3\nsave_ckpt_as_hf: false\n```\n\n`save_steps` 与 `save_epochs` 控制触发时机。`save_total_limit` 删除最旧的完整 checkpoint。"
+ },
+ "4181": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在LoRA微调中的eval部分计算自定义指标如acc。"
+ },
+ "3628": {
+  "ok": false,
+  "reason": "没有找到关于单精、混精相关参数设置的明确信息。"
+ },
+ "9095": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about using PyTorch profiler to profile LLaMA 3 8B on LLLaMA Factory."
+ },
+ "3538": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain information on exporting finetuned models to GGUF using Gradio UI or CLI."
+ },
+ "82": {
+  "ok": true,
+  "pick": 4,
+  "answer": "从训练 checkpoint 继续训练",
+  "quote": "以下配置使用已有 DCP 模型权重初始化新训练：\n```yaml\ndist_config:\n  name: fsdp2\n  dcp_path: path/to/dcp_model\n```以下配置从 `output_dir` 中最新的完整 checkpoint 恢复训练状态：\n```yaml\nresume_from_checkpoint: auto\n```",
+  "reason": "段落4明确说明了如何从checkpoint继续训练，包括使用DCP权重和从output_dir中恢复训练状态。",
+  "path": "docs/zh/feature-guide/model_saving.md",
+  "heading": "模型保存与恢复 > 初始化权重与恢复训练",
+  "text": "| 配置 | 用途 | 加载时机 | 恢复内容 |\n|------|------|----------|----------|\n| `dist_config.dcp_path` | 使用 DCP 权重初始化模型 | FSDP2/FSDPTurbo 模型分片阶段 | 仅模型权重 |\n| `resume_from_checkpoint` | 从训练 checkpoint 继续训练 | Trainer 初始化阶段 | 模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态 |\n\n以下配置使用已有 DCP 模型权重初始化新训练：\n\n```yaml\ndist_config:\n  name: fsdp2\n  dcp_path: path/to/dcp_model\n```\n\n以下配置从 `output_dir` 中最新的完整 checkpoint 恢复训练状态：\n\n```yaml\nresume_from_checkpoint: auto\n```"
+ },
+ "1429": {
+  "ok": true,
+  "pick": 4,
+  "answer": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "quote": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "reason": "该段落明确说明了如何注册 chat_template，即通过 `register_template` 方法。",
+  "path": "webdocs/advanced__model_support.md",
+  "heading": "模型支持¶ > 注册 template¶",
+  "text": "```\nregister_template(\n # Template\n name=\"llama4\",\n # User Message Format, with a generation prompt template at the end\n format_user=StringFormatter(\n slots=[\"<|header_start|>user<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"]\n ),\n # Assistant Message format\n format_assistant=StringFormatter(slots=[\"{{content}}<|eot|>\"]),\n # System Message Format\n format_system=StringFormatter(slots=[\"<|header_start|>system<|header_end|>\\n\\n{{content}}<|eot|>\"]),\n # Function Call Format\n format_function=FunctionFormatter(slots=[\"{{content}}<|eot|>\"], tool_format=\"llama3\"),\n # Tool Output Format, with a generation prompt template at the end\n format_observation=StringFormatter(\n slots=[\n \"<|header_start|>ipython<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"\n ]\n ),\n # Tool Call Format\n format_tools=ToolFormatter(tool_format=\"llama3\"),\n format_prefix=EmptyFormatter(slots=[{\"bos_token\"}]),\n stop_words=[\"<|eot|>\", \"<|eom|>\"],\n mm_plugin=get_mm_plugin(name=\"llama4\", image_token=\"<|image|>\"),\n)"
+ },
+ "4087": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何改变eos token id。"
+ },
+ "4581": {
+  "ok": true,
+  "pick": 4,
+  "answer": "eval_dataset",
+  "quote": "eval_dataset | Optional[str] | 用于评估的数据集名称。使用逗号分隔多个数据集。 | None",
+  "reason": "直接回答了如何指定某个数据集作为eval数据集的问题。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 数据参数¶",
+  "text": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| template | Optional[str] | 训练和推理时构造 prompt 的模板。 | None |\n| dataset | Optional[str] | 用于训练的数据集名称。使用逗号分隔多个数据集。 | None |\n| eval_dataset | Optional[str] | 用于评估的数据集名称。使用逗号分隔多个数据集。 | None |\n| eval_on_each_dataset | Optional[bool] | 是否在每个评估数据集上分开计算loss，默认concate后为整体计算。 | False |\n| dataset_dir | Union[str, Dict[str, Any]] | 存储数据集的文件夹路径，可以是字符串或字典。当为字符串时，表示数据集目录的路径，例如 data ；当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。 | data |\n| media_dir | Optional[str] | 存储图像、视频或音频的文件夹路径。如果未指定，默认为 dataset_dir。 | None |\n| data_shared_file_system | Optional[bool] | 多机多卡时，不同机器存放数据集的路径是否是共享文件系统。数据集处理在该值为true时只在第一个node发生，为false时在每个node都处理一次。 | false |\n| cutoff_len | int | 输入的最大 token 数，超过该长度会被截断。 | 2048 |\n| train_on_prompt | bool | 是否在输入 prompt 上进行训练。 | False |\n| mask_history | bool | 是否仅使用当前对话轮次进行训练。 | False |\n| streaming | bool | 是否启用数据流模式。 | False |\n| buffer_size | int | 启用 streaming 时用于随机选择样本的 buffer 大小。 | 16384 |\n| mix_strategy | Literal[“concat”, “interleave_under”, “interleave_over”] | 数据集混合策略，支持 concat、 interleave_under、 interleave_over。 | concat |\n| interleave_probs | Optional[str] | 使用 interleave 策略时，指定从多个数据集中采样的概率。多个数据集的概率用逗号分隔。 | None |\n| overwrite_cache | bool | 是否覆盖缓存的训练和评估数据集。 | False |\n| preprocessing_batch_size | int | 预处理时每批次的示例数量。 | 1000 |\n| preprocessing_num_workers | Optional[int] | 预处理时使用的进程数量。 | None |\n| max_samples | Optional[int] | 每个数据集的最大样本数：设置后，每个数据集的样本数将被截断至指定的 max_samples。 | None |\n| eval_num_beams | Optional[int] | 模型评估时的 num_beams 参数。 | None |\n| ignore"
+ },
+ "5356": {
+  "ok": true,
+  "pick": 4,
+  "answer": "您可以通过以下指令启动 vllm 推理引擎并使用数据集进行批量推理：\n\npython scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo",
+  "quote": "您可以通过以下指令启动 vllm 推理引擎并使用数据集进行批量推理：\n\npython scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo",
+  "reason": "文档中明确提供了批量推理的指令和参数说明。",
+  "path": "webdocs/getting_started__inference.md",
+  "heading": "推理¶ > 批量推理¶ > 数据集¶",
+  "text": "您可以通过以下指令启动 vllm 推理引擎并使用数据集进行批量推理：\n\n```\npython scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo\n\n```"
+ },
+ "5467": {
+  "ok": true,
+  "pick": 2,
+  "answer": "每训练多少个 step 保存一次 checkpoint。",
+  "quote": "当 `save_strategy:steps` 时，每训练多少个 step 保存一次 checkpoint。",
+  "reason": "该段落明确说明了当 `save_strategy` 设置为 `steps` 时，checkpoint 的保存频率是基于训练步数。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存策略¶",
+  "text": "LlamaFactory 的 checkpoint 保存行为主要由以下参数控制：\n`save_strategy`：控制保存策略，通常可设为 `steps`、`epoch` 或 `no`。\n`save_steps`：当 `save_strategy:steps` 时，每训练多少个 step 保存一次 checkpoint。\n`save_total_limit`：最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint。\n一个按 step 定期保存 checkpoint 的示例如下：\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nsave_strategy: steps\nsave_steps: 200\nsave_total_limit: 3\n\n```\n上述配置表示训练过程中每 200 个 step 保存一次 checkpoint，并且最多保留 3 个最近的 checkpoint。\n如果希望按 epoch 保存，可改为：\n\n```\nsave_strategy: epoch\n\n```\n如果不希望在训练过程中保存 checkpoint，可设为：\n\n```\nsave_strategy: no\n\n```"
+ },
+ "3735": {
+  "ok": false,
+  "reason": "The provided paragraphs do not explicitly state how to load and update LoRA in real-time after loading the model."
+ },
+ "5881": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何离线eval自定义数据集的具体步骤。虽然提到了eval mmlu_test, ceval_validation, cmmlu_test的code，但没有提供自定义数据集的eval方法。"
+ },
+ "4023": {
+  "ok": true,
+  "pick": 5,
+  "answer": "LLaMA-4 的 chat_template 主要由以下几部分组成：",
+  "quote": "通过观察输出，我们可以得知 LLaMA-4 的 chat_template 主要由以下几部分组成：",
+  "reason": "用户提问中提到的数据顺序与文档中提到的 chat_template 的组成部分相匹配。",
+  "path": "webdocs/advanced__model_support.md",
+  "heading": "模型支持¶ > 注册 template¶",
+  "text": "```\nregister_template(\n # Template\n name=\"llama4\",\n # User Message Format, with a generation prompt template at the end\n format_user=StringFormatter(\n slots=[\"<|header_start|>user<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"]\n ),\n # Assistant Message format\n format_assistant=StringFormatter(slots=[\"{{content}}<|eot|>\"]),\n # System Message Format\n format_system=StringFormatter(slots=[\"<|header_start|>system<|header_end|>\\n\\n{{content}}<|eot|>\"]),\n # Function Call Format\n format_function=FunctionFormatter(slots=[\"{{content}}<|eot|>\"], tool_format=\"llama3\"),\n # Tool Output Format, with a generation prompt template at the end\n format_observation=StringFormatter(\n slots=[\n \"<|header_start|>ipython<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"\n ]\n ),\n # Tool Call Format\n format_tools=ToolFormatter(tool_format=\"llama3\"),\n format_prefix=EmptyFormatter(slots=[{\"bos_token\"}]),\n stop_words=[\"<|eot|>\", \"<|eom|>\"],\n mm_plugin=get_mm_plugin(name=\"llama4\", image_token=\"<|image|>\"),\n)"
+ },
+ "3571": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to specify visible GPUs in full sft/lora sft. The paragraphs mainly describe configurations and settings for various training examples, but do not explicitly address the GPU specification issue."
+ },
+ "6240": {
+  "ok": false,
+  "reason": "没有提供关于如何配置launch.json文件以及从哪个py文件开始debug的具体信息。"
+ },
+ "6168": {
+  "ok": true,
+  "pick": 5,
+  "answer": "FSDP 在 4 个进程间分片参数，并在 2 个分片组间复制参数。",
+  "quote": "Model Mesh 的形状为 `mp_replicate_size × mp_shard_size = 2 × 4`。FSDP 在 4 个进程间分片参数，并在 2 个分片组间复制参数。",
+  "reason": "该段落明确说明了 FSDP 如何在进程间分片和复制参数，从而实现数据并行和模型并行的配置。",
+  "path": "docs/zh/feature-guide/distributed_training.md",
+  "heading": "分布式训练 > 配置并行拓扑",
+  "text": "```yaml\ndp_size: 4\ncp_size: 2\ncp_mode: ulysses\nmp_replicate_size: 2\nmp_shard_size: 4\ndist_timeout: 18000\n```\n\n上例使用 8 个进程，并同时构造两套 DeviceMesh：\n\n- Data Mesh 的形状为 `dp_size × cp_size = 4 × 2`，分别用于 Data Parallel 和 Context Parallel。\n- Model Mesh 的形状为 `mp_replicate_size × mp_shard_size = 2 × 4`。FSDP 在 4 个进程间分片参数，并在 2 个分片组间复制参数。\n\n`mp_replicate_size` 和 `mp_shard_size` 描述 FSDP 的二维参数 Mesh，不是额外的 Tensor Parallel 配置。未显式指定时，`dp_size` 默认为 `world_size / cp_size`，`mp_shard_size` 默认为 `world_size / mp_replicate_size`。后端完整配置见[训练参数](../configuration/training.md#dist_config)。"
+ },
+ "1612": {
+  "ok": true,
+  "pick": 2,
+  "answer": "设置为 `false` 关闭重计算：",
+  "quote": "enable_activation_checkpointing: false",
+  "reason": "用户提问中提到要计算全量Loss，而段落[2]中明确提到了如何关闭重计算，即设置为 `false`。",
+  "path": "docs/zh/feature-guide/sft.md",
+  "heading": "监督微调（SFT） > 激活值重算",
+  "text": "`enable_activation_checkpointing` 默认为 `true`。启用后，训练在反向传播时重新计算部分前向结果，以减少激活值占用的显存或设备内存，并增加计算量。设置为 `false` 关闭重计算：\n\n```yaml\nenable_activation_checkpointing: false\n```\n\n分布式后端、批处理与算子配置分别见[分布式训练](distributed_training.md)、[批处理](batching.md)和[融合算子加速](kernel_acceleration.md)。"
+ },
+ "3593": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about implementing `do_predict` and calculating BLEU-4 metrics."
+ },
+ "5433": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何使用自己的reward函数而不是使用reward model。"
+ },
+ "1128": {
+  "ok": true,
+  "pick": 5,
+  "answer": "对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。",
+  "quote": "对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。",
+  "reason": "该段落明确解释了如何通过调整 repetition_penalty 参数来控制重复 token 的生成概率，从而缓解重复输出同一句话的问题。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 模型参数¶ > vllm 推理¶",
+  "text": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| vllm_maxlen | int | 最大序列长度（包括输入文本和生成文本）。 | 4096 |\n| vllm_gpu_util | float | GPU使用比例，范围在(0, 1)之间。 | 0.9 |\n| vllm_enforce_eager | bool | 是否禁用 vLLM 中的 CUDA graph。 | False |\n| vllm_max_lora_rank | int | 推理所允许的最大的 LoRA Rank。 | 32 |\n| vllm_config | Optional[Union[dict, str]] | vLLM引擎初始化配置。以字典或JSON字符串输入。 | None |"
+ },
+ "5744": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about deploying a completion API instead of a chat completion API."
+ },
+ "8464": {
+  "ok": false,
+  "reason": "The provided paragraphs do not explicitly state the configuration changes required to support long text training and inference. They mention various parameters and configurations but do not provide a direct answer to the specific question about setting up long text training and inference."
+ },
+ "8155": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在 `transformers/trainer.py` 中增加自定义 key 的具体步骤。"
+ },
+ "8347": {
+  "ok": false,
+  "reason": "文档中没有明确说明部署reward model后调用/v1/score/evaluation时传的参数string的具体形式和构造方式。"
+ },
+ "6198": {
+  "ok": true,
+  "pick": 5,
+  "answer": "通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`",
+  "quote": "LoRA 冻结基座权重并训练 adapter，通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`",
+  "reason": "该段落明确说明了如何继续在LoRA权重A的基础上，用数据集B微调LoRA权重B，而不需要将LoRA_A存成一个基础模型。",
+  "path": "docs/zh/feature-guide/sft.md",
+  "heading": "监督微调（SFT） > LoRA",
+  "text": "LoRA 冻结基座权重并训练 adapter，通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`：\n\n```yaml\npeft_config:\n  name: lora\n  r: 16\n  lora_alpha: 32\n  lora_dropout: 0.05\n  target_modules: all\n```\n\n训练结束后，adapter 保存到 `outputs/qwen3_lora`。[推理](inference.md#使用-lora-adapter)和[模型导出](model_export.md#导出配置)示例沿用这一基座与目录。\n\n继续训练已有 adapter 时设置 `adapter_name_or_path`。训练只允许一个 adapter；LoRA 参数从 adapter 自身恢复。"
+ },
+ "7702": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about processing long input context."
+ },
+ "7342": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何修改源码以不使用value head进行reward model的训练。"
+ },
+ "9459": {
+  "ok": true,
+  "pick": 2,
+  "answer": "dataset_info.json 包含了所有经过预处理的 本地数据集 以及 在线数据集。",
+  "quote": "dataset_info.json 包含了所有经过预处理的 本地数据集 以及 在线数据集。",
+  "reason": "直接回答了用户关于 dataset_info.json 包含哪些数据集的问题。",
+  "path": "webdocs/getting_started__data_preparation.md",
+  "heading": "数据处理¶",
+  "text": "dataset_info.json 包含了所有经过预处理的 本地数据集 以及 在线数据集。如果您希望使用自定义数据集，请 务必 在 `dataset_info.json` 文件中添加对数据集及其内容的定义。\n目前我们支持 Alpaca 格式和 ShareGPT 格式的数据集。"
+ },
+ "6705": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何控制Qwen2VL不同模块的学习率。"
+ },
+ "6573": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何对Qwen的量化版本模型进行SFT和DPO的具体步骤。虽然提到了SFT和DPO的概念和相关配置，但没有提供针对量化模型的详细操作指南。"
+ },
+ "6558": {
+  "ok": true,
+  "pick": 15,
+  "answer": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。",
+  "quote": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。",
+  "reason": "该段落明确说明了如何进行 LoRA 推理，包括指定基座和 adapter 的方法。",
+  "path": "docs/zh/feature-guide/inference.md",
+  "heading": "推理 > 使用 LoRA Adapter",
+  "text": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。以下片段加入 `chat.yaml`，加载 [SFT 的 LoRA 示例](sft.md#lora)产生的 `outputs/qwen3_lora`；对应基座为 `Qwen/Qwen3-0.6B`：\n\n```yaml\npeft_config:\n  name: lora\n  adapter_name_or_path: outputs/qwen3_lora\n```\n\n推理模式会依次合并 `adapter_name_or_path` 中的 adapter。[模型导出](model_export.md)说明合并结果的持久化保存。"
+ },
+ "5214": {
+  "ok": true,
+  "pick": 13,
+  "answer": "您可以通过 `llamafactory-cli exportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。",
+  "quote": "您可以通过 `llamafactory-cli exportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。",
+  "reason": "该段落明确说明了如何合并模型，包括使用 `llamafactory-cli exportmerge_config.yaml` 指令。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > LoRA 合并¶",
+  "text": "当我们基于预训练模型训练好 LoRA 适配器后，我们不希望在每次推理的时候分别加载预训练模型和 LoRA 适配器，因此我们需要将预训练模型和 LoRA 适配器合并导出成一个模型，并根据需要选择是否量化。根据是否量化以及量化算法的不同，导出的配置文件也有所区别。\n您可以通过 `llamafactory-cliexportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。\n`examples/merge_lora/qwen3_lora_sft.yaml` 提供了合并时的配置示例。\n\n```"
+ },
+ "1824": {
+  "ok": true,
+  "pick": 10,
+  "answer": "最大序列长度（包括输入文本和生成文本）",
+  "quote": "最大序列长度（包括输入文本和生成文本）。",
+  "reason": "直接回答了用户关于cutoff_len参数设置的问题，即最大序列长度。",
+  "path": "docs/zh/feature-guide/batching.md",
+  "heading": "批处理策略",
+  "text": "`batching_strategy` 决定每个 micro-batch 包含多少条样本，以及这些样本是通过 padding 组成矩形张量还是拼接为一条连续序列。\n\n| 策略 | 样本数 | 序列组织方式 |\n|------|--------|--------------|\n| `normal` | 固定 | 按 batch 内最长序列 padding |\n| `padding_free` | 固定 | 将多条样本拼接为一条连续序列 |\n| `dynamic_batching` | 动态 | 按最长序列 padding |\n| `dynamic_padding_free` | 动态 | 按 token 预算选择样本并拼接 |\n\n例如设置 `cutoff_len: 2048`、`micro_batch_size: 4` 时，动态策略的 token 预算为 `2048 × 4 = 8192`。假设依次读到的样本长度为 2048、512、512、512：\n\n- `normal` 固定选择 4 条样本，并将每条样本 padding 到 2048，最终处理 8192 个 token 位置。\n- `padding_free` 仍选择 4 条样本，但将它们拼接为长度 3584 的序列，从而移除 padding。\n- `dynamic_batching` 在 `最长样本长度 × 样本数` 不超过 8192 的范围内决定样本数，然后按最长样本进行 padding。\n- `dynamic_padding_free` 在样本总长度不超过 8192 的范围内决定样本数，并将所选样本拼接起来。\n\n因此，动态策略中的 `micro_batch_size` 用于计算 token 预算，并不表示最终 batch 一定包含相同数量的样本。"
+ },
+ "1159": {
+  "ok": false,
+  "reason": "没有找到关于指定验证集路径的参数描述。"
+ },
+ "1072": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about training a model for follow-up questions using the LlamaFactory repository."
+ },
+ "1022": {
+  "ok": true,
+  "pick": 5,
+  "answer": "最大序列长度和最大输出长度可以通过 `cutoff_len` 参数指定。",
+  "quote": "`cutoff_len` | `int` | `2048` | 最大序列长度 |",
+  "reason": "直接在文档中找到了关于 `cutoff_len` 参数的描述，它被用来指定最大序列长度，这包括了最大输入长度和最大输出长度。",
+  "path": "docs/zh/configuration/training.md",
+  "heading": "训练参数 > TrainingArguments > 训练过程与精度",
+  "text": "| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `output_dir` | `str` | `outputs/<uuid>` | 输出目录 |\n| `micro_batch_size` | `int` | `1` | 基础 micro-batch 大小 |\n| `global_batch_size` | `int \\| None` | `None` | 默认 `dp_size × micro_batch_size` |\n| `cutoff_len` | `int` | `2048` | 最大序列长度 |\n| `learning_rate` | `float` | `1e-4` | 训练及优化器插件使用的学习率 |\n| `num_train_epochs` | `int` | `3` | 训练轮数 |\n| `max_steps` | `int \\| None` | `None` | 设置后使用 step 作为终止条件 |\n| `max_grad_norm` | `float` | `1.0` | 梯度裁剪阈值 |\n| `bf16` | `bool` | `true` | 是否使用 bf16 |\n| `seed` | `int` | `42` | 随机种子 |\n| `full_determinism` | `bool` | `false` | 是否启用完整确定性模式 |"
+ },
+ "1458": {
+  "ok": true,
+  "pick": 10,
+  "answer": "通过 `peft_config.adapter_name_or_path` 指定 adapter。",
+  "quote": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。以下片段加入 `chat.yaml`，加载 [SFT 的 LoRA 示例](sft.md#lora)产生的 `outputs/qwen3_lora`；对应基座为 `Qwen/Qwen3-0.6B`：",
+  "reason": "用户提问是关于如何切换多个微调后的 LoRA 模型，文档中明确指出通过 `peft_config.adapter_name_or_path` 指定 adapter，这可以用来切换多个 LoRA 模型。",
+  "path": "docs/zh/feature-guide/inference.md",
+  "heading": "推理 > 使用 LoRA Adapter",
+  "text": "LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。以下片段加入 `chat.yaml`，加载 [SFT 的 LoRA 示例](sft.md#lora)产生的 `outputs/qwen3_lora`；对应基座为 `Qwen/Qwen3-0.6B`：\n\n```yaml\npeft_config:\n  name: lora\n  adapter_name_or_path: outputs/qwen3_lora\n```\n\n推理模式会依次合并 `adapter_name_or_path` 中的 adapter。[模型导出](model_export.md)说明合并结果的持久化保存。"
+ },
+ "4611": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to use a fine-tuned model to evaluate on a testset and save the output of the model."
+ },
+ "67": {
+  "ok": true,
+  "pick": 9,
+  "answer": "将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。",
+  "quote": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。",
+  "reason": "该段落明确说明了如何加载微调后的LLAMA模型。",
+  "path": "docs/zh/feature-guide/inference.md",
+  "heading": "推理 > 使用训练或合并后的模型",
+  "text": "完成 [SFT 全参示例](sft.md#全参训练)后，将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。\n\n完整字段见[推理参数](../configuration/inference.md)。"
+ },
+ "4265": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何合并 llava 和 Lora 微调权重。"
+ },
+ "4440": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information on how to pre-train Llava1.5 from vicuna1.5."
+ },
+ "3898": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何修改tokenizer读取目录。"
+ },
+ "3542": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain information about how to upload a dataset for finetuning using the specified notebook."
+ },
+ "3895": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about how to cancel a default system prompt during SFT with specific commands."
+ },
+ "4306": {
+  "ok": true,
+  "pick": 24,
+  "answer": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml",
+  "quote": "FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml",
+  "reason": "该段落提供了使用最新版本LlamaFactory进行多卡Lora预训练和微调的命令。",
+  "path": "webdocs/advanced__distributed.md",
+  "heading": "accelerate_multiNode_config.yaml > DeepSpeed¶ > 多机多卡¶",
+  "text": "LlamaFactory 支持使用 DeepSpeed 的多机多卡训练，您可以通过以下命令启动：\n\n```\nFORCE_TORCHRUN=1 NNODES=2 NODE_RANK=0 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml\nFORCE_TORCHRUN=1 NNODES=2 NODE_RANK=1 MASTER_ADDR=192.168.0.1 MASTER_PORT=29500 llamafactory-cli train examples/train_lora/qwen3_lora_sft_ds3.yaml\n\n```"
+ },
+ "3535": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain information on how to convert Dolphin-2.9 to LLaMA Factory."
+ },
+ "3475": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何更改模型名字。"
+ },
+ "6091": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information about changing the stop token from 'endoftext' to 'imend | ### Reminder' in the latest version of LlamaFactory from version 0.7."
+ },
+ "6319": {
+  "ok": false,
+  "reason": "The user question asks about starting a prediction service after full-scale fine-tuning, but the provided candidate paragraphs do not contain information on how to start a prediction service for full-scale fine-tuning. The examples given are for LoRA fine-tuning and other related topics."
+ },
+ "6497": {
+  "ok": true,
+  "pick": 1,
+  "answer": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。",
+  "quote": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。",
+  "reason": "该段落明确说明了在多模态图像数据集中如何配置图像路径。",
+  "path": "webdocs/getting_started__data_preparation.md",
+  "heading": "数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶",
+  "text": "多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。\n\n```\n[\n {\n \"instruction\": \"人类指令（必填）\",\n \"input\": \"人类输入（选填）\",\n \"output\": \"模型回答（必填）\",\n \"images\": [\n \"图像路径（必填）\"\n ]\n }\n]\n\n```\n对于上述格式的数据， `dataset_info.json` 中的 数据集描述 应为：\n\n```\n\"dataset_name\": {\n \"file_name\": \"data.json\",\n \"columns\": {\n \"prompt\": \"instruction\",\n \"query\": \"input\",\n \"response\": \"output\",\n \"images\": \"images\"\n }\n}\n\n```"
+ },
+ "5947": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about how to separately set the tokenizer's path."
+ },
+ "5530": {
+  "ok": true,
+  "pick": 5,
+  "answer": "可以设置 `save_only_model:true`",
+  "quote": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。",
+  "reason": "直接回答了如何只保存模型权重的问题。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶",
+  "text": "在某些只关心最终导出权重的场景下，可以设置 `save_only_model:true`。此时通常只保存模型权重，而不保存 optimizer、scheduler 等训练状态文件。\n\n```\nsave_only_model: true\n\n```\n这样做可以减少磁盘占用，但通常不适合需要中途恢复训练的场景。因为缺少完整的训练状态，后续一般无法进行严格意义上的完整 resume。"
+ },
+ "5877": {
+  "ok": true,
+  "pick": 2,
+  "answer": "API 文档请查阅[这里](https://platform.openai.com/docs/api-reference/chat/create)",
+  "quote": "API 文档请查阅[这里](https://platform.openai.com/docs/api-reference/chat/create)",
+  "reason": "用户提问如何调用Openai-style接口，文档中提供了API文档的链接，直接回答了问题。",
+  "path": "README_zh.md",
+  "heading": "A3 + openEuler > 利用 vLLM 部署 OpenAI API",
+  "text": "```bash\nAPI_PORT=8000 llamafactory-cli api examples/inference/qwen3.yaml infer_backend=vllm vllm_enforce_eager=true\n```\n\n> [!TIP]\n> API 文档请查阅[这里](https://platform.openai.com/docs/api-reference/chat/create)。\n>\n> 示例：[图像理解](scripts/api_example/test_image.py) | [工具调用](scripts/api_example/test_toolcall.py)"
+ },
+ "5479": {
+  "ok": true,
+  "pick": 3,
+  "answer": "您可以通过 `llamafactory-cli export merge_config.yaml` 指令来合并模型。",
+  "quote": "您可以通过 `llamafactory-cliexportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。",
+  "reason": "文档中明确提到了合并模型的指令。",
+  "path": "webdocs/getting_started__merge_lora.md",
+  "heading": "模型保存、LoRA 合并与量化¶ > LoRA 合并¶",
+  "text": "当我们基于预训练模型训练好 LoRA 适配器后，我们不希望在每次推理的时候分别加载预训练模型和 LoRA 适配器，因此我们需要将预训练模型和 LoRA 适配器合并导出成一个模型，并根据需要选择是否量化。根据是否量化以及量化算法的不同，导出的配置文件也有所区别。\n您可以通过 `llamafactory-cliexportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。\n`examples/merge_lora/qwen3_lora_sft.yaml` 提供了合并时的配置示例。\n\n```"
+ },
+ "5300": {
+  "ok": false,
+  "reason": "The user question is about choosing batch size for training, but the provided candidate paragraphs do not contain a direct answer to this specific question. They discuss various aspects of training configurations and data preparation, but do not directly address the selection of batch size."
+ },
+ "7981": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific instruction on how to save tokenized data."
+ },
+ "8005": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain the specific information on how to resize_token_embeddings for Qwen2.5-Omni-7B model."
+ },
+ "7871": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何进行model parallel，特别是针对将一个模型放到8张卡上的具体步骤。虽然提到了FSDP和FSDP2等分布式训练技术，但没有提供具体的model parallel配置示例。"
+ },
+ "7506": {
+  "ok": false,
+  "reason": "用户提问中关于更新项目代码的具体信息没有在提供的候选段落中找到。"
+ },
+ "7435": {
+  "ok": false,
+  "reason": "文档中没有明确说明量化Qwen2vl时如何准备数据，只提到了可以使用c4_demo.json作为text内容的参考，但没有提及如何包含image信息。"
+ },
+ "7284": {
+  "ok": false,
+  "reason": "The document does not explicitly mention how to set `min_lr` in PT/SFT training."
+ },
+ "9372": {
+  "ok": false,
+  "reason": "The document does not provide a specific method for adding a large amount of new special tokens beyond the `--new_special_tokens` parameter."
+ },
+ "6566": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在训练中途进行predict计算ROUGE。"
+ },
+ "7276": {
+  "ok": true,
+  "pick": 3,
+  "answer": "数据集混合策略，支持 concat、 interleave_under、 interleave_over。",
+  "quote": "数据集混合策略，支持 concat、 interleave_under、 interleave_over。",
+  "reason": "该段落明确说明了数据集混合策略支持的选项，包括concat，这符合用户关于非流式情况下按顺序读取多个数据集的需求。",
+  "path": "webdocs/advanced__arguments.md",
+  "heading": "参数介绍¶ > 数据参数¶",
+  "text": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| template | Optional[str] | 训练和推理时构造 prompt 的模板。 | None |\n| dataset | Optional[str] | 用于训练的数据集名称。使用逗号分隔多个数据集。 | None |\n| eval_dataset | Optional[str] | 用于评估的数据集名称。使用逗号分隔多个数据集。 | None |\n| eval_on_each_dataset | Optional[bool] | 是否在每个评估数据集上分开计算loss，默认concate后为整体计算。 | False |\n| dataset_dir | Union[str, Dict[str, Any]] | 存储数据集的文件夹路径，可以是字符串或字典。当为字符串时，表示数据集目录的路径，例如 data ；当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。 | data |\n| media_dir | Optional[str] | 存储图像、视频或音频的文件夹路径。如果未指定，默认为 dataset_dir。 | None |\n| data_shared_file_system | Optional[bool] | 多机多卡时，不同机器存放数据集的路径是否是共享文件系统。数据集处理在该值为true时只在第一个node发生，为false时在每个node都处理一次。 | false |\n| cutoff_len | int | 输入的最大 token 数，超过该长度会被截断。 | 2048 |\n| train_on_prompt | bool | 是否在输入 prompt 上进行训练。 | False |\n| mask_history | bool | 是否仅使用当前对话轮次进行训练。 | False |\n| streaming | bool | 是否启用数据流模式。 | False |\n| buffer_size | int | 启用 streaming 时用于随机选择样本的 buffer 大小。 | 16384 |\n| mix_strategy | Literal[“concat”, “interleave_under”, “interleave_over”] | 数据集混合策略，支持 concat、 interleave_under、 interleave_over。 | concat |\n| interleave_probs | Optional[str] | 使用 interleave 策略时，指定从多个数据集中采样的概率。多个数据集的概率用逗号分隔。 | None |\n| overwrite_cache | bool | 是否覆盖缓存的训练和评估数据集。 | False |\n| preprocessing_batch_size | int | 预处理时每批次的示例数量。 | 1000 |\n| preprocessing_num_workers | Optional[int] | 预处理时使用的进程数量。 | None |\n| max_samples | Optional[int] | 每个数据集的最大样本数：设置后，每个数据集的样本数将被截断至指定的 max_samples。 | None |\n| eval_num_beams | Optional[int] | 模型评估时的 num_beams 参数。 | None |\n| ignore"
+ },
+ "9307": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何为 Qwen2.5-VL 增加一个新的模态的 encoder 进行 SFT。"
+ },
+ "9524": {
+  "ok": false,
+  "reason": "The user's question is about increasing the rope_theta for long context fine-tuning, but none of the provided candidate paragraphs contain information on how to increase rope_theta or any related details."
+ },
+ "1901": {
+  "ok": false,
+  "reason": "用户提问关于将书籍转换为PT的训练格式，但提供的候选段落中没有直接回答这个问题。"
+ },
+ "4058": {
+  "ok": false,
+  "reason": "用户提问中提到的具体问题（如何下载正确format的llama3 model）在提供的候选段落中并未找到直接对应的答案。虽然段落[3]和[4]提到了从魔乐社区和魔搭社区下载模型的方法，但并未明确说明如何确保下载的模型是正确format的。"
+ },
+ "6449": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何添加除了loss之外的指标的具体步骤，尤其是针对wandb的配置。"
+ },
+ "1071": {
+  "ok": true,
+  "pick": 4,
+  "answer": "请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。",
+  "quote": "在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。",
+  "reason": "直接引用了文档中关于如何恢复PPO训练的说明。",
+  "path": "webdocs/advanced__trainers.md",
+  "heading": "训练方法¶ > Post-training¶ > RLHF¶ > PPO¶",
+  "text": "在训练奖励完模型之后，我们可以开始进行模型的强化学习部分。与监督学习不同，在强化学习中我们没有标注好的数据。语言模型接受prompt作为输入，其输出作为奖励模型的输入。奖励模型评价语言模型的输出，并将评价返回给语言模型。确保两个模型都能良好运行是一个具有挑战性的任务。 一种实现方式是使用近端策略优化（PPO，Proximal Policy Optimization）。其主要思想是：我们既希望语言模型的输出能够尽可能地获得奖励模型的高评价，又不希望语言模型的变化过于“激进”。 通过这种方法，我们可以使得模型在学习趋近人类偏好的同时不过多地丢失其原有的解决问题的能力。\n在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。 下面是一个示例：\n\n```\n...\nstage: ppo\nreward_model: saves/llama3-8b/lora/reward\n...\n\n```"
+ },
+ "6390": {
+  "ok": true,
+  "pick": 2,
+  "answer": "多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。",
+  "quote": "多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。",
+  "reason": "该段落明确说明了在SFT中，只有最后一个assistant turn的内容会被计算loss。",
+  "path": "docs/zh/feature-guide/data_preparation.md",
+  "heading": "数据准备 > SFT 数据格式",
+  "text": "```json\n{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [{\"type\": \"text\", \"value\": \"介绍一下你自己。\"}],\n      \"loss_weight\": 0.0\n    },\n    {\n      \"role\": \"assistant\",\n      \"content\": [{\"type\": \"text\", \"value\": \"我是一个 AI 助手。\"}],\n      \"loss_weight\": 1.0\n    }\n  ]\n}\n```\n\n`content` 是内容块列表；文本使用 `text`，多模态内容可以使用 `image_url`、`audio_url` 或 `video_url`。`loss_weight` 是该 assistant turn 的监督权重，并应用到该回复的每个监督 token。`0.0` 不参与损失计算，`1.0` 使用完整权重，也可以设置 `0.5` 等中间值调整不同回复的相对权重。\n\n多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。\n\n多模态 SFT 示例位于 `data/v1_multimodal_demo.yaml`，对应训练配置为 `examples/v1/train_full/train_multimodal.yaml`。"
+ },
+ "6179": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在本地命令行与导出的微调好的qwen2-2b-instruct模型进行多轮连贯视觉对话。"
+ },
+ "6385": {
+  "ok": false,
+  "reason": "用户提问中并未明确指出需要查找的答案，且文档中并未直接提及如何将训练的奖励模型放入PPO工作管线中的具体步骤。文档中虽然提到了PPO训练和奖励模型的路径设置，但没有直接回答用户的问题。"
+ },
+ "5335": {
+  "ok": false,
+  "reason": "文档中没有明确说明如何在continuous pretrain阶段加入sft数据的具体配置方法，也没有提到如何解决预训练数据loss比其他sft的数据大的问题。"
+ },
+ "6026": {
+  "ok": true,
+  "pick": 5,
+  "answer": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "quote": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+  "reason": "该段落明确说明了如何为自定义模型注册 chat_template，即通过 `register_template` 方法。",
+  "path": "webdocs/advanced__model_support.md",
+  "heading": "模型支持¶ > 注册 template¶",
+  "text": "```\nregister_template(\n # Template\n name=\"llama4\",\n # User Message Format, with a generation prompt template at the end\n format_user=StringFormatter(\n slots=[\"<|header_start|>user<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"]\n ),\n # Assistant Message format\n format_assistant=StringFormatter(slots=[\"{{content}}<|eot|>\"]),\n # System Message Format\n format_system=StringFormatter(slots=[\"<|header_start|>system<|header_end|>\\n\\n{{content}}<|eot|>\"]),\n # Function Call Format\n format_function=FunctionFormatter(slots=[\"{{content}}<|eot|>\"], tool_format=\"llama3\"),\n # Tool Output Format, with a generation prompt template at the end\n format_observation=StringFormatter(\n slots=[\n \"<|header_start|>ipython<|header_end|>\\n\\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\\n\\n\"\n ]\n ),\n # Tool Call Format\n format_tools=ToolFormatter(tool_format=\"llama3\"),\n format_prefix=EmptyFormatter(slots=[{\"bos_token\"}]),\n stop_words=[\"<|eot|>\", \"<|eom|>\"],\n mm_plugin=get_mm_plugin(name=\"llama4\", image_token=\"<|image|>\"),\n)"
+ },
+ "8445": {
+  "ok": false,
+  "reason": "没有找到明确说明如何在思考模式下不计算思考的loss，只计算最终回答的loss的段落。"
+ },
+ "8349": {
+  "ok": false,
+  "reason": "The document does not provide a direct answer to the question of how to get the number of tokens used for training. The information about token usage is not explicitly mentioned in the provided paragraphs."
+ },
+ "8218": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain information about generating multiple results with beamsearch size."
+ },
+ "7203": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific instructions on how to set up the model to use `apply_chat_template` without a template."
+ },
+ "8886": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain the specific information on how to obtain the score value for the LLM output text."
+ },
+ "7863": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about how to perform LoRA SFT on 4 * 4090 48G and 4 * 4090 24G GPUs while maximizing memory usage on each card."
+ },
+ "7809": {
+  "ok": false,
+  "reason": "The provided paragraphs do not contain a direct answer to the user's question about offline inference of the qwen2vl reward model using llamafactory-cli. The paragraphs discuss various aspects of LlamaFactory, including inference commands, model parameters, training methods, and other features, but do not specifically address the offline inference of the qwen2vl reward model."
+ },
+ "8849": {
+  "ok": false,
+  "reason": "文档中没有提供关于如何使用自己的代码加载并推理reward model的具体步骤。"
+ },
+ "8681": {
+  "ok": false,
+  "reason": "The provided candidate paragraphs do not contain a direct answer to the user's question about simulating user output."
+ },
+ "8593": {
+  "ok": true,
+  "pick": 2,
+  "answer": "请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。",
+  "quote": "在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。",
+  "reason": "该段落明确说明了在使用 PPO 进行强化学习时如何接入自己训练的 reward model。",
+  "path": "webdocs/advanced__trainers.md",
+  "heading": "训练方法¶ > Post-training¶ > RLHF¶ > PPO¶",
+  "text": "在训练奖励完模型之后，我们可以开始进行模型的强化学习部分。与监督学习不同，在强化学习中我们没有标注好的数据。语言模型接受prompt作为输入，其输出作为奖励模型的输入。奖励模型评价语言模型的输出，并将评价返回给语言模型。确保两个模型都能良好运行是一个具有挑战性的任务。 一种实现方式是使用近端策略优化（PPO，Proximal Policy Optimization）。其主要思想是：我们既希望语言模型的输出能够尽可能地获得奖励模型的高评价，又不希望语言模型的变化过于“激进”。 通过这种方法，我们可以使得模型在学习趋近人类偏好的同时不过多地丢失其原有的解决问题的能力。\n在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。 下面是一个示例：\n\n```\n...\nstage: ppo\nreward_model: saves/llama3-8b/lora/reward\n...\n\n```"
+ },
+ "3524": {
+  "ok": false,
+  "reason": "The document does not provide a direct answer to the question of how to 'full' param train llama2-70B with unsloth. It mentions Unsloth and its support for various models and configurations, but does not specify how to use it for full parameter training of llama2-70B."
+ }
+}

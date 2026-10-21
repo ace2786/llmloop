@@ -1,0 +1,546 @@
+[
+ {
+  "id": 1,
+  "question": "推理的cutoff len 设置为8092，但预测输出被限制在1024tokens",
+  "answer": "`max_new_tokens` 设置为 1024 tokens 限制了预测输出长度。",
+  "doc_location": "docs/zh/configuration/inference.md > 推理参数 > SampleArguments",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #6071"
+ },
+ {
+  "id": 2,
+  "question": "请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?",
+  "answer": "可以存储tokenizer后的数据，使用`tokenized_path`配置项加载。",
+  "doc_location": "examples/README_zh.md > 目录 > 示例 > LoRA 微调 > 预处理数据集",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #5240"
+ },
+ {
+  "id": 3,
+  "question": "UserWarning('`do_sample` is set to `False`. However, `temperature` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.'), UserWarning('`do_sample` is set to `False`. However, `top_p` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.')]",
+  "answer": "`do_sample` 设置为 False 时，将使用 greedy decoding（贪心解码）生成文本，不再进行采样。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #2837",
+  "answer_fixed": "原答案「应设为True或取消temperature/top_p」文档中无此表述"
+ },
+ {
+  "id": 4,
+  "question": "如何自动保存checkpoint?",
+  "answer": "设置 `save_steps` 和 `save_epochs` 参数自动保存checkpoint。`save_steps` 默认为500，`save_epochs` 默认为null。",
+  "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 保存训练 Checkpoint",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #5467"
+ },
+ {
+  "id": 5,
+  "question": "How to implement weight decay towards the pre-trained model?",
+  "answer": "设置 `wd` 字段为 `float` 类型的值，默认值为 `0.1`。",
+  "doc_location": "docs/zh/configuration/training.md > 训练参数 > optim_config",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #5603"
+ },
+ {
+  "id": 6,
+  "question": "如何取部分数据集训练",
+  "answer": "使用 `max_samples` 参数：设置后，每个数据集的样本数会被截断至指定的 max_samples（默认 None，即不限制）。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #5921",
+  "answer_fixed": "原答案讲的是「数据来源」，答非所问；正解是 max_samples"
+ },
+ {
+  "id": 7,
+  "question": "Support Liger Kernel for Qwen3.5",
+  "answer": "通过 `kernel_config` 统一配置模型侧的融合算子加速（如 Liger Kernel）。`kernel_config.name` 接受加速实现名称，也可用逗号分隔多个；未设置或设为 null 时不做算子替换。",
+  "doc_location": "webdocs/advanced__feature/kernel_acceleration.md > 融合算子加速",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #10253",
+  "answer_fixed": "原答案超出文档（文档未说 Qwen3.5 支持），已改为文档原文表述"
+ },
+ {
+  "id": 8,
+  "question": "支持Qwen3-4B-Instruct-2507的KTO训练吗",
+  "answer": "支持",
+  "doc_location": "examples/train_lora/qwen3_lora_kto.yaml > examples/train_lora/qwen3_lora_kto.yaml",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #9479"
+ },
+ {
+  "id": 9,
+  "question": "推理可以直接设置do_sample=False的贪心采样策略吗",
+  "answer": "可以直接设置do_sample=False的贪心采样策略。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #2633"
+ },
+ {
+  "id": 10,
+  "question": "为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？",
+  "answer": "文档中 lora_alpha（LoRA 缩放系数）一般为 lora_rank * 2，你看到的 2 倍关系很可能来自 lora_alpha 与 lora_rank 的这个关系；文档未说明两处 lora_rank 不一致时以哪个为准。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #6672",
+  "answer_fixed": "原答案「以yaml为准」文档中无此表述，已按 arguments.md 原文修正"
+ },
+ {
+  "id": 11,
+  "question": "我想接着checkpoint继续train 该怎么办呢",
+  "answer": "设置 `resume_from_checkpoint: auto` 并在 `output_dir` 下寻找最新的完整 checkpoint。",
+  "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 从 Checkpoint 恢复训练",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #614"
+ },
+ {
+  "id": 12,
+  "question": "在训练过程中电脑突然重启，如何接着训练",
+  "answer": "从 `output_dir` 中最新的完整 checkpoint 恢复训练状态。",
+  "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 初始化权重与恢复训练",
+  "split": "test",
+  "source": "real",
+  "origin": "GitHub Issue #6664"
+ },
+ {
+  "id": 13,
+  "question": "请问如何添加自定义模型？",
+  "answer": "注册模型的template，解析多模态数据并构建messages",
+  "doc_location": "webdocs/advanced__model_support.md > 模型支持¶",
+  "split": "optimize",
+  "source": "real",
+  "origin": "GitHub Issue #2685"
+ },
+ {
+  "id": 14,
+  "question": "`repetition_penalty` 这个参数有什么作用？",
+  "answer": "对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。默认值为 1.0。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · repetition_penalty"
+ },
+ {
+  "id": 15,
+  "question": "如何理解和使用 `tokenized_path` 参数？",
+  "answer": "Tokenized datasets的保存或加载路径。如果路径存在，会加载已有的 tokenized datasets；如果路径不存在，则会在分词后将 tokenized datasets 保存在此路径中。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · tokenized_path"
+ },
+ {
+  "id": 16,
+  "question": "`top_p` 参数的默认值是多少？",
+  "answer": "默认值为 0.7。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · top_p"
+ },
+ {
+  "id": 17,
+  "question": "`length_penalty` 参数的默认值是多少？",
+  "answer": "默认值为 1.0。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · length_penalty"
+ },
+ {
+  "id": 18,
+  "question": "`dataset_dir` 这个参数有什么作用？",
+  "answer": "存储数据集的文件夹路径，可以是字符串或字典。当为字符串时，表示数据集目录的路径，例如 data ；当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。默认值为 data。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · dataset_dir"
+ },
+ {
+  "id": 19,
+  "question": "`mixture_of_depths` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 convert, load；默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · mixture_of_depths"
+ },
+ {
+  "id": 20,
+  "question": "`data_shared_file_system` 这个参数有什么作用？",
+  "answer": "多机多卡时，不同机器存放数据集的路径是否是共享文件系统。数据集处理在该值为true时只在第一个node发生，为false时在每个node都处理一次。默认值为 false。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · data_shared_file_system"
+ },
+ {
+  "id": 21,
+  "question": "`top_k` 这个参数有什么作用？",
+  "answer": "用于控制生成时候选 token 集合大小的参数。例如：top_k = 50 意味着模型会在概率最高的50个 token 组成的集合中进行采样。默认值为 50。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · top_k"
+ },
+ {
+  "id": 22,
+  "question": "`badam_switch_mode` 这个参数有什么作用？",
+  "answer": "layer-wise BAdam 中块更新策略，可选值有： ascending, descending, random, fixed。默认值为 ascending。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · badam_switch_mode"
+ },
+ {
+  "id": 23,
+  "question": "`pref_loss` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 sigmoid, hinge, ipo, kto_pair, orpo, simpo；默认值为 sigmoid。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · pref_loss"
+ },
+ {
+  "id": 24,
+  "question": "如何理解和使用 `double_quantization` 参数？",
+  "answer": "是否在量化过程中使用 double quantization，通常用于 “bitsandbytes” int4 量化训练。默认值为 True。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · double_quantization"
+ },
+ {
+  "id": 25,
+  "question": "`temperature` 这个参数有什么作用？",
+  "answer": "用于调整生成文本的随机性。temperature 越高，生成的文本越随机；temperature 越低，生成的文本越确定。默认值为 0.95。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · temperature"
+ },
+ {
+  "id": 26,
+  "question": "`val_size` 参数的默认值是多少？",
+  "answer": "默认值为 0.0。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · val_size"
+ },
+ {
+  "id": 27,
+  "question": "`flash_attn` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 auto, disabled, sdpa, fa2；默认值为 auto。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · flash_attn"
+ },
+ {
+  "id": 28,
+  "question": "`loraplus_lr_ratio` 这个参数有什么作用？",
+  "answer": "LoRA+ 学习率比例(λ=ηB/ηA)。 ηA,ηB 分别是 adapter matrices A 与 B 的学习率。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · loraplus_lr_ratio"
+ },
+ {
+  "id": 29,
+  "question": "`infer_dtype` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 auto, float16, bfloat16, float32；默认值为 auto。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · infer_dtype"
+ },
+ {
+  "id": 30,
+  "question": "`new_special_tokens` 这个参数有什么作用？",
+  "answer": "要添加到 tokenizer 中的 special token。多个 special token 用逗号分隔。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · new_special_tokens"
+ },
+ {
+  "id": 31,
+  "question": "如何理解和使用 `galore_proj_type` 参数？",
+  "answer": "GaLore 投影的类型，可选值有： std, reverse_std, right, left, full。默认值为 std。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · galore_proj_type"
+ },
+ {
+  "id": 32,
+  "question": "`default_system` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · default_system"
+ },
+ {
+  "id": 33,
+  "question": "`adapter_name_or_path` 这个参数有什么作用？",
+  "answer": "适配器路径（本地路径或 Huggingface/ModelScope 路径）。使用逗号分隔多个适配器路径。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · adapter_name_or_path"
+ },
+ {
+  "id": 34,
+  "question": "`mix_strategy` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 concat, interleave_under, interleave_over；默认值为 concat。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · mix_strategy"
+ },
+ {
+  "id": 35,
+  "question": "`rope_scaling` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 linear, dynamic, yarn, llama3；默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · rope_scaling"
+ },
+ {
+  "id": 36,
+  "question": "`task` 这个参数有什么作用？",
+  "answer": "评估任务的名称，可选项有 mmlu_test, ceval_validation, cmmlu_test。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · task"
+ },
+ {
+  "id": 37,
+  "question": "`quantization_device_map` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 auto；默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · quantization_device_map"
+ },
+ {
+  "id": 38,
+  "question": "`interleave_probs` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · interleave_probs"
+ },
+ {
+  "id": 39,
+  "question": "`badam_verbose` 参数的默认值是多少？",
+  "answer": "默认值为 0。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · badam_verbose"
+ },
+ {
+  "id": 40,
+  "question": "`max_samples` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · max_samples"
+ },
+ {
+  "id": 41,
+  "question": "`freeze_extra_modules` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Freeze¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · freeze_extra_modules"
+ },
+ {
+  "id": 42,
+  "question": "如何理解和使用 `freeze_trainable_layers` 参数？",
+  "answer": "可训练层的数量。正数表示最后 n 层被设置为可训练的，负数表示前 n 层被设置为可训练的。默认值为 2。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Freeze¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · freeze_trainable_layers"
+ },
+ {
+  "id": 43,
+  "question": "如何理解和使用 `do_sample` 参数？",
+  "answer": "是否使用采样策略生成文本。如果设置为 False，将使用 greedy decoding。默认值为 True。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · do_sample"
+ },
+ {
+  "id": 44,
+  "question": "`quantization_method` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 bitsandbytes, hqq, eetq；默认值为 bitsandbytes。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · quantization_method"
+ },
+ {
+  "id": 45,
+  "question": "`neat_packing` 参数的默认值是多少？",
+  "answer": "默认值为 False。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · neat_packing"
+ },
+ {
+  "id": 46,
+  "question": "`galore_target` 参数的默认值是多少？",
+  "answer": "默认值为 all。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · galore_target"
+ },
+ {
+  "id": 47,
+  "question": "`additional_target` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · additional_target"
+ },
+ {
+  "id": 48,
+  "question": "如何理解和使用 `max_new_tokens` 参数？",
+  "answer": "生成文本的最大长度。设置 max_new_tokens 会覆盖 max_length。默认值为 1024。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · max_new_tokens"
+ },
+ {
+  "id": 49,
+  "question": "`apollo_target` 参数的默认值是多少？",
+  "answer": "默认值为 all。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · apollo_target"
+ },
+ {
+  "id": 50,
+  "question": "`num_beams` 参数的默认值是多少？",
+  "answer": "默认值为 1。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · num_beams"
+ },
+ {
+  "id": 51,
+  "question": "如何理解和使用 `export_legacy_format` 参数？",
+  "answer": "True： .bin 格式保存。 False： .safetensors 格式保存。默认值为 False。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · export_legacy_format"
+ },
+ {
+  "id": 52,
+  "question": "如何理解和使用 `lora_target` 参数？",
+  "answer": "应用 LoRA 方法的模块名称。使用逗号分隔多个模块，使用 all 指定所有模块。默认值为 all。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · lora_target"
+ },
+ {
+  "id": 53,
+  "question": "`cache_dir` 这个参数有什么作用？",
+  "answer": "保存从 Hugging Face 或 ModelScope 下载的模型的本地路径。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · cache_dir"
+ },
+ {
+  "id": 54,
+  "question": "如何理解和使用 `badam_mask_mode` 参数？",
+  "answer": "BAdam 优化器的掩码模式，可选值为 adjacent 或 scatter。默认值为 adjacent。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+  "split": "optimize",
+  "source": "doc-derived",
+  "origin": "文档反推 · badam_mask_mode"
+ },
+ {
+  "id": 55,
+  "question": "`media_dir` 这个参数有什么作用？",
+  "answer": "存储图像、视频或音频的文件夹路径。如果未指定，默认为 dataset_dir。默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · media_dir"
+ },
+ {
+  "id": 56,
+  "question": "`reward_model_type` 参数支持哪些取值？默认值是什么？",
+  "answer": "支持 lora, full, api；默认值为 lora。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · reward_model_type"
+ },
+ {
+  "id": 57,
+  "question": "`shift_attn` 参数的默认值是多少？",
+  "answer": "默认值为 False。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · shift_attn"
+ },
+ {
+  "id": 58,
+  "question": "如何理解和使用 `badam_switch_interval` 参数？",
+  "answer": "layer-wise BAdam 中块更新步数间隔。使用 -1 禁用块更新。默认值为 50。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · badam_switch_interval"
+ },
+ {
+  "id": 59,
+  "question": "`model_name_or_path` 参数的默认值是多少？",
+  "answer": "默认值为 None。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · model_name_or_path"
+ },
+ {
+  "id": 60,
+  "question": "如何理解和使用 `use_dora` 参数？",
+  "answer": "是否使用权重分解 LoRA（Weight-Decomposed LoRA）。默认值为 False。",
+  "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+  "split": "test",
+  "source": "doc-derived",
+  "origin": "文档反推 · use_dora"
+ }
+]

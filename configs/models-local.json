@@ -1,0 +1,14 @@
+{
+  "_comment": "备用配置：只用本机 Ollama 模型。不花任何额度，用于第 13 节退路（被优化的模型跑本机）和离线场景。",
+  "models": [
+    {
+      "name": "qwen3-4b-本地",
+      "kind": "ollama",
+      "model": "qwen3-4b-local",
+      "base_url": "http://127.0.0.1:11434",
+      "api_key_env": "",
+      "temperature": 0.0,
+      "max_tokens": 800
+    }
+  ]
+}

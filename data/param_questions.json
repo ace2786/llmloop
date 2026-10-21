@@ -1,0 +1,74 @@
+[
+ {
+  "issue": 6824,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6824",
+  "title": "求助：如何对 DeepSeek R1 进行 SFT",
+  "comments": 10,
+  "created": "2025-02-05",
+  "params": [
+   "sft"
+  ],
+  "answers": {
+   "sft": {
+    "type": "training.jsonl、可选 validation.jsonl",
+    "desc": "优先 Hugging Face messages；无法注入 {%generation%} 时回退 ShareGPT",
+    "default": "",
+    "source": "webdocs/advanced__megatron_bridge.md | extra_config: /path/to/overrides.json > 数据流¶"
+   }
+  }
+ },
+ {
+  "issue": 5129,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/5129",
+  "title": "ppo训练没有限制保存checkpoints数量功能。save_steps、save_strategy、save_total_limit没有任何作用。依然每步保存一个checkpoint。",
+  "comments": 3,
+  "created": "2024-08-09",
+  "params": [
+   "save_steps"
+  ],
+  "answers": {
+   "save_steps": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "`None`",
+    "source": "docs/zh/configuration/training.md | 训练参数 > TrainingArguments > Checkpoint 与日志配置"
+   }
+  }
+ },
+ {
+  "issue": 3975,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/3975",
+  "title": "recover_from_checkpoint 如何修改后续语料的训练batch size?",
+  "comments": 2,
+  "created": "2024-05-30",
+  "params": [
+   "size"
+  ],
+  "answers": {
+   "size": {
+    "type": "`int \\",
+    "desc": "None`",
+    "default": "全部",
+    "source": "docs/zh/configuration/data.md | 数据参数 > DatasetInfo"
+   }
+  }
+ },
+ {
+  "issue": 6759,
+  "url": "https://github.com/hiyouga/LlamaFactory/issues/6759",
+  "title": "全参数微调的结果如何作为后续LoRA微调的base model",
+  "comments": 2,
+  "created": "2025-01-25",
+  "params": [
+   "model"
+  ],
+  "answers": {
+   "model": {
+    "type": "`str`",
+    "desc": "`Qwen/Qwen3-4B-Instruct-2507`",
+    "default": "本地模型路径或 Hub ID",
+    "source": "docs/zh/configuration/model.md | 模型参数 > ModelArguments"
+   }
+  }
+ }
+]

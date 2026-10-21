@@ -1,0 +1,20 @@
+{
+  "_comment": "硅基流动配置（待用）。账户余额为 0 时所有模型返回 402。领到新用户额度后，把 configs/models.json 里的第二个模型换成这里的一条即可。",
+  "_verified_models": {
+    "deepseek-ai/DeepSeek-V4.1-Flash": "与 GLM 不同家族，对比最有意义（但收费）",
+    "zai-org/GLM-5.3-Flash": "和智谱同款，重复了，不建议",
+    "Qwen/Qwen3.5-4B": "小模型，可作为廉价对照",
+    "THUDM/GLM-4-9B-0414": "老模型，稳定"
+  },
+  "models": [
+    {
+      "name": "deepseek-v4.1-flash-硅基",
+      "kind": "openai",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "base_url": "https://api.siliconflow.cn/v1",
+      "api_key_env": "SILICONFLOW_API_KEY",
+      "temperature": 0.0,
+      "max_tokens": 2000
+    }
+  ]
+}
