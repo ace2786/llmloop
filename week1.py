@@ -68,14 +68,38 @@ FAIL_REASONS = ["检索没命中", "编造内容", "理解错", "格式错"]
 
 # ─────────────────────────── 检索 ───────────────────────────
 class Retriever:
-    """BM25 检索 + 标题/路径加权重排。
+    """BM25 检索 + 标题/路径加权 + 参数名精确匹配加权重排。
 
-    只靠 BM25 时，短小的示例 yaml 会因为偶然命中一个词而排到前面；
-    标题或路径里出现查询词的块，更可能是「答案所在的那一节」，因此加权。
+    v0 的失败 92% 是「检索没命中」，根因有两个：
+      ① 参数散落在多张表（数据参数 / 生成参数 / 微调参数），BM25 只命中其中一张
+      ② 正确答案排在第 4 位之后，被 top-3 截掉
+
+    v1 加两层（对应 out/prediction.md 的方案 A + B）：
+      ① PARAM_BOOST：query 里的参数名（如 cutoff_len）若出现在块的表格行首，额外加分
+      ② top-k 默认从 3 提到 6
     """
 
-    HEADING_BOOST = 6.0  # 每个命中标题/路径的查询词加分
-    CANDIDATE_POOL = 30  # 先取前 N 个再重排
+    HEADING_BOOST = 6.0   # 每个命中标题/路径的查询词加分
+    PARAM_BOOST = 8.0     # 参数名出现在表格行首的加分（强信号，高于标题加权）
+    CANDIDATE_POOL = 30   # 先取前 N 个再重排
+
+    @staticmethod
+    def _table_params(text: str) -> set:
+        """从 markdown 表格行首提取参数名（形如 `| cutoff_len | int | ... |`）。"""
+        names = set()
+        for line in text.split("\n"):
+            if not line.startswith("|"):
+                continue
+            cell = line.strip("|").split("|")[0].strip(" `*")
+            if re.fullmatch(r"[a-z][a-z0-9_]{2,40}", cell):
+                names.add(cell)
+        return names
+
+    @staticmethod
+    def _query_params(query: str) -> set:
+        """从 query 里提取「像参数名」的词：带下划线，或长度 >= 8 的英文词。"""
+        words = re.findall(r"[a-z][a-z0-9_]{2,40}", query.lower())
+        return {w for w in words if "_" in w or len(w) >= 8}
 
     def __init__(self, chunks_path: Path):
         if not chunks_path.exists():
@@ -88,13 +112,16 @@ class Retriever:
         self.head_tokens = [
             set(tokenize(c["heading"])) | set(tokenize(c["path"])) for c in self.chunks
         ]
-        print(f"[检索] 已加载 {len(self.chunks)} 个块")
+        # v1 新增：每个块里出现的参数名
+        self.param_names = [self._table_params(c["text"]) for c in self.chunks]
+        print(f"[检索] 已加载 {len(self.chunks)} 个块（v1：参数名加权 + top-k 6）")
 
-    def top_k(self, query: str, k: int = 3) -> list[dict]:
+    def top_k(self, query: str, k: int = 6) -> list:
         qtok = tokenize(query)
         if not qtok:
             return []
         qset = set(qtok)
+        qparams = self._query_params(query)
         scores = self.bm25.get_scores(qtok)
 
         pool = scores.argsort()[::-1][: self.CANDIDATE_POOL]
@@ -103,17 +130,20 @@ class Retriever:
             i = int(i)
             base = float(scores[i])
             overlap = len(qset & self.head_tokens[i])
-            reranked.append((base + overlap * self.HEADING_BOOST, overlap, base, i))
+            hit_params = len(qparams & self.param_names[i]) if qparams else 0
+            final = base + overlap * self.HEADING_BOOST + hit_params * self.PARAM_BOOST
+            reranked.append((final, overlap, hit_params, base, i))
         reranked.sort(key=lambda x: -x[0])
 
         out = []
-        for final, overlap, base, i in reranked[:k]:
+        for final, overlap, hit_params, base, i in reranked[:k]:
             c = self.chunks[i]
             out.append(
                 {
                     "score": round(final, 2),
                     "bm25": round(base, 2),
                     "head_overlap": overlap,
+                    "param_hit": hit_params,
                     "source": c["source"],
                     "path": c["path"],
                     "heading": c["heading"],
@@ -268,7 +298,7 @@ def main() -> int:
     ap.add_argument("--version", default="v0", help="版本号，如 v0 / v1")
     ap.add_argument("--questions", default=str(DATA / "questions.json"))
     ap.add_argument("--models", default=str(ROOT / "configs" / "models.json"))
-    ap.add_argument("--topk", type=int, default=3)
+    ap.add_argument("--topk", type=int, default=6)
     ap.add_argument("--limit", type=int, default=0, help="只跑前 N 题（调试用）")
     ap.add_argument("--dry-run", action="store_true", help="只检索不调模型")
     ap.add_argument("--workers", type=int, default=4, help="并发数（默认 4）")

@@ -43,9 +43,12 @@ BLIND_COLS = [
 GRADE_COLS = ["人工判分", "失败原因", "判断理由"]
 
 
-def load_all(split: str) -> dict[str, list[dict]]:
+def load_all(split: str, version: str = "") -> dict[str, list[dict]]:
     """返回 {源文件路径: 行列表}"""
     files = sorted(glob.glob(str(OUT / "week1_*.csv")))
+    if version:
+        files = [f for f in files if f"_{version}." in f]
+        print(f"  只读版本 {version}: {len(files)} 个文件")
     if not files:
         raise SystemExit("out/ 下没有 week1_*.csv，先跑 week1.py")
 
@@ -67,7 +70,7 @@ def load_all(split: str) -> dict[str, list[dict]]:
 
 
 def cmd_make(args) -> int:
-    sources = load_all(args.split)
+    sources = load_all(args.split, args.version)
 
     flat = []
     for path, rows in sources.items():
@@ -200,6 +203,7 @@ def main() -> int:
 
     p1 = sub.add_parser("make", help="生成盲判表")
     p1.add_argument("--split", default="test", choices=["test", "optimize", "all"])
+    p1.add_argument("--version", default="", help="只处理某个版本，如 v1")
     p1.set_defaults(func=cmd_make)
 
     p2 = sub.add_parser("merge", help="把判分结果回填到原 CSV")
