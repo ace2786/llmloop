@@ -63,6 +63,12 @@ def do_make() -> int:
         rows = list(csv.DictReader(f))
     print(f"读到 {len(rows)} 条")
 
+    # 文件名跟着行数走，避免 120 条的测试集覆盖 60 条的优化集
+    global XLSX_NAME
+    if len(rows) != 60:
+        XLSX_NAME = f"待判分_{len(rows)}条.xlsx"
+        print(f"文件名：{XLSX_NAME}")
+
     wb = Workbook()
     ws = wb.active
     ws.title = "判分"
@@ -199,8 +205,10 @@ def do_make() -> int:
 
 
 def do_merge() -> int:
-    # 优先读 D 盘那份（用户实际在编辑的），本地 out/ 里的是生成时的副本
-    candidates = [D_DIR / XLSX_NAME, OUT / XLSX_NAME]
+    # 找 D 盘最新的「待判分_*.xlsx」（用户实际在编辑的）
+    import glob as _g
+    _cands = sorted(_g.glob(str(D_DIR / "待判分_*.xlsx")), key=lambda x: -Path(x).stat().st_mtime)
+    candidates = [Path(x) for x in _cands] + [OUT / XLSX_NAME]
     p = next((x for x in candidates if x.exists()), None)
     if p is None:
         print("找不到判分 Excel，先跑 make", file=sys.stderr)

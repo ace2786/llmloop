@@ -48,7 +48,7 @@ temp/
 # ── 盲判中间产物（打乱顺序 + 代号对照表，判完即失效，无复查价值）──
 out/to_grade.csv
 out/blind_map.json
-out/待判分_60条.xlsx
+out/待判分_*.xlsx
 
 # 注意：以下内容【必须】进仓库（第 11 节第 7 步要求）
 #   week1.py / lib/ / scripts/ / configs/

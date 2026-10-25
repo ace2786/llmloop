@@ -298,7 +298,7 @@ def main() -> int:
     ap.add_argument("--version", default="v0", help="版本号，如 v0 / v1")
     ap.add_argument("--questions", default=str(DATA / "questions.json"))
     ap.add_argument("--models", default=str(ROOT / "configs" / "models.json"))
-    ap.add_argument("--topk", type=int, default=6)
+    ap.add_argument("--topk", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0, help="只跑前 N 题（调试用）")
     ap.add_argument("--dry-run", action="store_true", help="只检索不调模型")
     ap.add_argument("--workers", type=int, default=4, help="并发数（默认 4）")

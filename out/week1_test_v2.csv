@@ -1,0 +1,755 @@
+﻿题号,问题,所属份,模型,版本,回答,检索到的段落,人工判分,失败原因,判断理由,耗时秒,输入token,输出token,检索命中来源,时间戳
+32,请问如何添加自定义模型？,测试用,qwen3-4b-本地,v2,"要添加自定义模型支持，需要完成以下步骤：
+
+1. 注册模型的 template：在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。需要填写 `name`, `format_user`, `format_assistant`, `format_system` 与 `format_observation` 字段。其中，`format_prefix` 字段用于指定模型的开头部分，通常可以在 tokenizer_config.json 中找到。`stop_words` 字段用于指定模型的停止词，可以在 generation_config.json 中找到 eos_token_id，再把 eos_token_id 对应的 token 填入。对于多模态模型，还需要在 `mm_plugin` 字段中指定多模态插件。
+
+2. 配置模型参数：根据模型的具体需求配置 `quant_config` 参数。`quantization_bit` 的字段默认值为 `None`，实际行为取决于 `name`：
+
+   - 不设置 `quant_config` 或将其设为 `null` 时，不通过此插件添加量化加载配置。
+   - `name: auto` 且省略 `quantization_bit`（或设为 `null`）时，保持模型加载参数不变。
+   - `name: bnb` 且省略 `quantization_bit`（或设为 `null`）时，使用 4-bit 量化。
+   - `name: auto` 且指定 `quantization_bit` 为 `4` 或 `8` 时，转交 `bnb` 实现处理，仍需满足该实现的依赖和运行条件。",webdocs/advanced__model_support.md#模型支持¶(17.6) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(12.59) ｜ docs/zh/configuration/model.md#模型参数 > quant_config(9.23),对,,与标准答案一致,9.51,671,339,"doc,web",2026-10-25 16:39:39
+32,请问如何添加自定义模型？,测试用,glm-5.3-flash-智谱,v2,"根据资料，LlamaFactory 支持添加自定义模型。以 LLaMA-4 多模态模型为例，需要完成两个主要任务：
+
+1. **注册模型的 template**
+2. **解析多模态数据并构建 messages**
+
+**第一步：注册 template**
+
+在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template，需要填写以下字段：
+
+- `name`、`format_user`、`format_assistant`、`format_system`、`format_observation`
+- `format_prefix`：指定模型的开头部分，通常可以在 `tokenizer_config.json` 中找到
+- `stop_words`：指定模型的停止词，可以在 `generation_config.json` 中找到 `eos_token_id`，再把该 id 对应的 token 填入
+- `mm_plugin`：多模态模型还需要在此字段指定多模态插件
+
+**关于消息模板的注意事项**：实际应用中，往往会在用户输入的信息后添加助手回复模板的头部 `<|header_start|>assistant<|header_end|>` 来引导模型回复。因此用户消息和工具输出的模板中都附有助手回复的头部，而助手消息格式 `format_assistant` 相应地省略该头部，只保留内容部分，如 `{{content}}<|eot|>`。
+
+至于第二个任务「解析多模态数据并构建 messages」的具体做法，资料里没有展开详细说明。",webdocs/advanced__model_support.md#模型支持¶(17.6) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(12.59) ｜ docs/zh/configuration/model.md#模型参数 > quant_config(9.23),对,,与标准答案一致,9.66,634,679,"doc,web",2026-10-25 16:39:39
+31,How to use accelerate to SFT with multiple machines?,测试用,qwen3-4b-本地,v2,"使用 `accelerate` 进行多机训练（SFT）的步骤如下：
+
+1. 生成 DeepSpeed 配置文件：
+   ```
+   accelerate config
+   ```
+   在提示中根据需求回答问题，生成配置文件。
+
+2. 使用生成的配置文件启动训练。例如，如果配置文件为 `accelerate_multiNode_config.yaml`，则运行：
+   ```
+   accelerate launch --config_file accelerate_multiNode_config.yaml your_train_script.py
+   ```
+
+请确保已正确配置多机环境，并根据实际需求调整配置文件参数。资料里没有找到。",webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(11.48) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(11.37) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > accelerate¶(11.34),对,,与标准答案一致,11.48,364,123,web,2026-10-25 16:39:41
+33,调用api_demo的时候如何能切换多个微调后的lora模型 —— 目前是这样运行 但只能加载固定一个lora模型，    api调用的时候可以通过model参数切换lora模型吗,测试用,qwen3-4b-本地,v2,根据提供的资料，调用API时是否可以通过`model`参数切换不同的LoRA模型，需要参考具体的API实现和配置。在资料中没有明确提到通过`model`参数切换不同LoRA模型的方法。因此，资料里没有找到相关信息。,webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(27.52) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶(26.86) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(24.46),错,检索没命中,文档中有答案，检索到的段落未命中,2.95,922,55,web,2026-10-25 16:39:42
+31,How to use accelerate to SFT with multiple machines?,测试用,glm-5.3-flash-智谱,v2,"根据资料，使用 `accelerate` 进行**多机多卡**训练的步骤如下：
+
+1. **先生成配置文件**：运行以下命令，根据提示回答一系列问题（包括多机相关的配置），自动生成 accelerate 配置文件：
+
+   ```bash
+   accelerate config
+   ```
+
+2. **使用生成的配置启动多机多卡训练**：之后即可通过 `accelerate` 指令启动训练。
+
+补充说明（来自资料）：
+
+- 同样的方式也适用于用 `accelerate` 启动 **DeepSpeed** 的多机多卡训练：先运行 `accelerate config` 生成配置文件，再启动。
+- 资料中也提到了单机多卡同样可用 `accelerate config` 生成配置后启动。
+
+需要注意：资料中「示例配置文件」的具体内容没有被包含在提供的资料里，因此**具体的多机配置参数（如机器数量、各机器 rank、主节点 IP 等）和完整的启动命令（如 `accelerate launch` 的具体写法及 SFT 相关参数）在资料里没有找到**，无法给出。建议运行 `accelerate config` 时按提示填写多机信息即可生成对应配置。",webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(11.48) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(11.37) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > accelerate¶(11.34),对,,与标准答案一致,16.21,341,799,web,2026-10-25 16:39:46
+34,deepspeed 单机多卡sft时，如何只保存模型,测试用,qwen3-4b-本地,v2,"在使用 `deepspeed` 进行单机多卡 SFT 训练时，若想只保存模型，可以在配置文件中设置 `save_steps` 参数，指定保存的步数，并且在训练脚本中使用 `--save_steps` 参数来控制保存频率。此外，可以通过设置 `--output_dir` 参数来指定保存路径。
+
+例如，在命令行中可以这样配置：
+
+```
+deepspeed --num_gpus 8 src/train.py \
+--deepspeed examples/deepspeed/ds_z3_config.json \
+--stage sft \
+--model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct \
+--do_train \
+--dataset alpaca_en \
+--template llama3 \
+--finetuning_type full \
+--output_dir saves/llama3-8b/lora/full \
+--overwrite_cache \
+--per_device_train_batch_size 1 \
+--gradient_accumulation_steps 8 \
+--lr_scheduler_type cosine \
+--logging_steps 10 \
+--save_steps 500 \
+--learning_rate 1e-4 \
+--num_train_epochs 2.0 \
+--plot_loss \
+--bf16
+```
+
+在这个例子中，`--save_steps 500` 表示每训练 500 步保存一次模型。如果希望只保存模型而不保存其他内容，可以调整配置文件中的参数，或者在训练脚本中进行相应设置。资料中没有提供更具体的参数来直接控制只保存模型，因此需要根据实际需求调整配置。",webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(32.07) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(30.9) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(30.58),对,,与标准答案一致,5.17,621,329,web,2026-10-25 16:39:47
+35,How to train the mm_proj and the LLM part with lora of Qwen2-VL？,测试用,qwen3-4b-本地,v2,资料里没有找到。,examples/README_zh.md#目录 > 示例 > LoRA 微调 > 多机指令监督微调(10.2) ｜ examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(9.85) ｜ docs/zh/configuration/model.md#模型参数 > ModelArguments(7.1),错,检索没命中,文档中有答案，检索到的段落未命中,0.37,667,6,doc,2026-10-25 16:39:47
+34,deepspeed 单机多卡sft时，如何只保存模型,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于「只保存模型」的说明。
+
+资料中与保存相关的内容仅有：
+- `--output_dir`：指定保存目录（如 `saves/llama3-8b/lora/full`）
+- `--save_steps 500`：指定保存步数间隔
+
+但资料未提及如何配置只保存模型（而不保存优化器状态等）的参数或配置片段，无法基于现有资料给出具体做法。",webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(32.07) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(30.9) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(30.58),错,检索没命中,文档中有答案，检索到的段落未命中,7.4,594,462,web,2026-10-25 16:39:48
+33,调用api_demo的时候如何能切换多个微调后的lora模型 —— 目前是这样运行 但只能加载固定一个lora模型，    api调用的时候可以通过model参数切换lora模型吗,测试用,glm-5.3-flash-智谱,v2,"根据提供的资料，**没有找到**通过 API 调用时用 `model` 参数动态切换多个 LoRA 模型的说明。
+
+资料中仅能确认以下信息：
+
+**1. 推理/API 服务只加载配置中指定的单个适配器**
+
+从资料 1 的配置示例（`examples/inference/qwen3_lora_sft.yaml`）可以看到，`adapter_name_or_path` 是在启动服务前的配置文件里固定指定的：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+adapter_name_or_path: saves/qwen3-4b/lora/sft
+template: qwen3_nothink
+trust_remote_code: true
+```
+
+即每次启动 API 服务（`API_PORT=8000 CUDA_VISIBLE_DEVICES=0 llamafactory-cli api examples/inference/qwen3_lora_sft.yaml`）时只能加载这一个 LoRA 适配器。
+
+**2. 资料中提供的替代方案：合并导出**
+
+根据资料 2，如果不想每次推理都同时加载预训练模型和 LoRA 适配器，可以将它们合并导出为一个完整模型：
+
+- 使用 `llamafactory-cli export merge_config.yaml` 指令合并
+- 配置示例参考 `examples/merge_lora/qwen3_lora_sft.yaml`
+- 可根据需要选择是否量化
+
+因此一种可行的做法是：**将每个微调后的 LoRA 分别合并导出成独立模型，然后分别部署 API 服务**，通过不同端口区分不同的模型。
+
+关于「API 调用时通过 `model` 参数切换 LoRA」这一功能是否支持，资料里没有找到相关内容，建议查阅 LlamaFactory 官方文档中关于 API 的完整说明或源码确认。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(27.52) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶(26.86) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(24.46),错,理解错,用户需要的是在使用时及时切换而AI回答的是在使用前怎么固定下来切换没有解决用户的难点或者说这个难点根本不符合吗或者本来就不能这样子嘛,11.58,861,737,web,2026-10-25 16:39:50
+36,model.chat 功能怎么在框架内批量使用呢？,测试用,qwen3-4b-本地,v2,"根据提供的资料，`model.chat` 功能的批量使用可能涉及通过命令行接口（CLI）进行推理。在资料中提到的 `vllm_infer.py` 脚本可以用于批量推理，但具体如何将 `model.chat` 功能与该脚本结合使用，资料中没有详细说明。
+
+不过，资料中提到可以通过 `llamafactory-cli` 启动 API 服务，并使用 YAML 配置文件（如 `examples/inference/qwen3_lora_sft.yaml`）来调用 API 服务。这可能涉及到使用 `model.chat` 功能的批量调用方式。
+
+如果需要更具体的指导，建议参考 `llamafactory-cli` 的文档或直接使用提供的 YAML 配置文件来启动服务并进行批量推理。资料中没有明确说明 `model.chat` 如何在框架内批量使用。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(13.16) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(10.68) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(10.41),错,理解错,AI并没有解答用户如何在代码里调用的难题,2.92,446,187,"doc,web",2026-10-25 16:39:51
+37,freeze_trainable_layers 这个参数是什么含义？,测试用,qwen3-4b-本地,v2,`freeze_trainable_layers` 参数用于指定可训练层的数量。正数表示最后 n 层被设置为可训练的，负数表示前 n 层被设置为可训练的。默认值为 2。,webdocs/advanced__tuning_algorithms.md#... > Freeze¶ > method(13.85) ｜ docs/zh/configuration/model.md#模型参数 > peft_config > Freeze(12.77) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > Freeze¶(12.47),对,,与标准答案一致,0.96,633,49,"doc,web",2026-10-25 16:39:52
+37,freeze_trainable_layers 这个参数是什么含义？,测试用,glm-5.3-flash-智谱,v2,"`freeze_trainable_layers` 是 **Freeze 微调方式**的参数，表示**可训练层的数量**。
+
+- **类型**：`int`
+- **默认值**：`2`
+- **含义**：
+  - **正数**：表示**最后 n 层**被设置为可训练的；
+  - **负数**：表示**前 n 层**被设置为可训练的。
+
+配置示例（配合 Freeze 微调使用）：
+
+```yaml
+stage: sft
+do_train: true
+finetuning_type: freeze
+freeze_trainable_layers: 8
+freeze_trainable_modules: all
+```
+
+如需控制层内可训练的模块，可搭配 `freeze_trainable_modules`（默认 `all`）和 `freeze_extra_modules` 使用。",webdocs/advanced__tuning_algorithms.md#... > Freeze¶ > method(13.85) ｜ docs/zh/configuration/model.md#模型参数 > peft_config > Freeze(12.77) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > Freeze¶(12.47),对,,与标准答案一致,4.59,588,318,"doc,web",2026-10-25 16:39:55
+38,开启视觉模型的api之后怎么给他传图片？,测试用,qwen3-4b-本地,v2,资料里没有找到。,README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API(12.34) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.88) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.1),错,检索没命中,文档中有答案，检索到的段落未命中,0.32,585,6,doc,2026-10-25 16:39:55
+35,How to train the mm_proj and the LLM part with lora of Qwen2-VL？,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到针对 Qwen2-VL 如何同时用 LoRA 训练 mm_proj（多模态投影层）和 LLM 部分的具体说明。
+
+资料中仅包含以下相关信息，供参考：
+
+1. **通用 LoRA 微调示例**（单模态 Qwen3）：通过 `llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml` 启动，多机训练可加 `FORCE_TORCHRUN=1 NNODES=2 NODE_RANK=... MASTER_ADDR=... MASTER_PORT=...`。
+
+2. **模型参数**：`ModelArguments` 中有 `peft_config` 字段（类型 `dict | None`，默认 `None`），说明中提到可用于「LoRA 或 Freeze 配置」，但资料中没有给出如何配置它来指定 `mm_proj` 等 vision 相关模块作为 LoRA target modules 的细节。
+
+如需了解 Qwen2-VL 多模态 LoRA 微调中 target modules 的具体写法（如是否包含 `visual`、`mm_projector` 等模块），建议查阅 LlamaFactory 多模态训练相关文档或示例，资料中未包含这部分内容。",examples/README_zh.md#目录 > 示例 > LoRA 微调 > 多机指令监督微调(10.2) ｜ examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(9.85) ｜ docs/zh/configuration/model.md#模型参数 > ModelArguments(7.1),错,检索没命中,文档中有答案，检索到的段落未命中,10.43,633,650,doc,2026-10-25 16:39:56
+39,如何指定只冻结 LLM 进行多模态模型的训练？,测试用,qwen3-4b-本地,v2,资料里没有找到。,webdocs/advanced__model_support.md#模型支持¶ > 多模态数据构建¶(18.31) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(17.69) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(15.99),错,检索没命中,文档中有答案，检索到的段落未命中,0.34,700,6,web,2026-10-25 16:39:56
+36,model.chat 功能怎么在框架内批量使用呢？,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于 `model.chat` 编程接口（Python 代码内调用）的说明。
+
+资料中提供的框架内批量使用方式有以下两种，可作参考：
+
+**1. 使用 vllm 引擎对数据集批量推理**
+
+```bash
+python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
+```
+
+**2. 启动 API 服务后批量调用**
+
+启动服务（示例使用 Qwen3 LoRA SFT 配置）：
+
+```bash
+API_PORT=8000 CUDA_VISIBLE_DEVICES=0 llamafactory-cli api examples/inference/qwen3_lora_sft.yaml
+```
+
+其中配置文件包含：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+adapter_name_or_path: saves/qwen3-4b/lora/sft
+template: qwen3_nothink
+trust_remote_code: true
+```
+
+如果您想了解 `model.chat` 这类程序化调用接口的具体用法，资料里没有找到相关内容。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(13.16) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(10.68) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(10.41),对,,与标准答案一致,10.06,419,741,"doc,web",2026-10-25 16:39:58
+39,如何指定只冻结 LLM 进行多模态模型的训练？,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于「冻结 LLM」进行多模态模型训练的参数或配置说明。
+
+目前资料中与多模态相关的内容仅涉及：
+
+- **多模态数据构建**（`src/llamafactory/data/mm_plugin.py` 中实现 Plugin 类，如 `Llama4Plugin`，含 `get_mm_inputs` 和 `process_messages` 方法）[资料 1]
+- **多模态模型推理**（如 `llamafactory-cli webchat examples/inference/qwen3vl.yaml` 及其配置项 `model_name_or_path`、`template`、`infer_backend`、`trust_remote_code`）[资料 2]
+- **多模态模型的图像/视频参数**（如 `image_max_pixels`、`image_min_pixels`、`video_max_pixels`、`video_min_pixels`、`video_fps`、`video_maxlen`）[资料 3]
+
+如需了解冻结 LLM（freeze）相关的训练参数，建议查阅其他文档（如训练参数相关章节），资料里没有找到相关内容。",webdocs/advanced__model_support.md#模型支持¶ > 多模态数据构建¶(18.31) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(17.69) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(15.99),错,检索没命中,文档中有答案，检索到的段落未命中,6.59,662,472,web,2026-10-25 16:40:02
+40,如何取部分数据集训练,测试用,qwen3-4b-本地,v2,"在 LlamaFactory 中，可以通过设置 `size` 和/或 `weight` 参数来取部分数据集训练。具体来说，`size` 和 `weight` 作用于数据集展开后的训练索引，用于控制采样规模。
+
+1. `size`：设置后，先从展开后的索引中有放回抽取 `size` 个条目。如果未设置 `size`，则保留完整索引。
+2. `weight`：设置后，再从上一步结果中有放回抽取 `int(当前条目数 × weight)` 个条目。如果未设置 `weight`，则保留上一步结果。
+
+例如，如果设置 `size: 1000` 与 `weight: 0.5`，则先抽取 1000 个条目，再从中抽取 500 个条目。最终规模为 500，但可能包含重复条目，也可能没有覆盖某些原始记录。
+
+在数据集 YAML 配置中，可以通过设置 `size` 和 `weight` 参数来控制采样规模。例如：
+
+```yaml
+data:
+  - name: my_dataset
+    path: data.json
+    source: ""data.json""
+    converter: ""alpaca""
+    size: 1000
+    weight: 0.5
+```
+
+这样配置后，数据集将按照指定的 `size` 和 `weight` 进行采样，从而取部分数据集进行训练。",docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(15.54) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(15.41) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(10.77),对,,与标准答案一致,5.15,903,320,"doc,web",2026-10-25 16:40:03
+38,开启视觉模型的api之后怎么给他传图片？,测试用,glm-5.3-flash-智谱,v2,"该项目启动的 API 兼容 OpenAI 接口格式，传图片按 OpenAI Chat API 的方式即可：
+
+1. **参考官方示例脚本**：资料中提供了图像理解的示例脚本 `scripts/api_example/test_image.py`，可以直接参考或运行它来测试传图。
+
+2. **API 格式**：接口文档与 OpenAI 的 [chat/create](https://platform.openai.com/docs/api-reference/chat/create) 一致，即在请求的 `messages` 中，把 `content` 设置为数组形式，其中图片部分使用 `type: ""image_url""` 的条目传入（可以是图片 URL 或 base64 编码），例如：
+
+```json
+{
+  ""model"": ""模型名称"",
+  ""messages"": [
+    {
+      ""role"": ""user"",
+      ""content"": [
+        {""type"": ""image_url"", ""image_url"": {""url"": ""图片URL或base64""}},
+        {""type"": ""text"", ""text"": ""描述这张图片""}
+      ]
+    }
+  ]
+}
+```
+
+注意：启动时需确保使用支持视觉的模型，资料 1 的示例中通过 `infer_backend=vllm` 启动 API 服务即可。
+
+具体完整代码请直接查看项目中的 `scripts/api_example/test_image.py` 示例文件。",README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API(12.34) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.88) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.1),对,,与标准答案一致,10.84,561,666,doc,2026-10-25 16:40:03
+41,如何使用 flash_attn2 进行加速训练？按照提示加了 --flash_attn 参数，但对比发现加不加这个参数训练速度都一样,测试用,qwen3-4b-本地,v2,"根据资料，若想使用 FlashAttention 进行加速训练，应在启动训练时在训练配置文件中添加以下参数：
+
+```
+flash_attn: fa2
+```
+
+如果您已经按照提示添加了 `--flash_attn` 参数但发现训练速度没有变化，可能的原因是参数名称或配置方式不正确。请确认是否使用了正确的参数名 `flash_attn: fa2`，并且该参数被正确地添加到训练配置文件中。如果仍然无法解决问题，可能需要检查您的环境或模型是否支持 FlashAttention。资料里没有找到更多相关信息。",webdocs/advanced__acceleration.md#加速¶ > FlashAttention¶(21.96) ｜ docs/zh/feature-guide/kernel_acceleration.md#融合算子加速(18.04) ｜ webdocs/advanced__acceleration.md#加速¶ > Unsloth¶(15.05),对,,与标准答案一致,2.08,452,124,"doc,web",2026-10-25 16:40:05
+42,如何在 sft llama 时添加 special token？,测试用,qwen3-4b-本地,v2,"在进行 SFT（监督微调）时，如果需要添加 special token，可以通过设置 `new_special_tokens` 参数来实现。该参数用于指定要添加到 tokenizer 中的 special token，多个 special token 用逗号分隔。
+
+例如，如果希望添加两个 special token，可以这样设置：
+```python
+new_special_tokens=""token1,token2""
+```
+
+在训练配置中，需要将此参数传递给模型参数部分，确保在加载模型和 tokenizer 时正确应用这些 special tokens。此外，还需要确保 `split_special_tokens` 参数设置为 `True`，以便在分词时将 special token 分割。",webdocs/advanced__extras.md#额外选项¶ > LLaMA Pro¶(13.45) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > SFT 数据格式(9.84) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 基本参数¶(8.25),对,,与标准答案一致,2.62,1569,136,"doc,web",2026-10-25 16:40:07
+42,如何在 sft llama 时添加 special token？,测试用,glm-5.3-flash-智谱,v2,"在 LlamaFactory 中，可以通过模型参数 `new_special_tokens` 来添加 special token：
+
+- **`new_special_tokens`**：要添加到 tokenizer 中的 special token，多个 special token 用逗号分隔，例如：
+  ```yaml
+  new_special_tokens: ""<tool_call>,</tool_call>""
+  ```
+
+如果需要相应调整词表和嵌入层大小，可以配合：
+
+- **`resize_vocab`**：是否调整词表和嵌入层的大小（默认 `False`），例如：
+  ```yaml
+  resize_vocab: true
+  ```
+
+这两个参数均属于模型参数（`model_name_or_path` 等所在的模型参数部分），在训练/推理的 yaml 配置中设置即可。资料中未提供更多关于添加 special token 的具体流程说明。",webdocs/advanced__extras.md#额外选项¶ > LLaMA Pro¶(13.45) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > SFT 数据格式(9.84) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 基本参数¶(8.25),对,,与标准答案一致,5.73,1510,344,"doc,web",2026-10-25 16:40:09
+43,"请教如何编写template —— 您好，想向您请教下如何自定义template  原始Input：    原始配置：   原始样例返回内容：    改写的template：    改写后返回内容： ` 问题：“你好，你是谁？” {""role"":""assistant"",""content"":""\n我是李华，你是谁？\n\n""} `",测试用,qwen3-4b-本地,v2,"根据提供的资料，自定义 template 的方法是使用 `AutoTokenizer.from_pretrained` 获取模型的 template，并通过 `tokenizer.apply_chat_template` 方法进行处理。以下是一个示例：
+
+```python
+from transformers import AutoTokenizer, AutoProcessor
+
+# 获取模型的 tokenizer
+tokenizer = AutoTokenizer.from_pretrained(""unsloth/Llama-4-Scout-17B-16E-Instruct"")
+
+# 定义 messages
+messages = [
+    {""role"": ""user"", ""content"": ""你好，你是谁？""},
+    {""role"": ""assistant"", ""content"": ""我是李华，你是谁？\n\n""}
+]
+
+# 应用 chat template
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+print(""========== Template =========="")
+print(text)
+```
+
+这个示例中，`messages` 是一个包含用户和助手对话的列表，`tokenizer.apply_chat_template` 会根据模型的 template 生成对应的文本格式。你可以根据需要修改 `messages` 中的内容来自定义 template。",webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(31.66) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(28.54) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > SFT 数据格式(24.53),错,理解错,用户需要的是如何编写，AI回答是如何调用，完全不搭边,3.75,805,221,"doc,web",2026-10-25 16:40:12
+40,如何取部分数据集训练,测试用,glm-5.3-flash-智谱,v2,"可以通过在**数据集描述**（DatasetInfo）中设置 `size` 或 `weight` 字段来只取部分数据训练，二者都作用于数据集展开后的训练索引（多轮 SFT 中每个受监督的 assistant turn 是一个条目，偏好对数据以一组 chosen/rejected 为一个条目）。
+
+**计算顺序（均为正数时）：**
+
+1. **`size`**：先从展开后的索引中**有放回**抽取 `size` 个条目；省略则保留完整索引。
+2. **`weight`**：再从上一步结果中有放回抽取 `int(当前条目数 × weight)` 个条目，小数部分向下取整；省略则保留上一步结果。
+
+**示例**：同时设置 `size: 1000` 和 `weight: 0.5`，先抽 1000 条，再从中抽 500 条，最终规模为 500——可能包含重复条目，也可能没有覆盖某些原始记录。
+
+```json
+""dataset_name"": {
+  ""file_name"": ""data.json"",
+  ""columns"": { ""prompt"": ""text"" },
+  ""size"": 1000,
+  ""weight"": 0.5
+}
+```
+
+**注意事项：**
+
+- `weight` 控制的是该数据集贡献的索引数量，**不是**各数据集之间归一化后的抽样概率，也不会改变样本的损失权重。
+- `weight > 1` 可以增加索引数量。
+- 显式设置 `weight: 1.0` 仍会执行有放回重采样；**只有同时省略 `size` 和 `weight` 才会直接保留全部展开后的索引**。
+
+此外，在通过数据集 YAML 组合多个数据集时，也支持在每个条目中配置这类采样设置，从而对不同的数据集分别控制取样规模。",docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(15.54) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(15.41) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(10.77),对,,与标准答案一致,16.19,843,1117,"doc,web",2026-10-25 16:40:13
+41,如何使用 flash_attn2 进行加速训练？按照提示加了 --flash_attn 参数，但对比发现加不加这个参数训练速度都一样,测试用,glm-5.3-flash-智谱,v2,"根据资料，使用 FlashAttention 加速的正确方式是在**训练配置文件**中添加参数，并且必须指定值为 `fa2`：
+
+```yaml
+flash_attn: fa2
+```
+
+您训练速度没有变化，很可能是因为只写了 `--flash_attn` 而没有给它赋值 `fa2`。正确写法应为：
+
+- **配置文件方式**：在 yaml 配置中添加 `flash_attn: fa2`
+- **命令行方式**：`--flash_attn fa2`（注意要带上 `fa2` 这个值）
+
+另外补充：资料中还提到 Unsloth 也是一种加速方案（`use_unsloth: True`），支持 Llama、Mistral、Phi-3、Gemma、Yi、DeepSeek、Qwen 等模型的 4-bit/16-bit QLoRA/LoRA 微调，可提升速度并减少显存占用，可作为备选方案。",webdocs/advanced__acceleration.md#加速¶ > FlashAttention¶(21.96) ｜ docs/zh/feature-guide/kernel_acceleration.md#融合算子加速(18.04) ｜ webdocs/advanced__acceleration.md#加速¶ > Unsloth¶(15.05),对,,与标准答案一致,10.86,426,757,"doc,web",2026-10-25 16:40:13
+44,Support Liger Kernel for Qwen3.5,测试用,qwen3-4b-本地,v2,"要为 Qwen3.5 支持 Liger Kernel，您需要在训练配置文件中添加以下参数：
+
+```
+enable_liger_kernel: True
+```
+
+同时，在 `kernel_config` 中指定使用 Liger Kernel：
+
+```yaml
+kernel_config:
+  name: liger_kernel
+```
+
+这将启用 Liger Kernel 对 Qwen3.5 的优化，包括融合 RMSNorm、RoPE、SwiGLU、Cross Entropy 等训练路径。具体启用项由模型支持范围和 Liger Kernel 版本决定。",webdocs/advanced__acceleration.md#加速¶ > Liger Kernel¶(26.74) ｜ docs/zh/feature-guide/kernel_acceleration.md#融合算子加速 > Liger Kernel(26.66) ｜ docs/zh/configuration/model.md#模型参数 > kernel_config(9.13),对,,与标准答案一致,1.98,475,118,"doc,web",2026-10-25 16:40:14
+45,kto训练完如何预测,测试用,qwen3-4b-本地,v2,"在 LlamaFactory 中，完成 KTO 训练后，可以通过 WebUI 的“评估与预测”界面进行预测。进入 WebUI 后，选择“评估与预测”功能，上传模型或选择已训练的模型，然后输入查询内容，即可得到模型的预测结果。具体操作步骤如下：
+
+1. 安装并启动 LlamaFactory WebUI：`llamafactory-cli webui`。
+2. 进入 WebUI 后，点击“评估与预测”。
+3. 选择已训练的 KTO 模型。
+4. 输入查询内容，点击“预测”按钮，查看模型的输出结果。
+
+通过这种方式，您可以使用训练好的 KTO 模型进行预测。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > KTO¶(14.02) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > KTO 数据集¶(11.81) ｜ webdocs/getting_started__webui.md#WebUI¶(7.72),对,,与标准答案一致,2.5,614,154,web,2026-10-25 16:40:17
+44,Support Liger Kernel for Qwen3.5,测试用,glm-5.3-flash-智谱,v2,"关于 Qwen3.5 是否支持 Liger Kernel，**资料里没有找到**明确针对 Qwen3.5 的支持说明。
+
+根据资料，Liger Kernel 的使用情况如下：
+
+1. **依赖模型适配**：Liger Kernel 依赖 `liger-kernel`，并要求模型具有对应适配；具体能融合哪些算子（如 RMSNorm、RoPE、SwiGLU、Cross Entropy 等）由**模型支持范围和 Liger Kernel 版本**决定。因此 Qwen3.5 能否使用，取决于该模型是否有对应适配。
+
+2. **启用方式**（两种写法）：
+   - 旧版训练配置参数：
+     ```yaml
+     enable_liger_kernel: True
+     ```
+   - 通过 `kernel_config`：
+     ```yaml
+     kernel_config:
+       name: liger_kernel
+     ```
+
+建议您在实际使用前确认当前环境的 `liger-kernel` 版本及 Qwen3.5 的适配情况。",webdocs/advanced__acceleration.md#加速¶ > Liger Kernel¶(26.74) ｜ docs/zh/feature-guide/kernel_acceleration.md#融合算子加速 > Liger Kernel(26.66) ｜ docs/zh/configuration/model.md#模型参数 > kernel_config(9.13),错,检索没命中,文档中有答案，检索到的段落未命中,8.19,448,544,"doc,web",2026-10-25 16:40:21
+45,kto训练完如何预测,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于 KTO 训练完成后如何进行预测的具体说明（例如预测时 `stage` 等参数如何设置、对应的命令行用法等）。
+
+资料中仅提到与「预测」相关的信息是：LlamaFactory 的 WebUI 包含「评估与预测」界面，可通过以下命令启动：
+
+```
+llamafactory-cli webui
+```
+
+如果需要 KTO 训练后预测的具体操作步骤和参数配置，建议查阅其他文档（如评估与预测相关的详细说明），当前提供的资料不足以完整回答该问题。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > KTO¶(14.02) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > KTO 数据集¶(11.81) ｜ webdocs/getting_started__webui.md#WebUI¶(7.72),错,检索没命中,文档中有答案，检索到的段落未命中,8.2,586,462,web,2026-10-25 16:40:21
+46,如何自动保存checkpoint?,测试用,glm-5.3-flash-智谱,v2,"在 LlamaFactory 中可以通过训练 YAML 的顶层参数配置自动保存 checkpoint：
+
+**按 step 保存（定期保存）**
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+save_strategy: steps
+save_steps: 200
+save_total_limit: 3
+```
+
+表示每 200 个 step 保存一次，最多保留 3 个最近的 checkpoint，超过后自动删除较旧的。
+
+**按 epoch 保存**
+
+```yaml
+save_strategy: epoch
+```
+
+也可以直接用 `save_epochs` 按数据遍历进度触发保存：
+
+```yaml
+save_steps: 500
+save_epochs: null
+```
+
+注意：
+- `save_steps` 与 `save_epochs` 同时设置时，训练器会根据 `save_epochs` 重新计算并覆盖 `save_steps`。
+- 纯 `dynamic_batching` 模式只支持按 step 保存。
+- `save_total_limit` 负责删除最旧的完整 checkpoint。
+
+**如果不想在训练过程中保存 checkpoint**
+
+```yaml
+save_strategy: no
+```
+
+**补充**：如果保存后想从 checkpoint 续训，可设置：
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+`auto` 会在 `output_dir` 下自动查找最新的完整 checkpoint，也可以直接填写具体 checkpoint 路径。未设置该参数时，即使 `output_dir` 中存在 checkpoint 也不会触发续训。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(25.88) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(25.3) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(21.0),对,,与标准答案一致,5.32,599,356,"doc,web",2026-10-25 16:40:22
+46,如何自动保存checkpoint?,测试用,qwen3-4b-本地,v2,"在 LlamaFactory 中，可以通过设置 `save_strategy` 参数来自动保存 checkpoint。如果希望按 step 定期保存 checkpoint，可以设置：
+
+```
+save_strategy: steps
+save_steps: 200
+save_total_limit: 3
+```
+
+这表示训练过程中每 200 个 step 保存一次 checkpoint，并且最多保留 3 个最近的 checkpoint。
+
+如果希望按 epoch 保存，可以设置：
+
+```
+save_strategy: epoch
+```
+
+如果不希望在训练过程中保存 checkpoint，可以设置：
+
+```
+save_strategy: no
+```
+
+此外，如果希望从现有的 checkpoint 恢复训练，可以使用 `resume_from_checkpoint: auto` 来自动查找最新的完整 checkpoint。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(25.88) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(25.3) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(21.0),对,,与标准答案一致,2.53,629,153,"doc,web",2026-10-25 16:40:23
+47,建议增加参数控制最大的保存 checkpoint 数量 save_total_limit,测试用,qwen3-4b-本地,v2,"根据资料 1 和资料 2，`save_total_limit` 参数用于控制最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint。该参数位于训练 YAML 的顶层，示例配置如下：
+
+```yaml
+save_total_limit: 3
+```
+
+此参数的值设置为一个整数，表示最多保留的 checkpoint 数量。如果希望增加最大保存 checkpoint 的数量，只需调整该参数的值即可。例如，若希望保留 5 个 checkpoint，可设置为：
+
+```yaml
+save_total_limit: 5
+```",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(35.29) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(31.54) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > Checkpoint 与日(31.38),,,,2.78,722,122,"doc,web",2026-10-25 16:40:25
+48,关于 packing 参数在 sft 阶段的疑问：为什么实际 batch 里的样本数和 micro_batch_size 对不上？,测试用,qwen3-4b-本地,v2,资料里没有找到。,docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(15.96) ｜ docs/zh/feature-guide/batching.md#批处理策略(14.37) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(12.81),错,检索没命中,文档中有答案，检索到的段落未命中,0.47,1070,6,doc,2026-10-25 16:40:26
+47,建议增加参数控制最大的保存 checkpoint 数量 save_total_limit,测试用,glm-5.3-flash-智谱,v2,"这个参数**已经存在**，无需新增。`save_total_limit` 就是用于控制最多保留的 checkpoint 数量的参数，超过限制时会自动删除最旧的 checkpoint。
+
+**使用方法**（位于训练 YAML 顶层）：
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+save_strategy: steps
+save_steps: 200
+save_total_limit: 3
+```
+
+上述配置表示每 200 个 step 保存一次 checkpoint，并且最多保留 3 个最近的 checkpoint。
+
+**参数说明**：
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `save_total_limit` | `int \| None` | `None` | 最多保留数量 |
+
+- 默认值为 `None`，即不限制数量。
+- 配合 `save_strategy: steps` + `save_steps` 可按 step 定期保存，或改用 `save_strategy: epoch` 按 epoch 保存。
+- 如果按数据遍历进度触发，也可以设置 `save_epochs`（注意：`save_steps` 与 `save_epochs` 同时设置时，训练器会根据 `save_epochs` 重新计算并覆盖 `save_steps`）。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(35.29) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(31.54) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > Checkpoint 与日(31.38),对,,与标准答案一致,8.35,684,591,"doc,web",2026-10-25 16:40:29
+49,seq_length 为什么是 8192，而 cutoff_len 设置为 4096 时？,测试用,qwen3-4b-本地,v2,资料里没有找到。,docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(9.61) ｜ webdocs/advanced__trainers.md#训练方法¶ > Pre-training¶ > dataset(2.82) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > dataset(2.69),错,检索没命中,文档中有答案，检索到的段落未命中,0.38,569,6,"doc,web",2026-10-25 16:40:30
+49,seq_length 为什么是 8192，而 cutoff_len 设置为 4096 时？,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于 `seq_length` 的说明，也没有解释 `seq_length` 与 `cutoff_len` 之间关系的文档，因此无法回答为什么 `seq_length` 是 8192 而 `cutoff_len` 设置为 4096。
+
+资料中仅提及 `cutoff_len`（默认值 `2048`，表示最大序列长度），例如：
+
+```yaml
+cutoff_len: 1024   # 预训练示例
+cutoff_len: 2048   # 评估示例
+```
+
+如果需要了解 `seq_length` 的含义及其与 `cutoff_len` 的区别，建议查阅相关模型配置或分词器参数的官方文档。",docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(9.61) ｜ webdocs/advanced__trainers.md#训练方法¶ > Pre-training¶ > dataset(2.82) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > dataset(2.69),错,检索没命中,文档中有答案，检索到的段落未命中,5.34,537,366,"doc,web",2026-10-25 16:40:31
+50,【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗,测试用,qwen3-4b-本地,v2,DPO训练结束后，可以使用类似SFT训练后推理的脚本进行推理。具体来说，完成DPO训练后，将 `chat.yaml` 中的 `model` 参数改为DPO训练输出的目录，例如 `outputs/qwen3_dpo`。此时，需要确保加载的是完整模型权重，同时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml` 进行推理。这样就能使用训练后的DPO模型进行推理。,docs/zh/feature-guide/dpo.md#偏好优化（DPO） > 训练配置(22.41) ｜ webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > DPO¶(21.1) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(20.48),对,,与标准答案一致,1.86,628,111,"doc,web",2026-10-25 16:40:33
+43,"请教如何编写template —— 您好，想向您请教下如何自定义template  原始Input：    原始配置：   原始样例返回内容：    改写的template：    改写后返回内容： ` 问题：“你好，你是谁？” {""role"":""assistant"",""content"":""\n我是李华，你是谁？\n\n""} `",测试用,glm-5.3-flash-智谱,v2,"您好！根据手头资料，我分几点说明，其中「自定义注册 template」的具体 API 细节资料里没有覆盖，会如实告知。
+
+## 1. 先获取模型的原始 template
+
+资料中给出的做法是：用 tokenizer 打印模型的 chat_template，观察它的格式，例如 LLaMA-4：
+
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(""unsloth/Llama-4-Scout-17B-16E-Instruct"")
+messages = [
+    {""role"": ""user"", ""content"": r""{{content}}""},
+    {""role"": ""assistant"", ""content"": r""{{content}}""},
+    {""role"": ""system"", ""content"": r""{{content}}""},
+    {""role"": ""tool"", ""content"": r""{{content}}""},
+]
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+print(text)
+```
+
+也可以直接到模型的 huggingface repo 中获取 template。以资料中的输出为例，可以看到模板本身就带有换行符和特殊标记：
+
+```
+<|begin_of_text|><|header_start|>user<|header_end|>
+
+{{content}}<|eot|><|header_start|>assistant<|header_end|>
+
+```
+
+> 顺带一提：您样例返回中的 `""\n我是李华，你是谁？\n\n""` 前后的换行符，很可能就是模板本身包含的换行（如上例中 `<|header_end|>` 后的空行），并非模型自己生成的内容。
+
+## 2. 在配置中指定 template
+
+在推理/训练的 yaml 配置里通过 `template` 参数指定，例如：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: huggingface
+trust_remote_code: true
+```
+
+## 3. 关于「改写/注册自定义 template」
+
+**资料里没有找到**如何编写注册自定义 template 的具体代码（如 `register_template` 的参数、自定义模板类的写法等），因此无法给出改写 template 的具体配置片段，建议查阅 LlamaFactory 源码中 template 注册相关的文档。
+
+## 4. 如果目标是让模型回复特定内容（如「我是李华」）
+
+更推荐的做法是通过 SFT 数据微调实现。数据格式如下（`loss_weight` 控制 assistant 回复的监督权重，`1.0` 为完整权重）：
+
+```json
+{
+  ""messages"": [
+    {""role"": ""user"", ""content"": [{""type"": ""text"", ""value"": ""你好，你是谁？""}]},
+    {""role"": ""assistant"", ""content"": [{""type"": ""text"", ""value"": ""我是李华。""}], ""loss_weight"": 1.0}
+  ]
+}
+```
+
+多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。
+
+**小结**：资料覆盖了「查看原始 template」「配置 template 参数」「用 SFT 数据改变模型回复内容」；但「注册/改写自定义 template」的具体写法在资料里没有找到，无法进一步展开。",webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(31.66) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(28.54) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > SFT 数据格式(24.53),错,检索没命中,用户需要的是我怎么改，AI回答是怎么找到这个问题,29.88,779,2029,"doc,web",2026-10-25 16:40:37
+48,关于 packing 参数在 sft 阶段的疑问：为什么实际 batch 里的样本数和 micro_batch_size 对不上？,测试用,glm-5.3-flash-智谱,v2,"资料里没有找到名为 `packing` 的参数说明。但「batch 里样本数与 `micro_batch_size` 对不上」这一现象，资料 2（批处理策略）中有对应解释，与 `batching_strategy` 的选择有关：
+
+**固定样本数策略**（`normal`、`padding_free`）：每个 micro-batch 固定包含 `micro_batch_size` 条样本，样本数是对得上的。区别只在序列组织方式：
+- `normal`：按 batch 内最长序列 padding；
+- `padding_free`：将多条样本拼接为一条连续序列（看起来像“一条”，实际包含多条样本）。
+
+**动态样本数策略**（`dynamic_batching`、`dynamic_padding_free`）：`micro_batch_size` 并不表示最终 batch 的样本数，而是用于计算 token 预算：
+
+> token 预算 = `cutoff_len` × `micro_batch_size`
+
+例如 `cutoff_len: 2048`、`micro_batch_size: 4` 时，预算为 8192：
+- `dynamic_batching` 在「最长样本长度 × 样本数 ≤ 8192」的范围内决定实际样本数，再按最长样本 padding；
+- `dynamic_padding_free` 在「样本总长度 ≤ 8192」的范围内决定实际样本数，并拼接起来。
+
+因此，动态策略下每个 micro-batch 的实际样本数会随样本长度动态变化，不一定等于 `micro_batch_size`。
+
+补充一点（资料 1）：动态策略中，一次参数更新的实际样本数也随长度变化，`global_batch_size` 只决定每个 DP 进程的累积次数 `global_batch_size / (dp_size × micro_batch_size)`，而不是固定样本数。
+
+如果需要确认你实际用的策略，可以检查配置中的 `batching_strategy` 字段。至于 SFT 阶段是否有独立的 `packing` 开关，资料里没有找到。",docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(15.96) ｜ docs/zh/feature-guide/batching.md#批处理策略(14.37) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(12.81),对,,与标准答案一致,17.05,996,1134,doc,2026-10-25 16:40:40
+51,"如何从checkpoints 完整复原出 optimizer,model 等的训练时的状态，使其可以从中断点继续训练",测试用,qwen3-4b-本地,v2,"要从 checkpoints 完整复原出 optimizer、model 等的训练时的状态，使其可以从中断点继续训练，需要在配置中使用 `resume_from_checkpoint` 参数，并指向具体的 checkpoint 目录（例如 `checkpoint-1000`）。这样，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态，包括 optimizer、scheduler 等信息。
+
+示例配置如下：
+```
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+如果此前开启了 `save_only_model: true`，则由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度。",docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(17.98) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(16.08) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶(14.44),对,,与标准答案一致,3.08,674,188,"doc,web",2026-10-25 16:40:40
+52,"qwen2vl 7b , how to call api",测试用,qwen3-4b-本地,v2,资料里没有找到。,README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API(12.34) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.88) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(10.35),错,检索没命中,文档中有答案，检索到的段落未命中,0.27,566,6,doc,2026-10-25 16:40:41
+51,"如何从checkpoints 完整复原出 optimizer,model 等的训练时的状态，使其可以从中断点继续训练",测试用,glm-5.3-flash-智谱,v2,"要完整恢复训练状态（模型、优化器、学习率调度器、批次进度、训练步数等），使用 `resume_from_checkpoint` 配置即可，而不是 `dist_config.dcp_path`（后者只加载模型权重）。
+
+**1. 指定具体 checkpoint 目录（推荐）**
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+Trainer 会在初始化阶段加载该 checkpoint 对应的模型参数以及训练状态（optimizer、scheduler 等），从中断点继续训练。
+
+**2. 自动恢复最新的完整 checkpoint**
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+会从 `output_dir` 中最新的完整 checkpoint 恢复，恢复内容包括：模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态。
+
+**注意事项**
+
+- 前提是之前保存 checkpoint 时**没有**开启 `save_only_model: true`。如果开启了该选项，checkpoint 中未保存 optimizer、scheduler 等训练状态文件，就无法进行完整的断点续训，只能用于推理、评估或权重转换。因此如需支持续训，请确保保存时不设置 `save_only_model: true`。
+- `dist_config.dcp_path` 仅在 FSDP2/FSDPTurbo 模型分片阶段加载模型权重用于初始化，不能恢复完整训练状态，不适用于此需求。",docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(17.98) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(16.08) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶(14.44),对,,与标准答案一致,8.6,648,557,"doc,web",2026-10-25 16:40:41
+53,（Instruct/Chat）模型对应的模板怎么找？,测试用,qwen3-4b-本地,v2,"模型对应的模板可以通过以下方式查找：
+
+1. 如果使用的是 Hugging Face 后端，模型自带的 chat template 会用于对话格式。如果没有模板，会回退到内置的 ChatML。
+
+2. 如果需要自定义模板，可以使用 `custom_chat_template` 参数，它接收一个 Jinja2 模板字符串，用于覆盖 tokenizer 自带的模板。
+
+3. 对于更复杂的自定义需求，可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template，这需要定义 `name`, `format_user`, `format_assistant`, `format_system` 与 `format_observation` 等字段。",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(24.32) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(13.73) ｜ docs/zh/feature-guide/inference.md#推理(11.35),对,,与标准答案一致,2.38,604,148,"doc,web",2026-10-25 16:40:44
+54,如何同时使用yaml文件和命令行参数？,测试用,glm-5.3-flash-智谱,v2,"在 `llamafactory-cli train` 后先指定 yaml 配置文件路径，再以 `参数名=值` 的形式追加命令行参数，即可覆盖 yaml 文件中的同名参数。
+
+示例（使用 `examples/train_lora/qwen3_lora_sft.yaml`，同时覆盖学习率和日志间隔）：
+
+```bash
+llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \
+ learning_rate=1e-5 \
+ logging_steps=1
+```
+
+即：yaml 文件中未覆盖的参数仍然生效，追加的命令行参数（如 `learning_rate=1e-5`、`logging_steps=1`）会更新 yaml 中的对应值。",webdocs/getting_started__sft.md#SFT 训练¶ > 命令行¶(15.3) ｜ webdocs/getting_started__sft.md#SFT 训练¶ > 命令行¶ > examples/train_lora/qwe(10.17) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(8.0),对,,与标准答案一致,4.57,779,278,"doc,web",2026-10-25 16:40:48
+50,【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗,测试用,glm-5.3-flash-智谱,v2,"可以的。资料中的推理流程是通用的（针对“训练或合并后的模型”），DPO 训练后可参照同样的方式操作：
+
+**推理步骤**
+
+1. 将 `chat.yaml` 中的 `model` 改为 DPO 训练的输出目录（即训练配置里 `output_dir` 指定的路径，例如 `outputs/qwen3_dpo`）；
+2. 若输出目录包含完整模型权重，加载时**移除 `peft_config`**，保留采样参数；
+3. 运行：
+
+```bash
+llamafactory-cli chat chat.yaml
+```
+
+**示例 chat.yaml 片段**
+
+```yaml
+model: outputs/qwen3_dpo   # 指向 DPO 训练输出目录
+# 移除 peft_config
+```
+
+**需要说明的一点**
+
+资料中的推理示例是基于 SFT 全参训练（`outputs/qwen3_full`）和模型导出（`outputs/qwen3_merged`）这两个「包含完整模型权重」的场景。如果你使用的是资料 1 中的 **LoRA DPO** 配置，输出为 adapter 权重，此时是直接加载 adapter 还是需先合并导出为完整权重再推理，资料里没有找到明确的说明，建议参考[模型导出](model_export.md)相关文档。",docs/zh/feature-guide/dpo.md#偏好优化（DPO） > 训练配置(22.41) ｜ webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > DPO¶(21.1) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(20.48),对,,与标准答案一致,20.77,600,1154,"doc,web",2026-10-25 16:40:50
+54,如何同时使用yaml文件和命令行参数？,测试用,qwen3-4b-本地,v2,"您可以同时使用 yaml 文件和命令行参数。在训练时，yaml 文件中的参数会作为默认配置，而命令行参数会覆盖 yaml 文件中的相应参数。例如，如果您在 yaml 文件中设置了 `learning_rate: 1.0e-4`，但通过命令行参数指定了 `learning_rate=1e-5`，则命令行参数会覆盖 yaml 文件中的设置。具体命令如下：
+
+```
+llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \
+ learning_rate=1e-5 \
+ logging_steps=1
+```
+
+在这个命令中，`learning_rate` 和 `logging_steps` 参数会覆盖 yaml 文件中的相应设置。",webdocs/getting_started__sft.md#SFT 训练¶ > 命令行¶(15.3) ｜ webdocs/getting_started__sft.md#SFT 训练¶ > 命令行¶ > examples/train_lora/qwe(10.17) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(8.0),对,,与标准答案一致,2.5,812,147,"doc,web",2026-10-25 16:40:51
+55,请问在 lora 微调 qwen3 moe 模型时，如何设置 lora_target？,测试用,qwen3-4b-本地,v2,"在微调 Qwen3 MoE 模型时，`lora_target` 参数用于指定应用 LoRA 方法的模块名称。您可以使用逗号分隔多个模块，或者使用 ""all"" 指定所有模块。例如，如果您希望对所有模块应用 LoRA，可以设置 `lora_target=""all""`。如果只想对特定模块应用 LoRA，可以将这些模块名称用逗号分隔列出，如 `lora_target=""module1,module2""`。默认值为 ""all""，即对所有模块应用 LoRA。",webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(25.99) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(19.58) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(16.76),错,理解错,用户问的是特定情况下如何调设置这个东西，AI回答的仍然是通用的情况下，忽略了核心的关键字,2.3,1218,120,web,2026-10-25 16:40:53
+53,（Instruct/Chat）模型对应的模板怎么找？,测试用,glm-5.3-flash-智谱,v2,"根据资料，可以分三种情况来看：
+
+**1. 模型自带模板时（最常见）**
+v1 的 `chat` 入口会自动读取 **tokenizer 自带的 Hugging Face chat template** 作为对话格式，无需手动指定；如果模型没有模板，会回退到内置的 ChatML。
+
+**2. 想覆盖/自定义模板时**
+使用 `custom_chat_template` 传入一段 Jinja2 模板字符串即可覆盖 tokenizer 自带模板：
+
+```yaml
+model: path/to/model
+custom_chat_template: >-
+  {% for message in messages %}
+  {{ message['role'] + ': ' + message['content'] }}
+  {% endfor %}
+```
+
+注意：v1 使用模板字符串，**不接受 `template: <name>` 字段**。
+
+**3. 模型没有模板、需要注册 template 时**
+在 `src/llamafactory/data/template.py` 中用 `register_template` 注册，需要填写：
+
+- `name`、`format_user`、`format_assistant`、`format_system`、`format_observation`
+- `format_prefix`：模型开头部分，**通常可在 tokenizer_config.json 中找到**
+- `stop_words`：可在 generation_config.json 中找到 eos_token_id，再把对应的 token 填入
+- 多模态模型还需指定 `mm_plugin` 字段
+
+资料里没有找到其他关于模板查找方式的说明。",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(24.32) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(13.73) ｜ docs/zh/feature-guide/inference.md#推理(11.35),对,,与标准答案一致,13.72,573,1072,"doc,web",2026-10-25 16:40:54
+52,"qwen2vl 7b , how to call api",测试用,glm-5.3-flash-智谱,v2,"根据资料，部署并调用 API 的步骤如下：
+
+**1. 启动 OpenAI 风格的 API 服务**
+
+```bash
+API_PORT=8000 llamafactory-cli api examples/inference/qwen3.yaml infer_backend=vllm vllm_enforce_eager=true
+```
+
+使用时需要把 yaml 文件中的模型配置改为你的 qwen2vl 7b 模型（如 `model_name_or_path` 指向 Qwen2-VL-7B 的路径/名称）。
+
+**2. 调用 API**
+
+该服务兼容 OpenAI API 格式，API 文档参考：https://platform.openai.com/docs/api-reference/chat/create
+
+**3. 图像理解示例**
+
+由于 Qwen2-VL 是多模态模型，可以参考官方提供的图像理解示例脚本：`scripts/api_example/test_image.py`；工具调用示例可参考 `scripts/api_example/test_toolcall.py`。
+
+资料里没有提供 qwen2vl 专属的 yaml 文件内容，具体配置项请参考 `examples/inference/` 目录下已有的示例文件进行修改。",README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API(12.34) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(11.88) ｜ README_zh.md#A3 + openEuler > 利用 vLLM 部署 OpenAI API >(10.35),对,,与标准答案一致,15.14,545,646,doc,2026-10-25 16:40:55
+56,video_maxlen 和 cutoff_len 分别是什么含义？,测试用,qwen3-4b-本地,v2,根据提供的资料，`video_maxlen` 是视频输入的最大采样帧数，用于限制视频处理时所使用的最大帧数。而资料中没有提到 `cutoff_len` 参数的定义和含义，因此无法确定其具体含义。资料里没有找到。,webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(13.08) ｜ examples/train_lora/mossvl_lora_sft.yaml#examples/train_lora/mossvl_lora_sft.yaml(5.79) ｜ examples/train_full/mossvl_full_sft.yaml#examples/train_full/mossvl_full_sft.yaml(5.79),部分对,检索没命中,,1.2,622,58,"example,web",2026-10-25 16:40:56
+57,"新手发问：SFT只有部分assistant的内容计算loss，该如何实现 —— ### Discussed in https://github.com/hiyouga/LLaMA-Factory/discussions/6389      Originally posted by **ReycoLi** December 19, 2024  数据集的格式如下  ""message",测试用,qwen3-4b-本地,v2,资料里没有找到。,webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(29.75) ｜ webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(29.05) ｜ webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(27.11),错,检索没命中,文档中有答案，检索到的段落未命中,0.46,984,6,web,2026-10-25 16:40:56
+55,请问在 lora 微调 qwen3 moe 模型时，如何设置 lora_target？,测试用,glm-5.3-flash-智谱,v2,"根据现有资料，**没有找到针对 qwen3 moe 模型设置 `lora_target` 的具体说明**（资料中未包含各模型推荐的模块名称列表）。
+
+不过资料中关于 `lora_target` 的通用说明如下：
+
+| 参数名称 | 类型 | 介绍 | 默认值 |
+|---|---|---|---|
+| lora_target | str | 应用 LoRA 方法的模块名称。使用逗号分隔多个模块，使用 `all` 指定所有模块。 | all |
+
+即：
+- 如果不确定具体模块名，可以直接使用默认值 `lora_target: all`，对所有模块应用 LoRA；
+- 如果只针对特定模块，可用逗号分隔多个模块名称，例如 `lora_target: q_proj,k_proj`（具体模块名需参考所选模型结构，资料中未提供 qwen3 moe 的模块列表）。",webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(25.99) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(19.58) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(16.76),错,检索没命中,文档中有答案，检索到的段落未命中,7.55,1145,409,web,2026-10-25 16:40:58
+58,求教怎么使用本地下载的模型？,测试用,qwen3-4b-本地,v2,"您可以按照以下步骤使用本地下载的模型：
+
+1. 模型保存与恢复：使用 [模型保存与恢复](model_saving.md) 页面中的内容，了解如何保存和恢复模型，包括最终模型、checkpoint 和断点续训。
+
+2. 模型导出：如果需要将模型导出为 HF 格式，可以参考 [模型导出](model_export.md) 页面，了解如何进行 LoRA 合并和 HF 格式导出。
+
+3. 推理：使用 [推理](inference.md) 页面中的内容，通过 CLI 对话与 adapter 加载来使用模型进行推理。
+
+如果您有具体的模型格式或需要进一步的指导，请提供更多信息。",webdocs/advanced__model_support.md#模型支持¶(7.1) ｜ docs/zh/feature-guide/rm.md#奖励模型训练（RM）(7.03) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(7.03),对,,与标准答案一致,2.4,368,149,"doc,web",2026-10-25 16:41:00
+56,video_maxlen 和 cutoff_len 分别是什么含义？,测试用,glm-5.3-flash-智谱,v2,"**video_maxlen**：视频输入的最大采样帧数，默认值为 128（资料 1）。例如在 MOSS-VL 的训练示例中设置为 256（资料 2、3）。
+
+**cutoff_len**：资料里没有找到该参数的介绍，无法根据现有资料回答其含义。",webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(13.08) ｜ examples/train_lora/mossvl_lora_sft.yaml#examples/train_lora/mossvl_lora_sft.yaml(5.79) ｜ examples/train_full/mossvl_full_sft.yaml#examples/train_full/mossvl_full_sft.yaml(5.79),部分对,,,8.19,574,261,"example,web",2026-10-25 16:41:01
+58,求教怎么使用本地下载的模型？,测试用,glm-5.3-flash-智谱,v2,"根据提供的资料，没有找到关于如何使用本地下载模型的具体说明（例如指定本地模型路径的参数或配置方法）。
+
+资料中与「模型使用」相关的内容仅有：
+
+- **推理**：涉及 CLI 对话与 adapter 加载（见资料 3 的功能指南目录）
+- **模型导出**：LoRA 合并和 HF 格式导出
+- **模型保存与恢复**：最终模型、checkpoint、断点续训
+
+但这些资料只列出了文档页面的标题，没有包含具体的操作步骤或参数说明。如果您需要了解如何加载本地模型，建议查阅推理（inference.md）或模型导出（model_export.md）的完整文档内容，目前提供的资料无法回答该问题。",webdocs/advanced__model_support.md#模型支持¶(7.1) ｜ docs/zh/feature-guide/rm.md#奖励模型训练（RM）(7.03) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(7.03),错,检索没命中,文档中有答案，检索到的段落未命中,6.42,344,388,"doc,web",2026-10-25 16:41:02
+59,请教下在 finetuning_type 为 full 的情况下，冻结参数的设置会生效吗？,测试用,qwen3-4b-本地,v2,"在 finetuning_type 为 full 的情况下，冻结参数的设置不会生效。因为全参微调（full）指的是在训练过程中对预训练模型的所有权重进行更新，而不是冻结某些参数。如果您希望冻结某些参数，请将 finetuning_type 设置为其他类型，如 ""freeze"" 或 ""lora""，并在相应的参数中设置冻结选项。",webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > 基本参数¶(15.76) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(12.09) ｜ webdocs/getting_started__sft.md#eval_steps: 500(10.74),对,,与标准答案一致,1.5,896,79,web,2026-10-25 16:41:03
+60,GeneratingArguments 中的 max_new_tokens 有默认值，任何情况下 max_length 都不会生效,测试用,qwen3-4b-本地,v2,资料里没有找到。,webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(25.83) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(17.22) ｜ docs/zh/feature-guide/inference.md#推理 > 启动 CLI 对话(5.52),错,检索没命中,文档中有答案，检索到的段落未命中,0.45,848,6,"doc,web",2026-10-25 16:41:03
+57,"新手发问：SFT只有部分assistant的内容计算loss，该如何实现 —— ### Discussed in https://github.com/hiyouga/LLaMA-Factory/discussions/6389      Originally posted by **ReycoLi** December 19, 2024  数据集的格式如下  ""message",测试用,glm-5.3-flash-智谱,v2,"资料里没有找到关于「SFT 只对部分 assistant 内容计算 loss」的相关内容（如 loss 掩码、数据集中标注哪些部分参与 loss 计算等方法）。
+
+提供的资料仅涉及：
+1. 在 `src/llamafactory/extras/constants.py` 中通过 `register_model_group` 注册模型下载路径（如 Llama-4 系列模型）；
+2. 多模态 `mm_plugin` 中 `process_messages` 的作用（根据图片/视频信息插入占位符）。
+
+关于该问题，建议直接查看您提到的 GitHub discussion #6389，或查阅 LlamaFactory 关于数据集格式与 `train_on_prompt` / 遮蔽相关参数的官方文档（当前资料中未包含这些内容，无法给出具体配置）。",webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(29.75) ｜ webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(29.05) ｜ webdocs/advanced__model_support.md#https://github.com/hiyouga/LlamaFactory/(27.11),错,检索没命中,文档中有答案，检索到的段落未命中,8.06,896,482,web,2026-10-25 16:41:03
+59,请教下在 finetuning_type 为 full 的情况下，冻结参数的设置会生效吗？,测试用,glm-5.3-flash-智谱,v2,"关于这个问题，**资料里没有找到直接说明**。
+
+资料中可以确认的相关信息只有：
+
+- **资料 2**：全参微调（`finetuning_type` 设为 `full`）指的是训练过程中对预训练模型的**所有权重**都进行更新。
+- **资料 1**：`freeze_vision_tower`（是否冻结视觉塔）、`freeze_multi_modal_projector`（是否冻结多模态投影器）、`use_llama_pro`（仅训练扩展块中的参数）等冻结相关参数，其介绍中只描述了各自的功能，**没有说明与 `finetuning_type=full` 的交互关系**。
+
+因此，仅凭提供的资料无法判断 full 模式下这些冻结参数是否仍然生效。建议查阅官方文档中关于冻结参数与微调方法兼容性的更详细说明，或到 LLaMA-Factory 的 GitHub 仓库确认。",webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > 基本参数¶(15.76) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(12.09) ｜ webdocs/getting_started__sft.md#eval_steps: 500(10.74),错,检索没命中,文档中有答案，检索到的段落未命中,11.35,855,753,web,2026-10-25 16:41:12
+60,GeneratingArguments 中的 max_new_tokens 有默认值，任何情况下 max_length 都不会生效,测试用,glm-5.3-flash-智谱,v2,"这个说法**部分正确，部分无法从资料确认**：
+
+1. **前半句正确**：根据资料 1（生成参数），`max_new_tokens` 确实有默认值 `1024`。另外资料 2 中 `SampleArguments` 的 `max_new_tokens` 默认值为 `128`（不同配置文档默认值不同）。
+
+2. **后半句无法确认**：资料 1 只说明「**设置** `max_new_tokens` 会覆盖 `max_length`」，即两者同时设置时 `max_new_tokens` 优先。但资料中并没有说明当 `max_new_tokens` 未被设置时 `max_length` 是否生效，因此「任何情况下 max_length 都不会生效」这一结论在资料里没有找到依据，无法直接确认。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(25.83) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(17.22) ｜ docs/zh/feature-guide/inference.md#推理 > 启动 CLI 对话(5.52),对,,与标准答案一致,58.85,790,1678,"doc,web",2026-10-25 16:42:01
