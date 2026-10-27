@@ -1,0 +1,1274 @@
+﻿题号,问题,所属份,模型,版本,回答,检索到的段落,人工判分,失败原因,判断理由,耗时秒,输入token,输出token,检索命中来源,时间戳
+2,export model以后如何加载微调后的llama模型？,优化用,qwen3-4b-本地,v3,"导出模型后，可以按照以下步骤加载微调后的模型：
+
+1. 确保你已经通过 `llamafactory-cli merge` 命令成功合并了 LoRA 适配器，并且导出的模型目录（如 `outputs/qwen3_merged`）已经生成。
+
+2. 使用推理配置文件指定导出的模型路径。例如，在 `inference/qwen3_lora_sft.yaml` 中将 `model` 参数设置为导出的模型目录，如 `model: outputs/qwen3_merged`。
+
+3. 根据需要调整推理配置中的其他参数，如 `template`、`infer_backend` 等，确保它们与你的模型和硬件环境相匹配。
+
+4. 运行推理命令加载模型，例如使用 `llamafactory-cli chat chat.yaml` 命令进行推理。
+
+注意：在加载导出的模型时，不需要再指定 `peft_config`，但需要保留采样参数并确保配置文件正确。详细参数配置请参考[推理参数](../configuration/inference.md)。",webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(35.0) ｜ docs/zh/feature-guide/model_export.md#模型导出(32.49) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(31.89) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(29.78) ｜ docs/zh/feature-guide/model_export.md#模型导出 > 导出配置(29.09) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(27.72),,,,7.86,985,231,"doc,web",2026-10-27 17:26:09
+1,为什么 DPO 训练时 ref_model 不指定为初始的 SFT 完的模型，而是用每个 batch 参数更新后的 policy model 来初始化呢？,优化用,qwen3-4b-本地,v3,"在 DPO 训练中，ref_model 通常不指定为初始的 SFT 完的模型，而是使用每个 batch 参数更新后的 policy model 来初始化，这是因为 DPO 训练的目标是通过对比 policy model 和 reference model 的 log-prob 来优化策略。如果使用初始的 SFT 完的模型作为 reference model，可能无法准确反映 policy model 在训练过程中的参数更新情况，导致损失计算不够准确。
+
+在 DPO 训练中，reference model 的 log-prob 是通过 policy model 的基座权重计算得到的，而 LoRA 训练复用 policy model 的基座权重，并在计算 reference log-prob 时禁用 adapter。因此，使用每个 batch 参数更新后的 policy model 来初始化 reference model 可以确保 reference log-prob 的计算基于最新的 policy model 参数，从而更准确地反映 policy model 的性能，提高 DPO 训练的效果。",docs/zh/feature-guide/sft.md#监督微调（SFT） > 全参训练(37.62) ｜ docs/zh/feature-guide/dpo.md#偏好优化（DPO） > 参考模型(31.86) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > Freeze(29.83) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > RLHF¶(29.0) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(26.14) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > LoRA(24.98),,,,11.5,1587,198,"doc,web",2026-10-27 17:26:13
+3,rm 阶段 do_predict 的 accept_score 和 reject_score 如何理解？,优化用,glm-5.3-flash-智谱,v3,"资料里没有找到关于 rm 阶段 `do_predict` 中 `accept_score` 和 `reject_score` 的说明。
+
+现有资料中与 reward model 相关的内容只提到：
+- 训练奖励模型时将 `stage` 设置为 `rm`
+- 数据集需符合偏好数据集格式（输入、好的回答、坏的回答三部分）
+- 需指定奖励模型的保存路径，例如 `output_dir: saves/llama3-8b/lora/reward`
+
+关于预测（do_predict）阶段输出的分数指标含义，资料中没有相关描述，无法给出准确解释。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > RLHF¶ > Reward (19.1) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > model(8.23) ｜ webdocs/getting_started__eval.md#评估¶ > 通用能力评估¶ > model(8.18) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(8.05) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(8.03) ｜ examples/extras/nlg_eval/llama3_lora_predict.yaml#examples/extras/nlg_eval/llama3_lora_pre(6.5),,,,5.72,889,287,"example,web",2026-10-27 17:26:15
+3,rm 阶段 do_predict 的 accept_score 和 reject_score 如何理解？,优化用,qwen3-4b-本地,v3,"在 RLHF（奖励模型）训练阶段，`accept_score` 和 `reject_score` 是用于衡量奖励模型对语言模型输出的评价分数。具体来说：
+
+- `accept_score` 表示奖励模型对“接受”回答的评分，即人类认为是好的回答的评分。
+- `reject_score` 表示奖励模型对“拒绝”回答的评分，即人类认为是坏的回答的评分。
+
+在训练奖励模型时，模型的目标是学习区分“好的回答”和“坏的回答”，并为它们分配适当的分数，以反映人类的偏好。这些分数用于训练奖励模型，使其能够更准确地评估语言模型的输出是否符合人类的偏好。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > RLHF¶ > Reward (19.1) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > model(8.23) ｜ webdocs/getting_started__eval.md#评估¶ > 通用能力评估¶ > model(8.18) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(8.05) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(8.03) ｜ examples/extras/nlg_eval/llama3_lora_predict.yaml#examples/extras/nlg_eval/llama3_lora_pre(6.5),,,,2.7,935,146,"example,web",2026-10-27 17:26:16
+2,export model以后如何加载微调后的llama模型？,优化用,glm-5.3-flash-智谱,v3,"导出（合并）完成后，导出目录（即 `export_dir`，例如 `outputs/qwen3_merged` 或 `saves/qwen3_sft_merged`）里已经是包含完整权重的模型，加载方式如下：
+
+1. **修改推理配置**：在推理配置文件（如 `chat.yaml`）中，把 `model` 改为导出目录路径，例如：
+
+```yaml
+model: outputs/qwen3_merged   # 改为你的 export_dir
+template: ...                 # 与模型对应的 template
+# 采样参数保留
+```
+
+2. **移除 `peft_config`**：因为合并后的目录已包含完整模型权重，不再是基座 + adapter 的形式，加载时要删掉之前的 `peft_config`（以及 adapter 相关配置）。
+
+3. **运行推理**：
+
+```bash
+llamafactory-cli chat chat.yaml
+```
+
+补充说明：
+- 资料里以 Qwen3 为例（SFT 全参目录 `outputs/qwen3_full` 或合并目录 `outputs/qwen3_merged` 都按此方式加载），对 LLaMA 模型流程相同，把路径换成你自己的基座/导出目录即可。
+- 完整推理参数可参考文档中的「推理参数（../configuration/inference.md）」部分，资料中未展开具体字段列表。",webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(35.0) ｜ docs/zh/feature-guide/model_export.md#模型导出(32.49) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(31.89) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(29.78) ｜ docs/zh/feature-guide/model_export.md#模型导出 > 导出配置(29.09) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(27.72),,,,14.68,943,838,"doc,web",2026-10-27 17:26:16
+4,为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？,优化用,qwen3-4b-本地,v3,"根据资料，当使用 LoRA 微调时，`lora_rank` 是 LoRA 微调的本征维数 r，它决定了可训练的参数数量。在 YAML 配置中设置的 `lora_rank` 和 adapter config 文件中的 `lora_rank` 之间可能存在 2 倍的关系，这通常是因为 `lora_alpha` 的设置影响了 `lora_rank` 的实际效果。
+
+在 LoRA 中，`lora_alpha` 是 LoRA 缩放系数，一般情况下为 `lora_rank * 2`。因此，如果在 YAML 中设置的 `lora_rank` 和 adapter config 文件中的 `lora_rank` 有 2 倍的关系，可能是由于 `lora_alpha` 的设置导致的。在这种情况下，`lora_alpha` 的值通常会覆盖 YAML 中的 `lora_rank` 值，以确保 LoRA 的正确应用。
+
+因此，当 `lora_alpha` 被设置时，它会覆盖 YAML 中的 `lora_rank` 值，而 `lora_rank` 的实际值应根据 `lora_alpha` 的设置进行调整。如果 `lora_alpha` 没有被特别设置，那么 YAML 中的 `lora_rank` 和 adapter config 文件中的 `lora_rank` 应该是一致的。",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(14.86) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(13.26) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(12.92) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > rsLoRA¶(9.15) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (8.74) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(8.0),,,,5.04,1551,290,"doc,web",2026-10-27 17:26:21
+5,多机多卡，设置 data_shared_file_system 为 true 时每个 worker 都要算一遍 tokenize,优化用,qwen3-4b-本地,v3,当设置 `data_shared_file_system` 为 true 时，不同机器存放数据集的路径是共享文件系统。在这种情况下，数据集处理只在第一个 node 发生，而不是每个 node 都处理一遍。因此，每个 worker 并不会都算一遍 tokenize。如果希望每个 worker 都算一遍 tokenize，需要将 `data_shared_file_system` 设置为 false。,webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(29.15) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(27.26) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(25.11) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(24.45) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.24) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > (23.95),,,,2.07,1926,82,"doc,web",2026-10-27 17:26:23
+5,多机多卡，设置 data_shared_file_system 为 true 时每个 worker 都要算一遍 tokenize,优化用,glm-5.3-flash-智谱,v3,"不是的，正好相反。根据参数文档：
+
+| 参数名称 | 默认值 | 说明 |
+|---|---|---|
+| `data_shared_file_system` | false | 多机多卡时，不同机器存放数据集的路径是否是共享文件系统。**为 `true` 时数据集处理只在第一个 node 发生**；为 `false` 时在每个 node 都处理一次 |
+
+也就是说：
+
+- **`data_shared_file_system: true`**（各节点通过共享文件系统访问同一份数据）：tokenize 等数据集处理**只在第一个节点执行一次**，其他节点直接复用结果，不会重复处理。
+- **`data_shared_file_system: false`**（各节点各自有一份数据）：每个节点都会**各自处理一遍**数据集。
+
+所以如果你的场景是每个 worker 都在重复 tokenize，应检查该参数是否被设成了默认的 `false`；如果数据集放在共享存储（如 NFS）上，将其设为 `true` 即可避免重复处理。",webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(29.15) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(27.26) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(25.11) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(24.45) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.24) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > (23.95),,,,8.1,1822,437,"doc,web",2026-10-27 17:26:24
+4,为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？,优化用,glm-5.3-flash-智谱,v3,"资料里没有找到关于「yaml 中的 `lora_rank` 与 adapter config 文件中的 `lora_rank` 存在 2 倍关系」的说明，无法解释这个现象的成因，也无法确认应以哪个为准。
+
+资料中唯一涉及「2 倍」的内容是关于 `lora_alpha` 的：
+
+- `lora_alpha` 是 LoRA 缩放系数，**一般情况下为 `lora_rank * 2`**（默认值为 None）。
+
+如果您看到的 2 倍关系实际是指 `lora_alpha` 与 `lora_rank`（例如资料示例中的 `lora_rank: 8` 搭配 `lora_alpha: 16`），那么这是两个不同的参数：`lora_rank` 是 LoRA 的本征维数 r，`lora_alpha` 是缩放系数，二者按惯例满足 alpha ≈ 2 × rank 即可，并不是同一个参数被放大了 2 倍。
+
+另外补充一点资料中相关信息：如果使用 Megatron Bridge，`lora_rank` / `lora_alpha` 会分别映射到 Megatron LoRA 的 `dim` / `alpha`，且自定义 `lora_target` 会被忽略、`lora_dropout` 不会传入。
+
+建议您确认一下对比的是否为 `lora_rank` 与 `lora_alpha`；若确实发现 adapter config 中 `lora_rank` 与 yaml 设置不一致，资料中没有对应说明，可到 LlamaFactory 社区进一步确认。",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(14.86) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > LoRA¶(13.26) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(12.92) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > rsLoRA¶(9.15) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (8.74) ｜ webdocs/advanced__tuning_algorithms.md#... > LoRA¶ > method(8.0),,,,14.1,1461,762,"doc,web",2026-10-27 17:26:29
+6,如何对多轮对话数据进行批量推理？数据集格式规范,优化用,qwen3-4b-本地,v3,"对多轮对话数据进行批量推理，可以使用 `vllm` 推理引擎，并确保数据集格式符合 `sharegpt` 格式。以下是数据集格式规范：
+
+1. **数据格式**：数据应为 JSON 格式，每个条目包含一个 `messages` 字段，其中是一个消息列表，每个消息包含 `role` 和 `content` 字段。例如：
+   ```json
+   [
+     {
+       ""messages"": [
+         {
+           ""role"": ""system"",
+           ""content"": ""系统提示词（选填）""
+         },
+         {
+           ""role"": ""user"",
+           ""content"": ""人类指令""
+         },
+         {
+           ""role"": ""assistant"",
+           ""content"": ""模型回答""
+         }
+       ]
+     }
+   ]
+   ```
+
+2. **`dataset_info.json` 配置**：该文件用于描述数据集，应包含以下信息：
+   ```json
+   ""dataset_name"": {
+     ""file_name"": ""data.json"",
+     ""formatting"": ""sharegpt"",
+     ""columns"": {
+       ""messages"": ""messages""
+     },
+     ""tags"": {
+       ""role_tag"": ""role"",
+       ""content_tag"": ""content"",
+       ""user_tag"": ""user"",
+       ""assistant_tag"": ""assistant"",
+       ""system_tag"": ""system""
+     }
+   }
+   ```
+
+3. **启动推理**：使用以下命令启动 `vllm` 推理引擎并使用数据集进行批量推理：
+   ```
+   python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
+   ```
+
+以上是多轮对话数据进行批量推理的格式规范和启动命令。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(33.99) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(31.09) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > OpenAI格式¶(30.54) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > 偏好数据集¶(30.16) ｜ docs/zh/feature-guide/inference.md#推理(26.59) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > 指令监督微调数据集¶(26.03),,,,6.17,1040,367,"doc,web",2026-10-27 17:26:30
+7,请问怎么缓解大模型微调后重复输出同一句话 —— 当把max_length调小时，生成内容不完整。把max_length调大后，模型生成完内容之后，会重复输出最后一句话去达到最大max_length，请问这种现象如何缓解。谢谢！,优化用,qwen3-4b-本地,v3,"您描述的现象是微调模型在生成文本时可能出现的重复输出问题。根据提供的资料，可以尝试以下方法来缓解这一问题：
+
+1. **调整 `repetition_penalty` 参数**：`repetition_penalty` 参数用于对生成重复 token 的惩罚系数。您可以尝试增加这个值，以降低模型重复生成相同句子的概率。例如，将 `repetition_penalty` 设置为大于 1.0 的值，如 1.5 或更高。
+
+2. **使用 `top_p` 和 `top_k` 参数**：通过调整 `top_p` 和 `top_k` 参数，可以控制生成时候选 token 的集合大小，从而减少重复生成的可能性。例如，可以尝试将 `top_p` 设置为 0.8 或更高，`top_k` 设置为 50 或更高。
+
+3. **调整 `temperature` 参数**：`temperature` 参数用于调整生成文本的随机性。您可以尝试降低 `temperature` 值，使生成的文本更加确定，从而减少重复输出的可能性。
+
+4. **使用 `num_beams` 参数**：`num_beams` 参数用于控制 beam search 的束宽度。您可以尝试增加 `num_beams` 的值，以提高生成文本的多样性，从而减少重复输出的可能性。
+
+5. **调整 `max_length` 和 `max_new_tokens` 参数**：确保 `max_length` 和 `max_new_tokens` 参数设置合理，避免生成文本过长导致重复输出。如果 `max_length` 设置过大，可以适当减小，以确保生成文本的完整性。
+
+通过上述方法的调整，可以有效缓解微调模型在生成文本时重复输出同一句话的问题。如果问题仍然存在，可能需要进一步调整模型的训练参数或使用更复杂的解码策略。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(36.19) ｜ webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > Supervised Fine(17.99) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(16.34) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(15.11) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(14.62) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > BAdam¶(12.37),,,,6.46,1533,374,web,2026-10-27 17:26:37
+6,如何对多轮对话数据进行批量推理？数据集格式规范,优化用,glm-5.3-flash-智谱,v3,"## 批量推理方法
+
+根据资料，可以通过 vllm 推理引擎使用数据集进行批量推理：
+
+```bash
+python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
+```
+
+其中 `--dataset` 指定数据集名称（需在 `dataset_info.json` 中注册）。
+
+## 多轮对话数据集格式规范
+
+多轮对话数据属于 **sharegpt** 格式，有两种写法：
+
+### 方式一：OpenAI 格式（sharegpt 的特殊情况）
+
+第一条消息可以是系统提示词，消息按 `role` / `content` 组织：
+
+```json
+[
+  {
+    ""messages"": [
+      {
+        ""role"": ""system"",
+        ""content"": ""系统提示词（选填）""
+      },
+      {
+        ""role"": ""user"",
+        ""content"": ""人类指令""
+      },
+      {
+        ""role"": ""assistant"",
+        ""content"": ""模型回答""
+      }
+    ]
+  }
+]
+```
+
+对应的 `dataset_info.json` 描述：
+
+```json
+""dataset_name"": {
+  ""file_name"": ""data.json"",
+  ""formatting"": ""sharegpt"",
+  ""columns"": {
+    ""messages"": ""messages""
+  },
+  ""tags"": {
+    ""role_tag"": ""role"",
+    ""content_tag"": ""content"",
+    ""user_tag"": ""user"",
+    ""assistant_tag"": ""assistant"",
+    ""system_tag"": ""system""
+  }
+}
+```
+
+### 方式二：ShareGPT 格式（`from` / `value` 组织）
+
+```json
+[
+  {
+    ""conversations"": [
+      {
+        ""from"": ""human"",
+        ""value"": ""人类指令""
+      },
+      {
+        ""from"": ""function_call"",
+        ""value"": ""工具参数""
+      },
+      {
+        ""from"": ""observation"",
+        ""value"": ""工具结果""
+      },
+      {
+        ""from"": ""gpt"",
+        ""value"": ""模型回答""
+      }
+    ],
+    ""system"": ""系统提示词（选填）"",
+    ""tools"": ""工具描述（选填）""
+  }
+]
+```
+
+对应的 `dataset_info.json` 描述：
+
+```json
+""dataset_name"": {
+  ""file_name"": ""data.json"",
+  ""formatting"": ""sharegpt"",
+  ""columns"": {
+    ""messages"": ""conversations"",
+    ""system"": ""system"",
+    ""tools"": ""tools""
+  }
+}
+```
+
+**位置要求**：`human` 和 `observation` 必须出现在奇数位置，`gpt` 和 `function` 必须出现在偶数位置。
+
+## 补充说明
+
+- 如果想通过 API 服务调用，也可以使用类似 `API_PORT=8000 CUDA_VISIBLE_DEVICES=0 llamafactory-cli api examples/inference/qwen3_lora_sft.yaml` 的方式启动服务（yaml 中可配置 `model_name_or_path`、`adapter_name_or_path`、`template` 等）。
+- 资料 5 提到 v1 的 `chat` 入口目前仅支持 `sample_backend: hf` 的交互式单条推理，批量推理和 `vllm` 采样后端尚未接入该入口。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(33.99) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(31.09) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > OpenAI格式¶(30.54) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > 偏好数据集¶(30.16) ｜ docs/zh/feature-guide/inference.md#推理(26.59) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶ > 指令监督微调数据集¶(26.03),,,,21.04,1002,1289,"doc,web",2026-10-27 17:26:44
+8,请问给其他模型如何配置正确的template模板,优化用,glm-5.3-flash-智谱,v3,"根据资料，为其他模型配置正确的 template 有以下几种方式：
+
+## 一、推理（v1）：使用 `custom_chat_template`
+
+v1 不接受 `template: <name>` 字段，而是直接用一段 Jinja2 模板字符串覆盖 tokenizer 自带模板：
+
+```yaml
+model: path/to/model
+custom_chat_template: >-
+  {% for message in messages %}
+  {{ message['role'] + ': ' + message['content'] }}
+  {% endfor %}
+```
+
+注意：v1 的模型对话格式默认来自 tokenizer 自带的 Hugging Face chat template，没有模板时会回退到内置 ChatML。
+
+## 二、在代码中注册 template（`register_template`）
+
+在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法注册，需要填写以下字段：
+
+| 字段 | 说明 |
+|---|---|
+| `name` | 模板名称 |
+| `format_user` | 用户消息格式 |
+| `format_assistant` | 助手消息格式 |
+| `format_system` | 系统消息格式 |
+| `format_observation` | 工具输出格式 |
+| `format_prefix` | 模型的开头部分，通常可在 `tokenizer_config.json` 中找到 |
+| `stop_words` | 停止词，可在 `generation_config.json` 中找到 `eos_token_id`，再把对应的 token 填入 |
+| `mm_plugin` | 多模态模型需在此字段指定多模态插件 |
+
+注册时注意：用户消息和工具输出的模板中要附上助手回复的头部（如 `<|header_start|>assistant<|header_end|>`）来引导模型回复，因此 `format_assistant` 只保留内容部分（如 `{{content}}<|eot|>`）。
+
+## 三、如何获取模型原有 template
+
+可以用以下脚本打印模型的 chat template 作为参考，也可以直接去 HuggingFace repo 查看：
+
+```python
+from transformers import AutoTokenizer, AutoProcessor
+
+tokenizer = AutoTokenizer.from_pretrained(""unsloth/Llama-4-Scout-17B-16E-Instruct"")
+messages = [
+ {""role"": ""user"", ""content"": r""{{content}}""},
+ {""role"": ""assistant"", ""content"": r""{{content}}""},
+ {""role"": ""system"", ""content"": r""{{content}}""},
+ {""role"": ""tool"", ""content"": r""{{content}}""}
+]
+
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+print(""========== Template =========="")
+print(text)
+```
+
+通过观察输出，即可归纳出该模型各类消息（user / assistant / system / tool）的模板格式，再据此填写 `register_template` 的各字段。
+
+## 四、训练（SFT）时
+
+在训练配置中使用 `template` 字段指定数据集模板，**必须保证与模型相对应**：
+
+```yaml
+template: <与模型对应的模板名>
+```",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(29.15) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(26.49) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(25.79) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(19.25) ｜ webdocs/getting_started__sft.md#eval_steps: 500(18.12) ｜ docs/zh/feature-guide/inference.md#推理(16.5),,,,12.98,1407,991,"doc,web",2026-10-27 17:26:50
+8,请问给其他模型如何配置正确的template模板,优化用,qwen3-4b-本地,v3,"要为其他模型配置正确的 `template` 模板，需要根据模型的具体需求和格式进行自定义。以下是一些关键步骤和注意事项：
+
+1. **理解模型的模板格式**：不同模型可能有不同的模板格式。例如，LLaMA-4 的模板格式包括用户消息、助手消息、系统消息和工具消息的特定格式。
+
+2. **使用 `custom_chat_template`**：如果你需要自定义模板，可以使用 `custom_chat_template` 参数，提供一个 Jinja2 模板字符串。例如：
+   ```yaml
+   model: path/to/model
+   custom_chat_template: >-
+     {% for message in messages %}
+     {{ message['role'] + ': ' + message['content'] }}
+     {% endfor %}
+   ```
+
+3. **注册模板**：对于更复杂的自定义需求，可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。这需要定义 `name`, `format_user`, `format_assistant`, `format_system` 与 `format_observation` 等字段。
+
+4. **多模态模型**：如果模型是多模态的，需要在 `mm_plugin` 字段中指定多模态插件。
+
+5. **示例模板**：参考 LLaMA-4 的模板格式，可以得到以下示例：
+   - 用户消息：`<|header_start|>user<|header_end|>\n\n{{content}}<|eot|>`
+   - 助手消息：`<|header_start|>assistant<|header_end|>\n\n{{content}}<|eot|>`
+   - 系统消息：`<|header_start|>system<|header_end|>\n\n{{content}}<|eot|>`
+   - 工具消息：`<|header_start|>ipython<|header_end|>\n\n""{{content}}""<|eot|>`
+
+6. **获取模板**：可以通过运行代码获取模型的模板，例如使用 `AutoTokenizer` 和 `apply_chat_template` 方法。
+
+通过以上步骤，你可以根据具体模型的需求和格式，正确配置和自定义 `template` 模板。如果资料中没有找到具体信息，请直接说明「资料里没有找到」。",docs/zh/feature-guide/inference.md#推理 > 覆盖模型 Chat Template(29.15) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(26.49) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(25.79) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(19.25) ｜ webdocs/getting_started__sft.md#eval_steps: 500(18.12) ｜ docs/zh/feature-guide/inference.md#推理(16.5),,,,8.21,1475,490,"doc,web",2026-10-27 17:26:52
+9,"UserWarning('`do_sample` is set to `False`. However, `temperature` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.'), UserWarning('`do_sample` is set to `False`. However, `top_p` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.')]",优化用,qwen3-4b-本地,v3,这些警告信息表明在使用 `do_sample=False` 时，`temperature` 和 `top_p` 参数被设置为非默认值，但 `do_sample=False` 仅用于 greedy decoding 模式，而 `temperature` 和 `top_p` 是用于采样策略的参数。因此，当 `do_sample=False` 时，不应设置 `temperature` 和 `top_p`。正确的做法是设置 `do_sample=True` 或者将 `temperature` 和 `top_p` 设为默认值。,webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(55.45) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(9.49) ｜ README_zh.md#编译 & 安装(7.95) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(6.68) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (6.48) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(6.16),,,,2.38,1754,110,"doc,web",2026-10-27 17:26:54
+7,请问怎么缓解大模型微调后重复输出同一句话 —— 当把max_length调小时，生成内容不完整。把max_length调大后，模型生成完内容之后，会重复输出最后一句话去达到最大max_length，请问这种现象如何缓解。谢谢！,优化用,glm-5.3-flash-智谱,v3,"针对“生成完内容后重复输出最后一句话直到 max_length”的现象，根据资料中的生成参数，可以从以下几方面调整：
+
+**1. 提高重复惩罚 `repetition_penalty`**
+
+这是最直接的参数。默认值为 `1.0`，值大于 1.0 会降低已生成过的 token 的生成概率（对已生成 token 的概率乘以 1/repetition_penalty）。可以将其设为大于 1.0 的值（例如先尝试 1.1 左右，再按效果微调）。
+
+**2. 使用采样策略而非 greedy decoding**
+
+如果 `do_sample` 设为 `False`，会使用 greedy decoding，这种确定性的解码方式更容易陷入循环重复。建议保持 `do_sample: true`，并配合合理的采样参数：
+
+```yaml
+do_sample: true
+temperature: 0.95
+top_p: 0.7
+top_k: 50
+repetition_penalty: 1.1
+```
+
+**3. 用 `max_new_tokens` 代替 `max_length` 控制生成内容**
+
+资料中指出，`max_new_tokens`（生成文本的最大长度）会覆盖 `max_length`（输入+生成文本的总长度）。使用 `max_new_tokens` 可以只针对“生成部分”设置上限，避免你遇到的“为凑满 max_length 而重复输出”的问题，同时也不会因总长度限制导致生成内容过早被截断。
+
+**4. 如果是自定义模型，检查停止词配置**
+
+若你为自定义模型注册过 template，请确认 `stop_words` 字段已正确配置——可在 `generation_config.json` 中找到 `eos_token_id`，再把对应的 token 填入。停止词缺失会导致模型生成到长度上限才停止。
+
+---
+
+需要说明的是，资料中没有涉及从**训练数据层面**（如训练数据中存在重复样本、EOS 标注缺失等）排查该问题的方法。如果调整以上生成参数后仍无法缓解，可能需要检查微调数据本身的标注质量，这部分内容资料里没有找到。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(36.19) ｜ webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > Supervised Fine(17.99) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(16.34) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(15.11) ｜ webdocs/advanced__model_support.md#模型支持¶ > 注册 template¶(14.62) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > BAdam¶(12.37),,,,31.26,1435,1574,web,2026-10-27 17:27:00
+9,"UserWarning('`do_sample` is set to `False`. However, `temperature` is set to `0.9` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `temperature`.'), UserWarning('`do_sample` is set to `False`. However, `top_p` is set to `0.6` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.')]",优化用,glm-5.3-flash-智谱,v3,"这是正常的参数冲突提示，原因是：根据资料中的生成参数说明，`do_sample=False` 时会使用 **greedy decoding（贪心解码）**，而 `temperature` 和 `top_p` 只在采样生成模式下生效，因此这两个参数此时是无效的，transformers 会给出警告。
+
+**两种解决办法（二选一）：**
+
+1. **想用采样生成**：把 `do_sample` 设为 `True`，此时 `temperature=0.9`、`top_p=0.6` 才会生效：
+```yaml
+do_sample: true
+temperature: 0.9
+top_p: 0.6
+```
+
+2. **想用贪心解码**：把配置中的 `temperature` 和 `top_p` 删掉（不设置），保留：
+```yaml
+do_sample: false
+```
+
+**补充说明**（来自资料 1）：
+- `temperature` 越高生成越随机，越低越确定
+- `top_p` 控制候选 token 集合大小（按累积概率截断）
+
+如果配置里没有显式设置这些参数却仍出现警告，检查一下是否使用了包含这些字段的推理配置文件（generation config），把其中多余的 `temperature`/`top_p` 移除即可。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(55.45) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(9.49) ｜ README_zh.md#编译 & 安装(7.95) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(6.68) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (6.48) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 多模态模型¶(6.16),,,,13.7,1621,609,"doc,web",2026-10-27 17:27:04
+10,请问单机多卡怎么训练,优化用,qwen3-4b-本地,v3,"单机多卡训练可以通过多种方式实现，以下是几种常见的方法：
+
+1. **使用 `accelerate`**：
+   - 运行 `accelerate config` 生成配置文件，根据需求回答问题后生成配置文件。
+   - 配置文件中可以指定 `num_machines` 和 `num_processes` 来控制节点数和GPU数量。
+
+2. **使用 `torchrun`**：
+   - 示例命令：
+     ```
+     torchrun --standalone --nnodes=1 --nproc-per-node=8 src/train.py \
+     --stage sft \
+     --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct \
+     --do_train \
+     --dataset alpaca_en_demo \
+     --template llama3 \
+     --finetuning_type lora \
+     --output_dir saves/llama3-8b/lora/ \
+     --overwrite_cache \
+     --per_device_train_batch_size 1 \
+     --gradient_accumulation_steps 8 \
+     --lr_scheduler_type cosine \
+     --logging_steps 100 \
+     --save_steps 500 \
+     --learning_rate 1e-4 \
+     --num_train_epochs 2.0 \
+     --plot_loss \
+     --bf16
+     ```
+
+3. **使用 `deepspeed`**：
+   - 示例命令：
+     ```
+     deepspeed --num_gpus 8 src/train.py \
+     --deepspeed examples/deepspeed/ds_z3_config.json \
+     --stage sft \
+     --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct \
+     --do_train \
+     --dataset alpaca_en \
+     --template llama3 \
+     --finetuning_type full \
+     --output_dir saves/llama3-8b/lora/full \
+     --overwrite_cache \
+     --per_device_train_batch_size 1 \
+     --gradient_accumulation_steps 8 \
+     --lr_scheduler_type cosine \
+     --logging_steps 10 \
+     --save_steps 500 \
+     --learning_rate 1e-4 \
+     --num_train_epochs 2.0 \
+     --plot_loss \
+     --bf16
+     ```
+
+4. **使用 `llamafactory-cli`**：
+   - 示例命令（使用 NativeDDP）：
+     ```
+     FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml
+     ```
+   - 如果需要指定GPU，可以使用：
+     ```
+     FORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml
+     ```
+
+这些方法都可以用于单机多卡训练，具体选择取决于您的需求和环境配置。",webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > accelerate¶(41.12) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > torchrun¶(40.73) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(33.81) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(33.71) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 单机多卡¶ > (33.3) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactor(31.99),,,,9.83,1137,594,web,2026-10-27 17:27:10
+10,请问单机多卡怎么训练,优化用,glm-5.3-flash-智谱,v3,"单机多卡训练有以下几种方式：
+
+## 1. NativeDDP 引擎
+
+**方式一：torchrun 启动**
+
+```bash
+torchrun --standalone --nnodes=1 --nproc-per-node=8 src/train.py \
+    --stage sft \
+    --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct \
+    --do_train \
+    --dataset alpaca_en_demo \
+    --template llama3 \
+    --finetuning_type lora \
+    --output_dir saves/llama3-8b/lora/ \
+    --overwrite_cache \
+    --per_device_train_batch_size 1 \
+    --gradient_accumulation_steps 8 \
+    --lr_scheduler_type cosine \
+    --logging_steps 100 \
+    --save_steps 500 \
+    --learning_rate 1e-4 \
+    --num_train_epochs 2.0 \
+    --plot_loss \
+    --bf16
+```
+
+**方式二：llamafactory-cli 启动**
+
+```bash
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml
+```
+
+- 如果未指定 `CUDA_VISIBLE_DEVICES`，默认使用所有 GPU
+- 如需指定 GPU（例如第 0、1 个），可以这样：
+
+```bash
+FORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml
+```
+
+**方式三：accelerate 启动**
+
+先运行 `accelerate config`，根据提示回答一系列问题后生成配置文件，再用 accelerate 启动即可。
+
+## 2. DeepSpeed 引擎
+
+**方式一：deepspeed 指令启动**
+
+```bash
+deepspeed --num_gpus 8 src/train.py \
+    --deepspeed examples/deepspeed/ds_z3_config.json \
+    --stage sft \
+    --model_name_or_path meta-llama/Meta-Llama-3-8B-Instruct \
+    ...（其余参数同上）
+```
+
+> 注意：使用 `deepspeed` 指令启动时**无法用 `CUDA_VISIBLE_DEVICES` 指定 GPU**，需要用 `--include` 参数指定，例如：`deepspeed --include localhost:1 your_program.py <normal cl args> --deepspeed ds_config.json`
+
+**方式二：llamafactory-cli 启动**
+
+```bash
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_full/qwen3_full_sft.yaml
+```
+
+需在配置文件中通过 `deepspeed` 参数指定 DeepSpeed 配置文件路径：
+
+```yaml
+...
+deepspeed: examples/deepspeed/ds_z3_config.json
+...
+```
+
+## 3. FSDP 引擎
+
+使用 accelerate 启动，节点数与 GPU 数可通过 `num_machines` 和 `num_processes` 指定。运行 `accelerate config` 按提示生成 FSDP 所需配置文件，也可以自行配置 `fsdp_config.yaml`。",webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > accelerate¶(41.12) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > torchrun¶(40.73) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(33.81) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(33.71) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 单机多卡¶ > (33.3) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactor(31.99),,,,16.18,1088,811,web,2026-10-27 17:27:11
+11,推理可以直接设置do_sample=False的贪心采样策略吗,优化用,qwen3-4b-本地,v3,是的，推理可以直接设置 `do_sample=False` 的贪心采样策略。在生成参数中，`do_sample` 参数用于控制是否使用采样策略生成文本，若设置为 `False`，则会使用 greedy decoding（贪心解码）策略。这一参数在推理过程中是可以直接设置的。,webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(27.02) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(14.74) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(14.67),,,,1.6,1218,69,"doc,web",2026-10-27 17:27:12
+12,我想接着checkpoint继续train 该怎么办呢,优化用,qwen3-4b-本地,v3,"你可以通过设置 `resume_from_checkpoint` 参数来从现有的 checkpoint 继续训练。如果希望从 `output_dir` 中最新的完整 checkpoint 恢复训练状态，可以使用以下配置：
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+这会自动在 `output_dir` 下寻找最新的完整 checkpoint，从而恢复训练状态。如果需要指定具体的 checkpoint 路径，可以直接填写 checkpoint 路径。例如：
+
+```yaml
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+此外，确保 `save_strategy` 和 `save_steps` 等参数已正确配置，以保证 checkpoint 的保存策略符合你的需求。如果之前开启了 `save_only_model:true`，则可能无法进行完整的断点续训，此时更适合将保存结果用于推理、评估或后续权重转换。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(54.89) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(44.89) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > Checkpoint 与日(35.75) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(33.79) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(33.79) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (32.74),,,,3.45,1404,184,"doc,web",2026-10-27 17:27:15
+11,推理可以直接设置do_sample=False的贪心采样策略吗,优化用,glm-5.3-flash-智谱,v3,"可以。根据资料，`do_sample` 是一个生成参数（bool 类型，默认为 `True`），将其设置为 `False` 时就会使用 greedy decoding（贪心解码）。
+
+在推理配置 yaml 中直接添加即可，例如：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: huggingface #choices： [huggingface, vllm]
+trust_remote_code: true
+do_sample: false
+```
+
+补充说明：默认情况下 `do_sample=True`，此时会配合 `temperature`（默认 0.95）、`top_p`（默认 0.7）、`top_k`（默认 50）等采样参数工作；改为 `False` 后则不再使用采样策略。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(27.02) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(14.74) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(14.67),,,,12.58,1139,579,"doc,web",2026-10-27 17:27:16
+13,在训练过程中电脑突然重启，如何接着训练,优化用,qwen3-4b-本地,v3,"在训练过程中电脑突然重启，可以使用 `resume_from_checkpoint` 指定恢复路径，从之前的 checkpoint 继续训练。例如：
+
+```
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+这里 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录（如 `checkpoint-1000`），恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。如果此前开启了 `save_only_model: true`，则可能无法进行完整的断点续训，此时更适合将保存结果用于推理、评估或后续权重转换。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(47.54) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(45.83) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(37.9) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(32.01) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 不同后端的保存格式(31.69) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(29.28),,,,2.87,1169,158,"doc,web",2026-10-27 17:27:19
+12,我想接着checkpoint继续train 该怎么办呢,优化用,glm-5.3-flash-智谱,v3,"接着 checkpoint 继续训练，使用 `resume_from_checkpoint` 参数即可。
+
+**两种写法**
+
+1. 指定具体 checkpoint 路径（推荐指向具体的 checkpoint 目录）：
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+2. 自动查找 `output_dir` 下最新的完整 checkpoint：
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+**注意事项**
+
+- 未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+- 恢复时会加载模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态，可严格接续之前的训练进度。
+- 如果之前保存时开启了 `save_only_model: true`（未保存 optimizer、scheduler 等状态），则无法完整断点续训，保存结果只适合用于推理、评估或权重转换。
+- 如果使用 Megatron Bridge 训练，则不要依赖 Hugging Face 的 `resume_from_checkpoint` 语义：保持相同 `output_dir` 并设置 `overwrite_output_dir: false`，存在 `latest_checkpointed_iteration.txt` 或 `latest_train_state.pt` 时会自动从该目录恢复。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(54.89) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(44.89) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > Checkpoint 与日(35.75) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(33.79) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(33.79) ｜ webdocs/advanced__megatron_bridge.md#extra_config: /path/to/overrides.json > (32.74),,,,9.75,1342,574,"doc,web",2026-10-27 17:27:20
+14,从 huggingface 中加载数据集时始终为 split=train，怎么指定其他 split？,优化用,qwen3-4b-本地,v3,"在从 Hugging Face 加载数据集时，如果希望指定其他 split（例如 validation 或 test），可以在数据集 YAML 配置文件中设置 `split` 字段为所需的 split 名称。例如，若要加载 Hugging Face 上的某个数据集的 validation split，可以这样配置：
+
+```yaml
+dataset:
+  path: ""dataset-name""
+  source: hf_hub
+  split: ""validation""
+```
+
+这里，`path` 是 Hugging Face 上的数据集 ID，`source` 指定数据来源为 Hugging Face Hub，`split` 则指定了要加载的数据集 split。这样配置后，训练或评估时就会使用指定的 split。",docs/zh/configuration/data.md#数据参数 > DatasetInfo(16.52) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(15.7) ｜ examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(14.55) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(14.43) ｜ README_zh.md#编译 & 安装 > 数据准备(14.27) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(14.22),,,,3.02,1788,147,"doc,web",2026-10-27 17:27:23
+13,在训练过程中电脑突然重启，如何接着训练,优化用,glm-5.3-flash-智谱,v3,"训练中断后，可以使用 `resume_from_checkpoint` 从 checkpoint 恢复训练，它会恢复模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态。
+
+**方式一：指定具体 checkpoint 路径**
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+**方式二：自动查找最新 checkpoint**
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+`auto` 会在 `output_dir` 下自动寻找最新的完整 checkpoint。
+
+**注意事项**
+
+1. **必须显式设置**：未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+2. **检查是否保存了完整训练状态**：如果此前开启了 `save_only_model: true`，由于未保存 optimizer、scheduler 等状态，不能进行完整的断点续训，此时保存结果只适合用于推理、评估或权重转换。
+3. **分布式训练**：如果是 FSDP2/FSDPTurbo 或 DeepSpeed 后端，checkpoint 中保存的是分布式训练状态（默认 `save_ckpt_as_hf: false`），用于续训没有问题；但若要导出 HF 格式权重需另行处理。
+
+**建议**：为避免下次中断丢失太多进度，可以配置按步数自动保存：
+
+```yaml
+save_steps: 500        # 每 500 步保存一次
+save_total_limit: 3    # 最多保留 3 个 checkpoint，删除最旧的
+```",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(47.54) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(45.83) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(37.9) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(32.01) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 不同后端的保存格式(31.69) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(29.28),,,,8.19,1118,502,"doc,web",2026-10-27 17:27:24
+1,为什么 DPO 训练时 ref_model 不指定为初始的 SFT 完的模型，而是用每个 batch 参数更新后的 policy model 来初始化呢？,优化用,glm-5.3-flash-智谱,v3,,docs/zh/feature-guide/sft.md#监督微调（SFT） > 全参训练(37.62) ｜ docs/zh/feature-guide/dpo.md#偏好优化（DPO） > 参考模型(31.86) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > Freeze(29.83) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > RLHF¶(29.0) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(26.14) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > LoRA(24.98),,,,82.23,1527,4000,"doc,web",2026-10-27 17:27:24
+15,命令行如何中断训练及其恢复训练？,优化用,qwen3-4b-本地,v3,"在命令行中中断训练，可以使用 `Ctrl+C` 或 `kill` 命令终止训练进程。若需恢复训练，需使用 `resume_from_checkpoint` 参数指定恢复的 checkpoint 路径。例如：
+
+```
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+此配置表示从 `output_dir` 下的 `checkpoint-1000` 目录恢复训练。若希望从 `output_dir` 中最新的完整 checkpoint 恢复训练，可设置：
+
+```
+resume_from_checkpoint: auto
+```
+
+此配置会自动查找 `output_dir` 下最新的完整 checkpoint 进行恢复。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(38.87) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(38.09) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(28.48) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(25.4) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(24.98) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 不同后端的保存格式(22.19),,,,3.0,1168,164,"doc,web",2026-10-27 17:27:27
+14,从 huggingface 中加载数据集时始终为 split=train，怎么指定其他 split？,优化用,glm-5.3-flash-智谱,v3,"可以通过数据集 YAML 中的 `split` 字段指定，该字段默认值为 `train`，可改为其他 split（如 `validation`、`test`）。
+
+**示例**（数据集 YAML）：
+
+```yaml
+demo:
+  path: organization/dataset
+  source: hf_hub
+  split: validation   # 指定所需的 split，默认为 train
+```
+
+然后在训练 YAML 的 `train_dataset` 中指向这个数据集 YAML，例如 `train_dataset: data/v1_sft_demo.yaml`。
+
+**注意事项**：
+- 同一个 YAML 中的 `streaming` 配置必须一致，且当前训练路径不支持 streaming 数据集。
+- 如果直接给 `train_dataset` 传 Hub 数据集 ID（而非 YAML），资料中未说明此时如何指定 split，因此建议使用上述数据集 YAML 的方式。",docs/zh/configuration/data.md#数据参数 > DatasetInfo(16.52) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(15.7) ｜ examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(14.55) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(14.43) ｜ README_zh.md#编译 & 安装 > 数据准备(14.27) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(14.22),,,,9.54,1705,496,"doc,web",2026-10-27 17:27:29
+15,命令行如何中断训练及其恢复训练？,优化用,glm-5.3-flash-智谱,v3,"**关于“如何中断训练”：** 资料里没有找到相关内容，无法提供命令行中断训练的具体操作说明。
+
+**关于恢复训练：** 资料中有明确说明，恢复训练通过 `resume_from_checkpoint` 配置实现：
+
+**1. 指定具体 checkpoint 路径恢复**
+
+```yaml
+output_dir: saves/qwen3_8b_lora_sft
+resume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000
+```
+
+通常建议指向某个具体的 checkpoint 目录（如 `checkpoint-1000`），恢复时 Trainer 会加载该 checkpoint 对应的模型参数以及训练状态（模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态）。
+
+**2. 使用 `auto` 自动恢复**
+
+```yaml
+resume_from_checkpoint: auto
+```
+
+`auto` 会在 `output_dir` 下自动查找最新的完整 checkpoint 进行恢复，也可以直接填写 checkpoint 路径。
+
+**注意事项：**
+- 未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+- 如果此前开启了 `save_only_model: true`，由于未保存 optimizer、scheduler 等状态，通常**不能**进行完整的断点续训，此时保存结果更适合用于推理、评估或后续权重转换。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶(38.87) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(38.09) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(28.48) ｜ docs/zh/feature-guide/index.md#功能指南 > 模型保存与使用(25.4) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(24.98) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 不同后端的保存格式(22.19),,,,8.92,1117,491,"doc,web",2026-10-27 17:27:32
+16,我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？,优化用,qwen3-4b-本地,v3,"您希望在LoRA_A的基础上继续微调LoRA_B，并且不将LoRA_A保存为一个独立的基础模型，而是直接在LoRA_A的权重上微调LoRA_B，最终得到的LoRA_B可以直接用于原始模型Model。这种情况下，您可以按照以下步骤操作：
+
+1. **使用LoRA_A作为基础**：在微调LoRA_B时，将LoRA_A作为基础模型。这通常意味着在微调配置中指定`adapter_name_or_path`为LoRA_A的路径。
+
+2. **配置微调参数**：在微调LoRA_B时，确保配置文件中正确指定了`adapter_name_or_path`为LoRA_A的路径，这样训练过程会基于LoRA_A的权重进行。
+
+3. **微调LoRA_B**：使用数据集B对LoRA_B进行微调，确保在训练过程中，LoRA_B的权重是在LoRA_A的权重基础上进行调整。
+
+4. **导出LoRA_B**：微调完成后，将LoRA_B导出，这样可以直接用于原始模型Model，而不需要将LoRA_A保存为独立模型。
+
+具体配置示例（基于您提供的资料）：
+
+```yaml
+peft_config:
+  name: lora
+  adapter_name_or_path: ""path/to/LoRA_A""
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: all
+```
+
+这里，`adapter_name_or_path`指定了LoRA_A的路径，微调LoRA_B时会基于这个路径进行。确保您的训练配置中正确指定了这个路径，并且数据集B与模型和适配器相匹配。
+
+注意：在微调LoRA_B时，不要使用量化模型或指定量化位数，以确保LoRA_B能够正确地基于LoRA_A进行调整。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(40.37) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(39.09) ｜ docs/zh/feature-guide/model_export.md#模型导出 > 合并多个 Adapter(39.05) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > LoRA(34.97) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(34.82) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(34.34),,,,6.67,1087,403,"doc,web",2026-10-27 17:27:33
+17,支持Qwen3-4B-Instruct-2507的KTO训练吗,优化用,glm-5.3-flash-智谱,v3,"支持。资料中提供了官方示例配置 `examples/train_lora/qwen3_lora_kto.yaml`，正是使用 `Qwen/Qwen3-4B-Instruct-2507` 进行 KTO 训练的 LoRA 微调示例。
+
+关键配置片段：
+
+```yaml
+### model
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+trust_remote_code: true
+
+### method
+stage: kto
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_target: all
+pref_beta: 0.1
+
+### dataset
+dataset: kto_en_demo
+template: qwen3_nothink
+cutoff_len: 2048
+
+### output
+output_dir: saves/qwen3-4b/lora/kto
+```
+
+启动方式（可参考 NativeDDP 的启动命令格式）：
+
+```bash
+FORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_kto.yaml
+```
+
+注意两点：
+
+1. **数据集格式**：KTO 训练需要使用 KTO 数据集，即每条数据包含 `instruction`、`input`（选填）、`output` 以及表示人类反馈的 `kto_tag`（true/false）列。
+2. **相关参数**：可根据需要调整 KTO 相关参数，如 `pref_beta`（默认 0.1）、`kto_chosen_weight`（默认 1.0）、`kto_rejected_weight`（默认 1.0）。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > KTO¶(14.02) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > KTO 数据集¶(11.81) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactor(9.39) ｜ examples/train_lora/qwen3_lora_kto.yaml#examples/train_lora/qwen3_lora_kto.yaml(8.9) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶(5.21) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > RLHF¶(3.99),,,,8.41,1649,580,"example,web",2026-10-27 17:27:37
+17,支持Qwen3-4B-Instruct-2507的KTO训练吗,优化用,qwen3-4b-本地,v3,"是的，支持Qwen3-4B-Instruct-2507的KTO训练。根据资料4中的配置示例，可以使用以下参数进行KTO训练：
+
+```
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+trust_remote_code: true
+
+stage: kto
+do_train: true
+finetuning_type: lora
+lora_rank: 8
+lora_target: all
+pref_beta: 0.1
+
+dataset: kto_en_demo
+template: qwen3_nothink
+cutoff_len: 2048
+max_samples: 1000
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+output_dir: saves/qwen3-4b/lora/kto
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+overwrite_output_dir: true
+report_to: none
+```
+
+此外，训练参数设置如下：
+
+```
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 5.0e-6
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+```",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > KTO¶(14.02) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > KTO 数据集¶(11.81) ｜ webdocs/advanced__distributed.md#分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactor(9.39) ｜ examples/train_lora/qwen3_lora_kto.yaml#examples/train_lora/qwen3_lora_kto.yaml(8.9) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > ShareGPT¶(5.21) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 微调参数¶ > RLHF¶(3.99),,,,6.06,1729,288,"example,web",2026-10-27 17:27:38
+18,How to implement weight decay towards the pre-trained model?,优化用,qwen3-4b-本地,v3,"要实现对预训练模型的权重衰减（weight decay），需要在训练配置中设置 `optim_config` 参数，并指定 `name: muon`。然后，设置 `wd`（weight decay）参数的值。例如，可以设置 `wd: 0.1`，这是默认值。权重衰减在优化器配置中控制模型参数的更新，有助于防止过拟合。
+
+具体配置示例如下：
+
+```
+optim_config:
+  name: muon
+  wd: 0.1
+  momentum: 0.95
+  nesterov: true
+  ns_steps: 5
+  adamw_betas: [0.9, 0.95]
+  adamw_eps: 1e-8
+```
+
+学习率统一使用顶层 `learning_rate` 参数。权重衰减的值可以根据具体任务和数据进行调整。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > Supervised Fine(12.22) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(11.33) ｜ docs/zh/configuration/training.md#训练参数 > optim_config(10.81) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > model(8.23) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(8.19) ｜ webdocs/getting_started__eval.md#评估¶ > 通用能力评估¶ > model(8.18),,,,4.84,1075,188,"doc,web",2026-10-27 17:27:42
+19,昇腾多机训练怎么设置？,优化用,qwen3-4b-本地,v3,资料里没有找到。,"docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.98) ｜ README_zh.md#克隆 bitsandbytes 仓库, Ascend NPU 目前在 multi(23.38) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(21.81) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(21.74) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练(21.27) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(21.17)",,,,0.51,866,6,"doc,web",2026-10-27 17:27:42
+19,昇腾多机训练怎么设置？,优化用,glm-5.3-flash-智谱,v3,"根据现有资料，没有找到昇腾 NPU 专属的多机训练配置说明，但可以提供以下相关信息：
+
+**1. 多机启动的通用配置（同样适用于各后端）**
+
+CLI 通过环境变量读取拓扑信息，多机时在每台机器上执行，例如 4 台机器、每台 8 卡：
+
+```bash
+NNODES=4 \
+NODE_RANK=<0到3，各节点不同> \
+NPROC_PER_NODE=8 \
+MASTER_ADDR=<rank 0 节点的 IP> \
+MASTER_PORT=29500 \
+llamafactory-cli sft config.yaml
+```
+
+注意：所有节点需使用相同的 `NNODES`、`NPROC_PER_NODE`、`MASTER_ADDR` 和 `MASTER_PORT`，仅 `NODE_RANK` 分别设为 0、1、2、3。
+
+**2. 昇腾相关提示**
+
+- 训练命令检测到多设备后会自动通过 `torchrun` 启动；拓扑字段属于 `TrainingArguments`，后端专属字段放在 `dist_config`。
+- NPU 的设备安装与支持范围，文档指引参见 `docs/zh/multi-backend/npu/index.md`（该页面的具体内容在提供的资料中没有，无法给出细节）。
+- 若需使用 bitsandbytes，昇腾 NPU 目前在 `multi-backend-refactor` 分支中支持：
+
+```bash
+git clone -b multi-backend-refactor https://github.com/bitsandbytes-foundation/bitsandbytes.git
+cd bitsandbytes/
+```
+
+如需 NPU 专属的多机设置细节（如 `dist_config` 中 NPU 后端字段、HCCL 相关配置等），资料里没有找到，建议查阅上述 NPU 说明文档。","docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.98) ｜ README_zh.md#克隆 bitsandbytes 仓库, Ascend NPU 目前在 multi(23.38) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(21.81) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(21.74) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练(21.27) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(21.17)",,,,10.82,809,664,"doc,web",2026-10-27 17:27:49
+20,How to use multiple images in  multimodal dataset?,优化用,glm-5.3-flash-智谱,v3,"在多模态图像数据集中使用多张图片的方法如下：
+
+**1. 数据格式**
+
+在 Alpaca 格式数据中额外添加 `images` 列，包含输入图像的路径。图片的数量必须与文本中所有 `<image>` 标记的数量**严格一致**，即在文本中每出现一个 `<image>` 标记，就对应 `images` 列中的一个图像路径。
+
+```json
+[
+ {
+  ""instruction"": ""人类指令（必填）"",
+  ""input"": ""人类输入（选填）"",
+  ""output"": ""模型回答（必填）"",
+  ""images"": [
+   ""图像路径（必填）""
+  ]
+ }
+]
+```
+
+如需多张图片，在 `images` 数组中放入多个路径，并确保指令文本中包含对应数量的 `<image>` 标记。
+
+**2. dataset_info.json 配置**
+
+```json
+""dataset_name"": {
+ ""file_name"": ""data.json"",
+ ""columns"": {
+  ""prompt"": ""instruction"",
+  ""query"": ""input"",
+  ""response"": ""output"",
+  ""images"": ""images""
+ }
+}
+```
+
+注意：使用自定义数据集时，需要更新 `data/dataset_info.json` 文件。",webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶(40.9) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 音频数据集¶(22.79) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 视频数据集¶(22.79) ｜ webdocs/advanced__model_support.md#模型支持¶ > 多模态数据构建¶(22.19) ｜ README_zh.md#编译 & 安装 > 数据准备(15.04) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(13.86),,,,7.4,1307,371,"doc,web",2026-10-27 17:27:50
+18,How to implement weight decay towards the pre-trained model?,优化用,glm-5.3-flash-智谱,v3,"根据资料，关于 weight decay 只有以下信息：
+
+**优化器层面的 weight decay**
+
+资料 3（optim_config）提到，设置 `name: muon` 时可配置 `wd` 字段：
+
+| 字段 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `wd` | `float` | `0.1` | weight decay |
+
+注意：Muon 的学习率统一使用顶层 `learning_rate`，完整配置示例见「优化器」文档（资料中未包含具体示例）。
+
+**需要说明的是**：如果您指的是「向预训练模型权重方向衰减」（即通过正则化约束使权重靠近预训练初始权重，如 L2-SP 类方法），资料里没有找到相关内容。资料中只涉及优化器的标准 weight decay 参数，没有提供以预训练权重为目标的衰减/锚定机制的具体实现方式。",webdocs/advanced__trainers.md#训练方法¶ > Post-training¶ > Supervised Fine(12.22) ｜ webdocs/advanced__tuning_algorithms.md#调优算法¶ > Full Parameter Fine-tuning¶(11.33) ｜ docs/zh/configuration/training.md#训练参数 > optim_config(10.81) ｜ webdocs/getting_started__eval.md#评估¶ > NLG 评估¶ > model(8.23) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo > 采样规模的计算(8.19) ｜ webdocs/getting_started__eval.md#评估¶ > 通用能力评估¶ > model(8.18),,,,16.93,1008,779,"doc,web",2026-10-27 17:27:50
+20,How to use multiple images in  multimodal dataset?,优化用,qwen3-4b-本地,v3,"要在多模态数据集中使用多个图像，需要按照以下步骤进行：
+
+1. 确保数据集格式正确：多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。
+
+2. 数据格式示例：
+```json
+[
+ {
+ ""instruction"": ""人类指令（必填）"",
+ ""input"": ""人类输入（选填）"",
+ ""output"": ""模型回答（必填）"",
+ ""images"": [
+ ""图像路径（必填）""
+ ]
+ }
+]
+```
+
+3. 数据集描述配置：
+```json
+""dataset_name"": {
+ ""file_name"": ""data.json"",
+ ""columns"": {
+ ""prompt"": ""instruction"",
+ ""query"": ""input"",
+ ""response"": ""output"",
+ ""images"": ""images""
+ }
+}
+```
+
+通过以上步骤，您可以正确地在多模态数据集中使用多个图像。",webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶(40.9) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 音频数据集¶(22.79) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 多模态数据集¶ > 视频数据集¶(22.79) ｜ webdocs/advanced__model_support.md#模型支持¶ > 多模态数据构建¶(22.19) ｜ README_zh.md#编译 & 安装 > 数据准备(15.04) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(13.86),,,,3.66,1341,202,"doc,web",2026-10-27 17:27:53
+21,有一个40G的数据集，但是由于他太大，所以跑sft出很多问题。如果把数据集拆成多个小数据集，如何配置训练？,优化用,qwen3-4b-本地,v3,"根据提供的资料，可以将一个大的数据集拆分成多个小数据集，并通过配置训练参数来处理。具体来说，可以使用 `train_dataset` 字段指定多个数据集，每个数据集可以通过 YAML 文件描述其路径、来源、split、converter 和采样配置，并支持组合多个数据集。
+
+在训练配置中，可以使用 `dataset` 参数指定多个数据集，用逗号分隔。例如，如果拆分成两个小数据集，可以这样配置：
+
+```bash
+--dataset dataset1,dataset2
+```
+
+其中 `dataset1` 和 `dataset2` 是描述每个小数据集的 YAML 文件或路径。
+
+此外，可以使用 `mix_strategy` 参数来控制数据集的混合策略，支持 `concat`、`interleave_under`、`interleave_over`。如果希望数据集之间进行交错采样，可以设置：
+
+```bash
+--mix_strategy interleave_under
+```
+
+或者：
+
+```bash
+--mix_strategy interleave_over
+```
+
+如果希望使用交错策略，并指定从多个数据集中采样的概率，可以使用 `interleave_probs` 参数，例如：
+
+```bash
+--interleave_probs 0.5,0.5
+```
+
+这样，训练过程会从多个数据集中按指定概率交错采样，从而避免处理单个大数据集时出现的问题。同时，确保 `streaming` 配置一致，因为同一个 YAML 中的 streaming 配置必须一致，且当前训练路径不支持 streaming 数据集。",docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(30.3) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(29.64) ｜ webdocs/advanced__distributed.md#分布训练¶(22.41) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(22.24) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo(21.03) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(17.97),,,,8.55,1889,317,"doc,web",2026-10-27 17:27:59
+16,我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？,优化用,glm-5.3-flash-智谱,v3,"可以做到，不需要先把 LoRA_A 合并成完整模型。关键是在训练配置里通过 `adapter_name_or_path` 指向 LoRA_A 的输出目录，框架会直接从该 adapter 恢复 LoRA 参数继续训练（资料：训练时只允许一个 adapter，LoRA 参数从 adapter 自身恢复）。
+
+配置示例（沿用 SFT 文档的风格）：
+
+```yaml
+model: Model                    # 仍使用原始基座模型
+adapter_name_or_path: outputs/lora_a   # 上一次训练保存 LoRA_A 的目录（即当时的 output_dir）
+
+peft_config:
+  name: lora
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: all
+
+dataset: 数据集B
+output_dir: outputs/lora_b      # 新 adapter（LoRA_B）的保存位置
+```
+
+几点说明：
+
+- **训练阶段**：基座填原始 Model，`adapter_name_or_path` 填 LoRA_A 的输出目录，训练数据换成数据集 B，结果保存到新的 `output_dir`（即 LoRA_B）。
+- **结果可用性**：由于 LoRA 参数是从 LoRA_A 恢复后继续训练的，得到的 LoRA_B 已包含 A+B 的全部更新，结构上与原始 Model 匹配，推理或导出时只需 `adapter_name_or_path: outputs/lora_b` 即可直接用在原始 Model 上。
+- **注意事项**：adapter 必须与基座模型匹配（与合并多个 adapter 时的要求一致）；如果之后要把 LoRA_B 合并回 Model 导出，请使用未量化的模型进行合并，不要指定量化位数。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(40.37) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(39.09) ｜ docs/zh/feature-guide/model_export.md#模型导出 > 合并多个 Adapter(39.05) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > LoRA(34.97) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(34.82) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(34.34),,,,35.08,1032,2111,"doc,web",2026-10-27 17:27:59
+22,vllm如何进行batch推理,优化用,qwen3-4b-本地,v3,"使用vllm进行批量推理，您可以按照以下指令启动vllm推理引擎并使用数据集进行推理：
+
+```
+python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
+```
+
+其中，`path_to_merged_model`是您本地存储的合并后的模型路径，`alpaca_en_demo`是您希望使用的数据集名称。请根据您的具体需求调整参数。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(39.49) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(32.4) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(31.44) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(31.31) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(26.8) ｜ webdocs/getting_started__inference.md#推理¶(23.95),,,,2.02,919,96,web,2026-10-27 17:28:01
+23,请问在推理或预测的时候如何指定 temperature 等参数？,优化用,qwen3-4b-本地,v3,"在推理或预测时，可以通过配置文件中的生成参数来指定 `temperature` 等参数。例如，在 `inference_config.yaml` 中添加或修改以下参数：
+
+```yaml
+generate_params:
+  do_sample: true
+  temperature: 0.95
+  top_p: 0.7
+  top_k: 50
+  num_beams: 1
+  max_length: 1024
+  max_new_tokens: 1024
+  repetition_penalty: 1.0
+  length_penalty: 1.0
+  skip_special_tokens: true
+```
+
+以上参数的默认值可以参考资料 6 中的描述。您可以在推理配置文件中根据需要调整这些参数以控制生成文本的随机性和其他生成行为。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(14.74) ｜ webdocs/getting_started__inference.md#推理¶(13.66) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(13.55),,,,3.02,1341,168,web,2026-10-27 17:28:04
+22,vllm如何进行batch推理,优化用,glm-5.3-flash-智谱,v3,"根据资料，使用 vllm 进行批量推理的方式如下：
+
+**1. 使用批量推理脚本（推荐用于大量数据集）**
+
+通过 `scripts/vllm_infer.py` 脚本启动 vllm 推理引擎，对数据集进行批量推理并保存结果：
+
+```bash
+python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
+```
+
+- `--model_name_or_path`：指定模型路径（需为合并后的模型）
+- `--dataset`：指定要推理的数据集
+
+**2. 在推理配置中指定 vllm 后端**
+
+如果通过 `llamafactory-cli chat` 或 `llamafactory-cli webchat` 交互式推理，也可以在配置文件中指定 `infer_backend: vllm` 以获得更快的推理速度：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: vllm  # choices: [huggingface, vllm]
+trust_remote_code: true
+```
+
+**注意事项：**
+- 默认使用 Huggingface 引擎，需显式指定 `infer_backend: vllm` 才会使用 vllm
+- 模型 `model_name_or_path` 需要存在，且与 `template` 相对应
+- 除了 vllm 批量推理，也可以通过部署 API 服务的形式进行批量推理（例如：`API_PORT=8000 CUDA_VISIBLE_DEVICES=0 llamafactory-cli api examples/inference/qwen3_lora_sft.yaml`）
+
+关于批量推理输出结果的保存格式、更多脚本参数等细节，资料里没有找到。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(39.49) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(32.4) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(31.44) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > 数据集¶(31.31) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(26.8) ｜ webdocs/getting_started__inference.md#推理¶(23.95),,,,11.1,877,611,web,2026-10-27 17:28:04
+24,请问如何使用多机多卡推理呢？,优化用,qwen3-4b-本地,v3,"根据提供的资料，使用多机多卡进行推理的配置方式可能涉及使用 `deepspeed` 或 `accelerate` 工具。以下是基于资料的示例配置：
+
+### 使用 DeepSpeed 进行多机多卡推理
+```
+deepspeed --num_gpus 8 --num_nodes 2 --hostfile hostfile --master_addr hostname1 --master_port=9901 \
+your_program.py <normal cl args> --deepspeed ds_config.json
+```
+
+- `--num_gpus`: 每个节点上的 GPU 数量。
+- `--num_nodes`: 节点数量。
+- `--hostfile`: 指定主机文件，格式为 `hostname slots=number_of_gpus`。
+- `--master_addr`: 主节点的 IP 地址。
+- `--master_port`: 主节点的端口号。
+- `ds_config.json`: DeepSpeed 的配置文件。
+
+### 使用 Accelerate 进行多机多卡推理
+配置文件 `fsdp_config_multiple_nodes.yaml` 中需要设置以下参数：
+- `num_machines`: 节点数量。
+- `num_processes`: 所有节点上的 GPU 总数。
+- `main_process_ip`: 主进程所在节点的 IP 地址。
+- `main_process_port`: 主进程的端口号。
+- `machine_rank`: 当前节点的编号。
+
+启动命令：
+```
+accelerate launch \
+--config_file fsdp_config_multiple_nodes.yaml \
+train.py llm_config.yaml
+```
+
+请根据实际需求调整配置参数，并确保所有节点使用相同的 `master_addr` 和 `master_port`。资料中没有直接提供多机多卡推理的具体配置示例，但上述方法可以作为参考。",webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(27.26) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(24.81) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.78) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(24.45) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(23.97) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > (23.95),,,,6.21,1203,366,"doc,web",2026-10-27 17:28:10
+24,请问如何使用多机多卡推理呢？,优化用,glm-5.3-flash-智谱,v3,"关于**多机多卡推理**的具体做法，资料里没有找到相关内容。
+
+资料中涉及的内容仅包括：
+
+1. **多机多卡训练**（非推理）：提供了多种启动方式，例如：
+   - 使用 Ray：主节点执行 `ray start --head --port=6379`，从节点执行 `ray start --address='master node IP:6379'`
+   - 使用 `llamafactory-cli` 配合 `FORCE_TORCHRUN`、`NNODES`、`NODE_RANK`、`MASTER_ADDR`、`MASTER_PORT` 等环境变量
+   - 使用 `deepspeed` 指令配合 hostfile
+   - 使用 `accelerate launch` 配合 FSDP 多节点配置（`num_machines`、`main_process_ip` 等）
+
+2. **推理配置**（资料中仅涉及单机推理）：例如 `examples/inference/qwen3.yaml` 中的配置：
+   ```yaml
+   model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+   template: qwen3_nothink
+   infer_backend: huggingface  # 可选 [huggingface, vllm]
+   trust_remote_code: true
+   ```
+
+如果您需要多机多卡推理的配置方法，建议查阅 LlamaFactory 官方文档中关于推理（inference）或 vllm 部分的更多内容。",webdocs/advanced__distributed.md#deepspeed_config.yaml > Ray¶ > 多机多卡¶(27.26) ｜ webdocs/advanced__distributed.md#accelerate_singleNode_config.yaml > 多机多卡(24.81) ｜ docs/zh/feature-guide/distributed_training.md#分布式训练 > 配置多机启动(24.78) ｜ webdocs/advanced__distributed.md#accelerate_multiNode_config.yaml > DeepS(24.45) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(23.97) ｜ webdocs/advanced__distributed.md#deepspeed_config.yaml > FSDP¶ > 多机多卡¶ > (23.95),,,,9.82,1138,541,"doc,web",2026-10-27 17:28:14
+23,请问在推理或预测的时候如何指定 temperature 等参数？,优化用,glm-5.3-flash-智谱,v3,"根据资料，这些生成参数可以直接写在推理配置文件（yaml）中，与 `model_name_or_path`、`template` 等参数并列即可。例如：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: huggingface
+trust_remote_code: true
+temperature: 0.7
+top_p: 0.9
+```
+
+可用的生成参数及其默认值如下（摘自参数介绍）：
+
+| 参数 | 说明 | 默认值 |
+|---|---|---|
+| `do_sample` | 是否使用采样策略，False 时使用 greedy decoding | True |
+| `temperature` | 越高越随机，越低越确定 | 0.95 |
+| `top_p` | 控制候选 token 集合（累积概率） | 0.7 |
+| `top_k` | 在概率最高的 top_k 个 token 中采样 | 50 |
+| `num_beams` | beam_search 束宽度，1 表示不用 | 1 |
+| `max_length` | 文本最大长度（含输入） | 1024 |
+| `max_new_tokens` | 生成文本最大长度，会覆盖 max_length | 1024 |
+| `repetition_penalty` | 重复 token 惩罚系数 | 1.0 |
+| `length_penalty` | beam_search 时的长度惩罚系数 | 1.0 |
+| `default_system` | 默认 system message | None |
+| `skip_special_tokens` | 解码时是否忽略特殊 token | True |
+
+配置文件写好后，按正常方式运行即可，例如：
+
+```bash
+llamafactory-cli chat inference_config.yaml
+```
+
+需要说明的是，资料中只给出了这些生成参数的名称与含义，未详细展示在 CLI 命令行中直接传参的方式，以上 yaml 写法是依据推理配置文件统一传参的方式给出的。",webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(14.74) ｜ webdocs/getting_started__inference.md#推理¶(13.66) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(13.55),,,,14.87,1260,1008,web,2026-10-27 17:28:14
+25,qwen2vl-sft后如何将adapter_model.safetensors和模型原始参数合并使用,优化用,qwen3-4b-本地,v3,"根据提供的资料，要将 adapter_model.safetensors 和模型原始参数合并使用，可以按照以下步骤进行：
+
+1. 确保你有模型的原始参数和 LoRA 适配器。原始模型参数应来自一个未量化的预训练模型，而 LoRA 适配器应是在该模型上进行微调得到的。
+
+2. 使用 `merge_lora` 工具或相关命令来合并 LoRA 适配器到原始模型中。在配置文件中，你需要指定 `model_name_or_path` 为原始模型的路径，`adapter_name_or_path` 为 LoRA 适配器的路径，以及 `template` 为模型的模板。
+
+3. 在配置文件中设置 `export_legacy_format: false` 以避免使用遗留格式，这通常在合并 LoRA 适配器时是推荐的。
+
+4. 如果需要，可以指定 `export_dir` 为保存合并后模型的目录。
+
+一个示例配置可能如下：
+
+```
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+adapter_name_or_path: saves/qwen3-4b/lora/sft
+template: qwen3_nothink
+trust_remote_code: true
+export_dir: saves/qwen3_sft_merged
+export_legacy_format: false
+```
+
+请根据你的具体需求调整配置参数。如果你需要将模型和 LoRA 适配器合并到一个模型中，确保你使用的是未量化的原始模型，并且在合并过程中不要使用量化模型或设置量化位数。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶(36.47) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(36.09) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(35.24) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(34.9) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(33.76) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(33.16),,,,5.59,799,337,web,2026-10-27 17:28:19
+26,推理的cutoff len 设置为8092，但预测输出被限制在1024tokens,优化用,qwen3-4b-本地,v3,资料里没有找到。,webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(41.67) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(28.69) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > vllm 推理¶(15.77),,,,0.55,1284,6,"doc,web",2026-10-27 17:28:20
+21,有一个40G的数据集，但是由于他太大，所以跑sft出很多问题。如果把数据集拆成多个小数据集，如何配置训练？,优化用,glm-5.3-flash-智谱,v3,"可以把 40G 的数据集拆成多个文件，然后通过**数据集 YAML 组合多个数据集**的方式配置训练。
+
+## 1. 编写数据集 YAML
+
+把拆分后的每个子集写成一个条目，例如 `data/my_sft.yaml`：
+
+```yaml
+part1:
+  path: data/part1.json
+  source: local
+  converter: sharegpt    # 按实际格式选择 alpaca / sharegpt / pair
+
+part2:
+  path: data/part2.json
+  source: local
+  converter: sharegpt
+
+part3:
+  path: data/part3.json
+  source: local
+  converter: sharegpt
+```
+
+## 2. 在训练 YAML 中引用
+
+训练 YAML 的 `train_dataset` 字段指向这个数据集 YAML：
+
+```yaml
+train_dataset: data/my_sft.yaml
+```
+
+`train_dataset` 也支持直接填本地数据文件/目录、HF Hub 数据集 ID 或 Hub 仓库中的 YAML。
+
+## 注意事项
+
+- **streaming 必须一致**：同一个 YAML 中所有条目的 `streaming` 配置必须一致，且当前训练路径**不支持 streaming 数据集**（保持默认 `false` 即可）。
+- **控制采样规模**：多个条目会组成一个全局数据索引，可用 `size`（重采样后的目标索引数量）和 `weight`（索引数量缩放倍率）控制每个子集的采样量。
+- **混合策略**：数据参数中的 `mix_strategy` 支持 `concat`、`interleave_under`、`interleave_over`，配合 `interleave_probs` 指定各数据集的采样概率。
+
+## 针对“数据太大”的辅助参数
+
+- `tokenized_path`：指定路径后，首次分词会保存 tokenized 数据集，之后直接加载，避免每次重复预处理 40G 数据。
+- `max_samples`：可将每个数据集截断到指定样本数（如果只是想先跑通）。
+- `packing` / `neat_packing`：启用序列打包提升训练效率（预训练时默认启用 packing）。
+- `preprocessing_num_workers`：增加预处理进程数，加快大数据集的预处理。
+
+另外提醒：`eval_dataset` 字段已定义，但评估流程尚未实现。",docs/zh/feature-guide/data_preparation.md#数据准备 > 组合多个数据集(30.3) ｜ docs/zh/feature-guide/data_preparation.md#数据准备 > 配置训练数据集(29.64) ｜ webdocs/advanced__distributed.md#分布训练¶(22.41) ｜ webdocs/getting_started__data_preparation.md#数据处理¶ > Alpaca¶ > 预训练数据集¶(22.24) ｜ docs/zh/configuration/data.md#数据参数 > DatasetInfo(21.03) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(17.97),,,,31.09,1771,1483,"doc,web",2026-10-27 17:28:21
+27,请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?,优化用,qwen3-4b-本地,v3,"是的，预训练数据tokenizer后可以存储，下次运行时可以直接加载tokenizer后的数据，无需每次都在线tokenizer。在配置中使用 `tokenized_path` 参数可以实现这一点。如果路径存在，会加载已有的 tokenized datasets；如果路径不存在，则会在分词后将 tokenized datasets 保存在此路径中。例如，可以在配置文件中设置：
+
+```yaml
+tokenized_path: ""/path/to/your/tokenized/data""
+```
+
+这样就可以直接加载已有的预处理数据，提高效率。",examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(34.83) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(24.33) ｜ webdocs/getting_started__data_preparation.md#数据处理¶(21.85) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(19.19) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(18.08) ｜ docs/zh/quick_start.md#快速开始 > 运行 SFT(16.71),,,,2.31,1503,109,"doc,web",2026-10-27 17:28:23
+27,请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?,优化用,glm-5.3-flash-智谱,v3,"可以的。LlamaFactory 支持将分词（tokenize）后的数据集保存到本地，下次运行时直接加载，无需重复在线分词。这在处理大数据集时特别有帮助。
+
+使用方法：在训练配置（YAML）中设置 `tokenized_path` 参数：
+
+```yaml
+tokenized_path: path/to/save_tokenized_data
+```
+
+该参数的行为是：
+- **如果路径存在**：直接加载已有的 tokenized 数据集；
+- **如果路径不存在**：会在分词后将 tokenized 数据集保存到该路径，供下次使用。
+
+官方也提供了对应的示例配置，可以直接参考运行：
+
+```bash
+llamafactory-cli train examples/train_lora/qwen3_preprocess.yaml
+```",examples/README_zh.md#目录 > 示例 > LoRA 微调 > 预处理数据集(34.83) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(24.33) ｜ webdocs/getting_started__data_preparation.md#数据处理¶(21.85) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 从 Checkpoint 恢复训练(19.19) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 保存训练 Checkpoint(18.08) ｜ docs/zh/quick_start.md#快速开始 > 运行 SFT(16.71),,,,7.08,1431,321,"doc,web",2026-10-27 17:28:27
+28,如何设置模型推理的一些参数如 temperature？,优化用,qwen3-4b-本地,v3,资料里没有找到。,webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(30.7) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(30.15) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(24.94) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(23.63) ｜ examples/README_zh.md#目录 > 示例 > 推理 LoRA 模型 > 使用 vLLM 多卡推理评估(19.82) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(19.02),,,,0.56,854,6,"doc,web",2026-10-27 17:28:27
+26,推理的cutoff len 设置为8092，但预测输出被限制在1024tokens,优化用,glm-5.3-flash-智谱,v3,"这是因为生成输出长度不是由 `cutoff_len` 控制的，而是由生成参数控制的，两者是独立的参数：
+
+- **`cutoff_len`**：限制输入（prompt）的截断长度
+- **`max_new_tokens`**：控制单次生成的最大 token 数，**默认值为 1024**，这就是你的输出被限制在 1024 的原因
+- **`max_length`**：文本最大长度（包括输入文本和生成文本），默认也是 1024；注意设置 `max_new_tokens` 会覆盖 `max_length`
+
+**解决方法**：在推理配置 yaml 中显式设置 `max_new_tokens`，例如：
+
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: huggingface # choices: [huggingface, vllm]
+trust_remote_code: true
+max_new_tokens: 8192
+```
+
+另外，如果使用 vllm 推理后端，还需要注意 `vllm_maxlen`（最大序列长度，包括输入和生成文本）默认为 4096，可能也需要相应调大。
+
+补充说明：资料里没有找到 `cutoff_len` 参数的具体说明，但输出被限制在 1024 的直接原因就是 `max_new_tokens` 的默认值，设置该参数即可解决。",webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(41.67) ｜ docs/zh/configuration/inference.md#推理参数 > SampleArguments(28.69) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(20.41) ｜ webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(20.3) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(19.92) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > vllm 推理¶(15.77),,,,14.22,1200,727,"doc,web",2026-10-27 17:28:28
+25,qwen2vl-sft后如何将adapter_model.safetensors和模型原始参数合并使用,优化用,glm-5.3-flash-智谱,v3,"合并 LoRA 适配器使用 `export` 导出，参考配置如下（资料中以 Qwen3 为例，qwen2vl 同理，只需换成对应的模型路径和 template）：
+
+```yaml
+### model
+model_name_or_path: 原始模型路径          # 微调时使用的未量化基座模型
+adapter_name_or_path: saves/qwen2vl/lora/sft   # 与 SFT 时的 output_dir 一致，即 adapter_model.safetensors 所在目录
+template: 与模型对应的 template
+trust_remote_code: true
+
+### export
+export_dir: saves/qwen2vl_sft_merged
+export_size: 5
+export_device: cpu
+export_legacy_format: false
+```
+
+要点说明：
+
+1. **adapter_name_or_path 不是指向 adapter_model.safetensors 文件本身**，而是指向微调时的适配器输出目录 `output_dir`（资料备注：`adapter_name_or_path` 需要与微调中的适配器输出路径 `output_dir` 相对应）。
+2. `model_name_or_path` 需要存在且与 `template` 相对应。qwen2vl 对应的具体 template 名称在资料里没有找到，请以模型实际对应的 template 为准。
+3. **合并时不要使用量化模型或指定量化位数**（如 `quantization_bit`），应使用本地或下载的未量化预训练模型进行合并。
+4. 合并完成后，完整权重会保存在 `export_dir` 指定的目录中（如 `saves/qwen2vl_sft_merged`），之后可直接加载该目录用于推理。
+
+另外补充一点与保存相关的信息：如果训练时只关心最终导出权重，可设置 `save_only_model: true` 减少磁盘占用，但这样缺少训练状态，无法用于中途恢复训练。",webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶(36.47) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(36.09) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(35.24) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > model(34.9) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > model(33.76) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(33.16),,,,18.85,755,1325,web,2026-10-27 17:28:29
+29,请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？,优化用,qwen3-4b-本地,v3,"使用全参训练出的 checkpoint 与原始模型的权重进行合并，通常是在完成全参训练后，将训练得到的模型权重与原始模型的权重进行合并。不过，根据提供的资料，全参训练的模型（如 `outputs/qwen3_full`）已经包含了完整模型权重，而 LoRA 合并通常是在微调（如 SFT）后对适配器进行合并。如果您的问题是关于如何将全参训练的模型与原始模型进行合并，可能需要更具体的上下文或操作步骤。
+
+但根据资料，全参训练的模型已经包含了完整模型权重，不需要额外合并。如果您指的是将全参训练的模型与 LoRA 适配器合并，这通常是在微调后进行的步骤，而不是全参训练后的步骤。因此，资料中没有直接说明如何将全参训练的 checkpoint 与原始模型的权重进行合并，但全参训练的模型已经包含了完整权重，无需额外合并。",docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(32.84) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(31.25) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(29.45) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > 全参训练(28.92) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(28.87) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(28.48),,,,3.62,1131,207,"doc,web",2026-10-27 17:28:32
+30,--cutoff_len 1024，截断长度设置的 1024，是指 1024 个字，还是 1024 个 token？,优化用,qwen3-4b-本地,v3,在参数 `cutoff_len` 中，1024 表示的是 1024 个 token，而不是 1024 个字。这个参数定义了输入的最大 token 数，超过该长度的内容会被截断。,webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(15.02) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(12.7) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(10.23) ｜ docs/zh/feature-guide/batching.md#批处理策略(10.15) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 模型导出¶(6.32) ｜ docs/zh/feature-guide/batching.md#批处理策略 > 配置示例(6.27),,,,1.86,2591,54,"doc,web",2026-10-27 17:28:33
+30,--cutoff_len 1024，截断长度设置的 1024，是指 1024 个字，还是 1024 个 token？,优化用,glm-5.3-flash-智谱,v3,"是 **1024 个 token**，不是 1024 个字。
+
+根据资料，`cutoff_len` 的定义是：**输入的最大 token 数，超过该长度会被截断**（默认值为 2048）。
+
+需要注意 token 和汉字不是一一对应的关系，通常一个汉字可能对应一个或多个 token（取决于模型的分词器），所以 `cutoff_len: 1024` 实际能容纳的汉字数量一般少于或等于 1024 个字。
+
+另外补充一点：在动态批处理策略（`dynamic_batching` / `dynamic_padding_free`）中，token 预算的计算方式为 `cutoff_len × micro_batch_size`，例如 `cutoff_len: 2048`、`micro_batch_size: 4` 时，每个 micro-batch 的 token 预算为 8192。",webdocs/advanced__arguments.md#参数介绍¶ > 数据参数¶(15.02) ｜ docs/zh/configuration/training.md#训练参数 > TrainingArguments > 训练过程与精度(12.7) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 生成参数¶(10.23) ｜ docs/zh/feature-guide/batching.md#批处理策略(10.15) ｜ webdocs/advanced__arguments.md#参数介绍¶ > 模型参数¶ > 模型导出¶(6.32) ｜ docs/zh/feature-guide/batching.md#批处理策略 > 配置示例(6.27),,,,5.66,2410,257,"doc,web",2026-10-27 17:28:35
+28,如何设置模型推理的一些参数如 temperature？,优化用,glm-5.3-flash-智谱,v3,"根据提供的资料，**没有直接给出 temperature 等采样参数的具体设置方法和参数名**，资料里没有找到相关内容。
+
+资料中与此相关的信息仅有：
+
+1. **资料 6** 提到使用训练或合并后的完整模型推理时，应「保留采样参数并运行 `llamafactory-cli chat chat.yaml`」，并指出完整字段可参见推理参数文档（`docs/zh/configuration/inference.md`，即「推理参数」章节）。
+
+2. 资料中给出的推理配置示例（如 `examples/inference/qwen3.yaml`）只包含以下字段：
+```yaml
+model_name_or_path: Qwen/Qwen3-4B-Instruct-2507
+template: qwen3_nothink
+infer_backend: huggingface  # choices: [huggingface, vllm]
+trust_remote_code: true
+```
+
+建议您查阅 LlamaFactory 文档中的「推理参数」（`configuration/inference.md`）章节，那里包含 temperature 等采样参数的完整字段说明。",webdocs/getting_started__inference.md#推理¶ > 原始模型推理配置¶ > examples/inference/qwe(30.7) ｜ webdocs/getting_started__inference.md#推理¶ > 微调模型推理配置¶ > examples/inference/qwe(30.15) ｜ webdocs/getting_started__inference.md#推理¶ > 多模态模型¶(24.94) ｜ webdocs/getting_started__inference.md#推理¶ > 批量推理¶ > examples/inference/qwen3_l(23.63) ｜ examples/README_zh.md#目录 > 示例 > 推理 LoRA 模型 > 使用 vLLM 多卡推理评估(19.82) ｜ docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(19.02),,,,13.48,814,549,"doc,web",2026-10-27 17:28:37
+29,请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？,优化用,glm-5.3-flash-智谱,v3,"**全参训练产生的 checkpoint 不需要（也不存在）与原始模型权重合并的步骤。**
+
+根据资料说明：
+
+1. **全参训练的输出本身就是完整模型权重。** 全参训练会更新全部模型参数（不设置 `peft_config`），训练输出目录（如 `outputs/qwen3_full`）中已包含完整的模型权重。因此无需像 LoRA 那样进行合并操作。
+
+2. **直接加载使用即可。** 完成全参 SFT 后，只需将 `chat.yaml` 中的 `model` 改为训练输出目录（如 `outputs/qwen3_full`），加载时**移除此前的 `peft_config`**，保留采样参数，然后运行：
+   ```bash
+   llamafactory-cli chat chat.yaml
+   ```
+
+3. **资料中的“合并（export）”流程仅适用于 LoRA 适配器**，即需要将 `adapter_name_or_path` 指定的适配器合并回基座模型的场景。全参训练没有独立的适配器文件，自然不涉及这一步。
+
+补充说明：资料里没有找到关于“将全参 checkpoint 与原始模型权重合并”的具体操作方法，因为从训练机制上讲，全参 checkpoint 已经是独立、完整的模型，可直接用于推理或后续导出量化等流程。",docs/zh/feature-guide/inference.md#推理 > 使用训练或合并后的模型(32.84) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > LoRA 合并¶ > export(31.25) ｜ docs/zh/feature-guide/model_saving.md#模型保存与恢复 > 初始化权重与恢复训练(29.45) ｜ docs/zh/feature-guide/sft.md#监督微调（SFT） > 全参训练(28.92) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存(28.87) ｜ webdocs/getting_started__merge_lora.md#模型保存、LoRA 合并与量化¶ > 量化¶ > export(28.48),,,,14.75,1082,685,"doc,web",2026-10-27 17:28:42

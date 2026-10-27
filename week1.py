@@ -172,6 +172,40 @@ def load_model_config(path: Path) -> list[ModelCfg]:
     return [ModelCfg(**m) for m in raw["models"]]
 
 
+REWRITE_PROMPT = """你是检索查询改写器。把用户的技术问题改写成更适合关键词检索的形式。
+
+规则：
+1. 保留问题里出现的所有参数名、配置项、命令（如 cutoff_len、lora_rank、save_steps）
+2. 如果问题用泛称（如「那个参数」「这类配置」），且能从问题本身推断出具体名词，就补上；推断不出就不要编
+3. 补充技术同义词，例如：推理→predict/inference，合并→export/merge，中断→resume/断点续训
+4. 不要回答问题，不要解释，不要加引号
+5. 只输出改写后的一行文本
+
+原问题：{q}
+改写后："""
+
+
+def rewrite_query(cfg: ModelCfg, question: str) -> str:
+    """用模型把问题改写成更适合 BM25 检索的形式。
+
+    只用于检索，不改变实际回答时使用的问题。
+    失败时回退到原问题，保证不影响主流程。
+    """
+    try:
+        res = call_model(
+            cfg,
+            [{"role": "user", "content": REWRITE_PROMPT.format(q=question)}],
+            retries=1,
+        )
+        out = (res.get("text") or "").strip().split("\n")[0].strip()
+        # 防御：改写结果过长或过短都视为失败
+        if 4 <= len(out) <= 300 and out != question:
+            return out
+    except Exception:
+        pass
+    return question
+
+
 def build_messages(question: str, contexts: list[dict]) -> list[dict]:
     ctx_text = "\n\n".join(
         f"[资料 {i + 1}] 来源：{c['path']} ｜ {c['heading']}\n{c['text']}"
@@ -300,6 +334,7 @@ def main() -> int:
     ap.add_argument("--models", default=str(ROOT / "configs" / "models.json"))
     ap.add_argument("--topk", type=int, default=3)
     ap.add_argument("--limit", type=int, default=0, help="只跑前 N 题（调试用）")
+    ap.add_argument("--rewrite", action="store_true", help="检索前用模型改写查询（v3 实验）")
     ap.add_argument("--dry-run", action="store_true", help="只检索不调模型")
     ap.add_argument("--workers", type=int, default=4, help="并发数（默认 4）")
     args = ap.parse_args()
@@ -341,8 +376,16 @@ def main() -> int:
     lock = threading.Lock()
     tasks = []
 
+    # v3：可选查询改写（只影响检索，不影响回答用的问题）
+    rewriter = models[0] if args.rewrite else None
+    if rewriter:
+        print(f"[改写] 使用 {rewriter.name} 改写查询")
+
     for q in questions:
-        contexts = retriever.top_k(q["question"], k=args.topk)
+        rq = rewrite_query(rewriter, q["question"]) if rewriter else q["question"]
+        if rewriter and rq != q["question"]:
+            print("  题" + str(q["id"]) + " 改写: " + rq[:60])
+        contexts = retriever.top_k(rq, k=args.topk)
         ctx_brief = " ｜ ".join(
             f"{c['path']}#{c['heading'][:40]}({c['score']})" for c in contexts
         )
