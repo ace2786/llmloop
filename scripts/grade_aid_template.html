@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>v3 盲判辅助 · 82 条</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #f6f6f4; color: #1a1a1a;
+         font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 20px 20px 120px; }
+  .bar { position: sticky; top: 0; background: #f6f6f4; padding: 12px 0 10px;
+         border-bottom: 1px solid #e3e3e0; z-index: 5; }
+  .row { display: flex; align-items: center; gap: 12px; }
+  .grow { flex: 1; }
+  .track { height: 6px; background: #e3e3e0; border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .fill { height: 100%; background: #185FA5; width: 0; transition: width .18s; }
+  .meta { font-size: 13px; color: #6b6b66; }
+  .code { font-family: ui-monospace, Consolas, monospace; font-weight: 500; color: #1a1a1a; }
+  .tag { font-size: 12px; padding: 2px 8px; border-radius: 10px; background: #eef2f7; color: #185FA5; }
+  .card { background: #fff; border: 1px solid #e3e3e0; border-radius: 12px;
+          padding: 16px 18px; margin-top: 14px; }
+  .label { font-size: 12px; color: #8a8a84; margin-bottom: 6px; letter-spacing: .3px; }
+  .q { font-size: 15px; font-weight: 500; line-height: 1.6; }
+  .txt { font-size: 14px; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+  .ref { background: #f2f7ef; border-left: 3px solid #639922; padding: 10px 12px; border-radius: 6px; }
+  .ctx { font-size: 12.5px; color: #55554f; font-family: ui-monospace, Consolas, monospace;
+         line-height: 1.6; white-space: pre-wrap; word-break: break-word;
+         max-height: 120px; overflow: auto; }
+  .ans { max-height: 320px; overflow: auto; }
+  .empty { color: #b04a4a; font-style: italic; }
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; background: #fff;
+          border-top: 1px solid #e3e3e0; padding: 12px 20px; }
+  .dock .inner { max-width: 940px; margin: 0 auto; }
+  button { font: inherit; font-size: 14px; padding: 9px 18px; border-radius: 8px;
+           border: 1px solid #d5d5d0; background: #fff; cursor: pointer; }
+  button:hover { border-color: #a8a8a2; }
+  button.on { background: #185FA5; border-color: #185FA5; color: #fff; }
+  button.ok { background: #eaf3de; border-color: #97c459; color: #27500a; }
+  button.part { background: #faeeda; border-color: #ef9f27; color: #633806; }
+  button.bad { background: #fcebeb; border-color: #e24b4a; color: #791f1f; }
+  .hint { font-size: 12px; color: #8a8a84; margin-top: 8px; }
+  input[type=text] { font: inherit; font-size: 13.5px; width: 100%; padding: 8px 10px;
+                     border: 1px solid #d5d5d0; border-radius: 8px; }
+  .hidden { display: none; }
+  .done { text-align: center; padding: 60px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar">
+    <div class="row">
+      <div class="grow">
+        <span class="meta">v3 盲判 · 剩余 <b id="left">0</b> / <span id="total">0</span></span>
+      </div>
+      <button id="export">导出判分 CSV</button>
+    </div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <div id="view"></div>
+</div>
+
+<div class="dock" id="dock">
+  <div class="inner">
+    <div class="row" id="gradeRow">
+      <button class="ok"   data-g="对">对 <span class="meta">1</span></button>
+      <button class="part" data-g="部分对">部分对 <span class="meta">2</span></button>
+      <button class="bad"  data-g="错">错 <span class="meta">3</span></button>
+      <span class="grow"></span>
+      <button id="skip">跳过 <span class="meta">空格</span></button>
+      <button id="prev">上一条 <span class="meta">←</span></button>
+    </div>
+    <div id="reasonRow" class="hidden" style="margin-top:10px">
+      <div class="row" style="margin-bottom:8px">
+        <span class="meta">失败原因：</span>
+        <button data-r="检索没命中">检索没命中 <span class="meta">1</span></button>
+        <button data-r="编造内容">编造内容 <span class="meta">2</span></button>
+        <button data-r="理解错">理解错 <span class="meta">3</span></button>
+        <button data-r="格式错">格式错 <span class="meta">4</span></button>
+      </div>
+      <input type="text" id="why" placeholder="一句话理由（对照文档原文写：文档说什么、回答说什么）">
+      <div class="hint">回车确认并进下一条 · Esc 取消</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ITEMS = /*__DATA__*/;
+const KEY = 'llmloop_v3_grades_v1';
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+
+let idx = 0;
+let pending = null;
+
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+function gradedCount() { return ITEMS.filter(it => state[it.code]).length; }
+
+function nextUnjudged(from) {
+  for (let i = from; i < ITEMS.length; i++) if (!state[ITEMS[i].code]) return i;
+  for (let i = 0; i < ITEMS.length; i++) if (!state[ITEMS[i].code]) return i;
+  return -1;
+}
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+
+function render() {
+  const total = ITEMS.length, done = gradedCount();
+  document.getElementById('total').textContent = total;
+  document.getElementById('left').textContent = total - done;
+  document.getElementById('fill').style.width = (done / total * 100) + '%';
+
+  if (idx < 0) {
+    document.getElementById('view').innerHTML =
+      '<div class="done"><h2 style="font-weight:500">82 条判完了</h2>' +
+      '<p class="meta">点右上角「导出判分 CSV」，然后跑：<br>' +
+      '<code>python scripts/grade_aid.py apply 下载的.csv</code></p></div>';
+    document.getElementById('dock').classList.add('hidden');
+    return;
+  }
+  document.getElementById('dock').classList.remove('hidden');
+
+  const it = ITEMS[idx];
+  const cur = state[it.code];
+  const ansHtml = it.ans.trim()
+    ? '<div class="txt ans">' + esc(it.ans) + '</div>'
+    : '<div class="txt empty">（空回答 —— 输出被截断，判「错」+「格式错」）</div>';
+
+  document.getElementById('view').innerHTML =
+    '<div class="row" style="margin-top:12px">' +
+      '<span class="code">' + esc(it.code) + '</span>' +
+      '<span class="meta">题号 ' + esc(it.qid) + '</span>' +
+      '<span class="tag">' + esc(it.type) + '</span>' +
+      (cur ? '<span class="meta">已判：' + esc(cur.g) + '</span>' : '') +
+      '<span class="grow"></span>' +
+      '<span class="meta">第 ' + (idx + 1) + ' / ' + ITEMS.length + '</span>' +
+    '</div>' +
+    '<div class="card"><div class="label">问题</div><div class="q">' + esc(it.q) + '</div></div>' +
+    '<div class="card"><div class="label">检索到的段落</div><div class="ctx">' + esc(it.ctx) + '</div></div>' +
+    '<div class="card"><div class="label">标准答案（判分依据，文档原文）</div><div class="ref txt">' + esc(it.ref) + '</div></div>' +
+    '<div class="card"><div class="label">模型回答</div>' + ansHtml + '</div>';
+
+  showReason(false);
+  window.scrollTo(0, 0);
+}
+
+function showReason(on) {
+  document.getElementById('reasonRow').classList.toggle('hidden', !on);
+  document.getElementById('gradeRow').classList.toggle('hidden', on);
+  if (on) {
+    document.querySelectorAll('#reasonRow button').forEach(b => b.classList.remove('on'));
+    document.getElementById('why').value = pending && pending.why ? pending.why : '';
+    setTimeout(() => document.getElementById('why').focus(), 0);
+  }
+}
+
+function commit(g, reason, why) {
+  const it = ITEMS[idx];
+  state[it.code] = { g: g, reason: reason || '', why: why || '' };
+  save();
+  pending = null;
+  idx = nextUnjudged(idx + 1);
+  render();
+}
+
+document.querySelectorAll('#gradeRow button[data-g]').forEach(btn => {
+  btn.onclick = () => {
+    const g = btn.dataset.g;
+    if (g === '对') commit('对', '', '');
+    else { pending = { g: g }; showReason(true); }
+  };
+});
+
+document.querySelectorAll('#reasonRow button[data-r]').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('#reasonRow button').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    if (pending) pending.reason = btn.dataset.r;
+    document.getElementById('why').focus();
+  };
+});
+
+document.getElementById('why').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const why = document.getElementById('why').value.trim();
+    if (!pending || !pending.reason) {
+      document.getElementById('why').placeholder = '先按 1-4 选一个失败原因';
+      return;
+    }
+    commit(pending.g, pending.reason, why);
+  } else if (e.key === 'Escape') {
+    pending = null; showReason(false);
+  }
+  e.stopPropagation();
+});
+
+document.getElementById('skip').onclick = () => { idx = nextUnjudged(idx + 1); render(); };
+document.getElementById('prev').onclick = () => { idx = Math.max(0, idx - 1); render(); };
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (pending) {
+    const map = { '1': '检索没命中', '2': '编造内容', '3': '理解错', '4': '格式错' };
+    if (map[e.key]) {
+      pending.reason = map[e.key];
+      document.querySelectorAll('#reasonRow button').forEach(b => {
+        b.classList.toggle('on', b.dataset.r === map[e.key]);
+      });
+      document.getElementById('why').focus();
+    }
+    return;
+  }
+  if (e.key === '1') commit('对', '', '');
+  else if (e.key === '2') { pending = { g: '部分对' }; showReason(true); }
+  else if (e.key === '3') { pending = { g: '错' }; showReason(true); }
+  else if (e.key === ' ') { e.preventDefault(); idx = nextUnjudged(idx + 1); render(); }
+  else if (e.key === 'ArrowLeft') { idx = Math.max(0, idx - 1); render(); }
+});
+
+document.getElementById('export').onclick = () => {
+  const rows = [['代号', '人工判分', '失败原因', '判断理由']];
+  ITEMS.forEach(it => {
+    const s = state[it.code];
+    if (s) rows.push([it.code, s.g, s.reason || '', s.why || '']);
+  });
+  const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = 'v3_grades.csv';
+  a.click();
+};
+
+idx = nextUnjudged(0);
+render();
+</script>
+</body>
+</html>
