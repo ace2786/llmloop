@@ -49,7 +49,9 @@ temp/
 out/to_grade.csv
 out/blind_map.json
 out/待判分_*.xlsx
-out/grade_*.html          # 判分辅助页，由 scripts/grade_aid.py make 重新生成
+
+# 判分辅助页（由 scripts/grade_aid.py make 重新生成）
+out/grade_*.html
 
 # 注意：以下内容【必须】进仓库（第 11 节第 7 步要求）
 #   week1.py / lib/ / scripts/ / configs/
