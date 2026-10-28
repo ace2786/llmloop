@@ -1,0 +1,32 @@
+{
+  "tag": "smoke",
+  "sizes": {
+    "train": 4,
+    "dev": 2,
+    "test": 4
+  },
+  "models": {
+    "local": "glm-4-flash (智谱)",
+    "untrusted": "Qwen2.5-72B-Instruct (硅基流动)",
+    "reflection": "DeepSeek-V4.1-Flash (硅基流动)",
+    "judge": "glm-4-plus (智谱)"
+  },
+  "full_evals": 1,
+  "baseline": {
+    "n": 4,
+    "quality": 0.775,
+    "leakage": 0.5,
+    "overall": 0.6375
+  },
+  "optimized": {
+    "n": 4,
+    "quality": 0.775,
+    "leakage": 0.5,
+    "overall": 0.6375
+  },
+  "delta_pp": 0.0,
+  "paper": {
+    "base": 80.82,
+    "gepa": 91.85
+  }
+}
