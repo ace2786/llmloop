@@ -120,6 +120,20 @@ def main() -> int:
     n_models = M.shape[1] if a.limit is None else min(a.limit, M.shape[1])
     print(f"\n开始估计 {n_models} 个模型……")
 
+    # ── 对照组：随机抽 100 题（第 8 节要求的口径，和「选代表题」对比）──
+    true_all = M[:, :n_models].mean(axis=0)
+    rng = np.random.default_rng(20261028)
+    rand_means, rand_stds = [], []
+    for _ in range(20):
+        idx = rng.choice(M.shape[0], 100, replace=False)
+        est = M[idx, :n_models].mean(axis=0)
+        err = np.abs(est - true_all) * 100
+        rand_means.append(err.mean())
+        rand_stds.append(err.std(ddof=1))
+    rand_err = float(np.mean(rand_means))
+    rand_err_std = float(np.mean(rand_stds))
+    print(f"  随机抽 100 题（20 次抽样平均）：误差 {rand_err:.1f}%")
+
     rows = []
     for m in range(n_models):
         y = M[seen, m]
@@ -149,8 +163,9 @@ def main() -> int:
     print()
     print("| 方法 | 平均绝对误差 | 标准差 | 论文 | 差距 |")
     print("|---|---|---|---|---|")
+    print(f"| **随机抽 100 题**（20 次抽样平均） | **{rand_err:.1f}%** | {rand_err_std:.1f}% | — | — |")
     n_mean, n_std = stats("naive100")
-    print(f"| 直接用 100 题平均（不做 IRT） | **{n_mean:.1f}%** | {n_std:.1f}% | — | — |")
+    print(f"| 直接用 100 道代表题平均（不做 IRT） | **{n_mean:.1f}%** | {n_std:.1f}% | — | — |")
     for k in ("irt", "pirt", "gpirt"):
         mean, std = stats(k)
         pm, ps = PAPER[k]
@@ -170,6 +185,7 @@ def main() -> int:
         "n_models": len(rows),
         "n_items": int(M.shape[0]),
         "n_seen": len(seen),
+        "random100": {"mean": rand_err, "std": rand_err_std, "draws": 20},
         "summary": {k: dict(zip(("mean", "std"), stats(k)))
                     for k in ("naive100", "irt", "pirt", "gpirt")},
         "paper": PAPER,

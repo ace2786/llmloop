@@ -72,14 +72,25 @@ def load_pupa(seed: int = 20261028) -> tuple[list, list, list]:
 
 
 class CraftRedactedRequest(dspy.Signature):
-    """把用户请求改写成不含任何隐私信息的版本，交给外部模型处理。"""
+    """把用户请求改写成不含任何隐私信息的版本，交给外部模型处理。
+
+    输出约束：只填 llm_request 一个字段，写改写后的请求正文即可。
+    不要在输出里自行要求 JSON 格式、不要加 reasoning 字段、不要解释你的做法
+    —— 框架已经负责结构化，额外加格式说明会导致解析失败。
+    """
 
     user_query = dspy.InputField(desc="用户的原始请求，可能含姓名、电话、邮箱等隐私")
-    llm_request = dspy.OutputField(desc="改写后的请求：隐私全部替换为 [REDACTED]，语义完整可独立理解")
+    llm_request = dspy.OutputField(
+        desc="改写后的请求：隐私全部替换为 [REDACTED]，语义完整可独立理解。"
+             "长度不超过原请求，不要复述原文，不要重复句子"
+    )
 
 
 class RespondToQuery(dspy.Signature):
-    """结合外部模型的回复，生成给用户的最终回复。"""
+    """结合外部模型的回复，生成给用户的最终回复。
+
+    输出约束：只填 response 一个字段，不要加额外格式说明。
+    """
 
     user_query = dspy.InputField(desc="用户原始请求")
     related_llm_request = dspy.InputField(desc="发给外部模型的脱敏请求")
@@ -216,18 +227,19 @@ def main() -> int:
 
     zhipu_key, sf_key = env("ZHIPU_API_KEY"), env("SILICONFLOW_API_KEY")
 
-    local_lm = dspy.LM(
-        model="openai/glm-4-flash", api_base=ZHIPU_BASE, api_key=zhipu_key,
-        max_tokens=800, temperature=0.3,
+    # 任务书第 8 节要求：模型用 Qwen3-8B（论文同款）
+    # 注意：Qwen3 默认开思考模式，dspy 会拿到 dict（含 reasoning_content）导致解析失败，
+    # 必须用 extra_body 关掉，否则 17s/次且输出不可用
+    qwen3 = dict(
+        model="openai/Qwen/Qwen3-8B",
+        api_base=SF_BASE,
+        api_key=sf_key,
+        extra_body={"enable_thinking": False},
     )
-    untrusted_lm = dspy.LM(
-        model="openai/Qwen/Qwen2.5-72B-Instruct", api_base=SF_BASE, api_key=sf_key,
-        max_tokens=800, temperature=0.3,
-    )
-    reflection_lm = dspy.LM(
-        model="openai/deepseek-ai/DeepSeek-V4.1-Flash", api_base=SF_BASE, api_key=sf_key,
-        max_tokens=4000, temperature=1.0,
-    )
+    local_lm = dspy.LM(**qwen3, max_tokens=2000, temperature=0.6)
+    untrusted_lm = dspy.LM(**qwen3, max_tokens=2000, temperature=0.6)
+    reflection_lm = dspy.LM(**qwen3, max_tokens=4000, temperature=1.0)
+    # 判分用另一个模型，避免「自己判自己」
     judge_lm = dspy.LM(
         model="openai/glm-4-plus", api_base=ZHIPU_BASE, api_key=zhipu_key,
         max_tokens=200, temperature=0.0,
@@ -285,10 +297,10 @@ def main() -> int:
         "tag": tag,
         "sizes": {"train": len(trainset), "dev": len(devset), "test": len(testset)},
         "models": {
-            "local": "glm-4-flash (智谱)",
-            "untrusted": "Qwen2.5-72B-Instruct (硅基流动)",
-            "reflection": "DeepSeek-V4.1-Flash (硅基流动)",
-            "judge": "glm-4-plus (智谱)",
+            "local": "Qwen3-8B (硅基流动，论文同款)",
+            "untrusted": "Qwen3-8B (硅基流动，论文同款)",
+            "reflection": "Qwen3-8B (硅基流动，论文同款)",
+            "judge": "glm-4-plus (智谱，独立判分避免自评)",
         },
         "full_evals": a.full_evals,
         "baseline": base,
