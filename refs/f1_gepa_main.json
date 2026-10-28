@@ -1,0 +1,32 @@
+{
+  "tag": "main",
+  "sizes": {
+    "train": 30,
+    "dev": 20,
+    "test": 40
+  },
+  "models": {
+    "local": "Qwen3-8B (硅基流动，论文同款)",
+    "untrusted": "Qwen3-8B (硅基流动，论文同款)",
+    "reflection": "Qwen3-8B (硅基流动，论文同款)",
+    "judge": "glm-4-plus (智谱，独立判分避免自评)"
+  },
+  "full_evals": 1,
+  "baseline": {
+    "n": 40,
+    "quality": 0.735,
+    "leakage": 0.5458333333333333,
+    "overall": 0.5945833333333332
+  },
+  "optimized": {
+    "n": 40,
+    "quality": 0.7475,
+    "leakage": 0.4575,
+    "overall": 0.645
+  },
+  "delta_pp": 5.041666666666678,
+  "paper": {
+    "base": 80.82,
+    "gepa": 91.85
+  }
+}
