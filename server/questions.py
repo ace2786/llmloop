@@ -35,6 +35,26 @@ def _counts(app_id: int) -> dict:
     return out
 
 
+def _escape_like(s: str) -> str:
+    return s.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+
+def _where(app_id: int, split: str, q: str) -> tuple[str, list]:
+    sql = "FROM questions WHERE app_id = ?"
+    params = [app_id]
+    if split:
+        sql += " AND split = ?"
+        params.append(split)
+    if q:
+        sql += (
+            " AND (lower(content) LIKE ? ESCAPE '\\'"
+            " OR lower(COALESCE(reference, '')) LIKE ? ESCAPE '\\')"
+        )
+        kw = f"%{_escape_like(q.strip().lower())}%"
+        params += [kw, kw]
+    return sql, params
+
+
 def _sizes(n: int) -> tuple[int, int, int]:
     if n < 3:
         return n, 0, 0
@@ -97,6 +117,7 @@ def import_questions(app_id: int, payload: ImportPayload, user: dict = Depends(c
 def list_questions(
     app_id: int,
     split: str = Query(default=""),
+    q: str = Query(default=""),
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     user: dict = Depends(current_user),
@@ -104,20 +125,18 @@ def list_questions(
     _app_or_404(app_id, user["id"])
     if split and split not in SPLITS:
         raise HTTPException(400, "split must be optimize/valid/test")
-    if split:
-        rows = execute(
-            "SELECT * FROM questions WHERE app_id=? AND split=? ORDER BY id LIMIT ? OFFSET ?",
-            (app_id, split, limit, offset),
-            True,
-        )
-    else:
-        rows = execute(
-            "SELECT * FROM questions WHERE app_id=? ORDER BY id LIMIT ? OFFSET ?",
-            (app_id, limit, offset),
-            True,
-        )
+    where, params = _where(app_id, split, q)
+    rows = execute(
+        f"SELECT * {where} ORDER BY id LIMIT ? OFFSET ?", (*params, limit, offset), True
+    )
+    matched = execute(f"SELECT COUNT(*) AS n {where}", tuple(params), True)[0]["n"]
     counts = _counts(app_id)
-    return {"total": counts["total"], "splits": counts, "items": [dict(r) for r in rows]}
+    return {
+        "total": counts["total"],
+        "splits": counts,
+        "matched": matched,
+        "items": [dict(r) for r in rows],
+    }
 
 
 @router.get("/stats")
@@ -136,3 +155,14 @@ def clear_questions(app_id: int, split: str = "", user: dict = Depends(current_u
     else:
         execute("DELETE FROM questions WHERE app_id=?", (app_id,))
     return _counts(app_id)
+
+
+@router.delete("/{question_id}")
+def delete_question(app_id: int, question_id: int, user: dict = Depends(current_user)):
+    _app_or_404(app_id, user["id"])
+    if not execute(
+        "SELECT 1 FROM questions WHERE id=? AND app_id=?", (question_id, app_id), True
+    ):
+        raise HTTPException(404, "question not found")
+    execute("DELETE FROM questions WHERE id=?", (question_id,))
+    return {"deleted": question_id, "splits": _counts(app_id)}
