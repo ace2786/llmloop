@@ -114,26 +114,66 @@ uv pip install --python .venv/bin/python rank_bm25 jieba openpyxl
 ```
 llmloop/
 ├── week1.py                 # 第 1 周主脚本：检索 → 多模型回答 → CSV
-├── lib/
-│   └── text.py              # 共享分词（索引与查询必须一致）
-├── configs/
-│   └── models.json          # 模型配置（API key 走环境变量）
+├── LESSONS.md               # 经验库：每条教训带 Seen 次数，满 3 次升级为硬规则
+├── RUBRIC.md                # 判分口径（什么算对、什么算失败）
+├── REPRO.md                 # 可行性五关 + 本机配置
+│
+├── server/                  # 后端（FastAPI + SQLite，13 个接口）
+│   ├── main.py              # 入口 + CORS + 路由挂载
+│   ├── db.py                # 建表与连接
+│   ├── auth.py              # 注册/登录/登出/token 校验
+│   ├── apps.py              # 应用接入（含 app_key）
+│   └── questions.py         # 题目导入、6:2:2 切分、分页、搜索、删除
+│
+├── bugs/                    # ★ bug 数据库
+│   ├── README.md            # 链路说明：trace → 最小复现 → eval case → CI 闸门
+│   └── index.jsonl          # 一条 bug 一行（9 条真实记录）
+│
+├── refs/                    # ★ 三个论文复现的报告与原始数据
+│   ├── F1_result.md         # GEPA + PUPA：59.46% → 64.50%
+│   ├── F2_result.md         # tinyBenchmarks：2.5 / 1.9 / 1.9
+│   ├── F3_result.md         # RAGTruth：回答级 F1 = 0.7607
+│   └── *.json               # 每次运行的原始结果
+│
+├── docs/                    # 交接书与任务书
+│   ├── FRONTEND_BRIEF.md    # 前端交接（接口契约 + A/B 区红线）
+│   ├── BACKEND_TASK_*.md    # 后端任务书
+│   ├── FRONTEND_TASK_*.md   # 前端任务书
+│   └── PLAN_until_1103.md   # 本周任务分配
+│
+├── lib/text.py              # 共享分词（索引与查询必须一致）
+├── configs/models.json      # 模型配置（API key 走环境变量）
+│
 ├── scripts/
+│   ├── # 第 1 周：题库构建
 │   ├── fetch_issues.sh      # 拉 LlamaFactory Issues
 │   ├── build_index.py       # 文档切块 + BM25 索引
 │   ├── filter_issues.py     # Issue 初筛
 │   ├── probe_retrieval.py   # 检索命中探测
 │   ├── select_questions.py  # 候选题目排序
-│   └── make_review_sheet.py # 生成人工核对表
+│   ├── draft_answers.py     # 标准答案草稿
+│   ├── make_review_sheet.py # 人工核对表
+│   ├── # 评测与判分
+│   ├── blind.py             # 盲判表（遮版本防偏袒）
+│   ├── grade_aid.py         # 判分辅助页
+│   ├── # 三个复现
+│   ├── f1_gepa.py           # F1：GEPA + PUPA
+│   ├── f2_error.py          # F2：tinyBenchmarks 误差复算
+│   ├── # 工程基建
+│   ├── bug.py               # bug 库工具（list/stats/check/export）
+│   └── precommit_check.py   # 提交前自检（扫密钥、Mock、硬编码数字）
+│
 ├── data/                    # 数据（不进仓库，见 .gitignore）
 │   ├── chunks.jsonl         # 检索索引
 │   ├── questions.json       # 60 道题（人工填写标准答案）
 │   └── review_sheet.md      # 候选核对表
 ├── models/                  # 本地模型（不进仓库）
 ├── out/                     # 评测输出 CSV
-├── README.md
-└── REPRO.md                 # 可行性五关 + 本机配置
+└── .git/hooks/pre-commit    # 提交闸门：bug 库格式 + 仓库自检
 ```
+
+> 前端在仓库外：`D:\llmloop\web`（Vite + React + TS，三页）。
+> 复现用的数据与模型在 `~/f1`、`~/f3`（不进仓库，体积大）。
 
 ---
 
