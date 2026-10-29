@@ -59,3 +59,8 @@ out/grade_*.html
 #   data/questions.json        ← 60 道题与标准答案
 #   data/review_sheet.md       ← 候选核对表
 #   out/*.csv                  ← 回答原文与判分，保证数字可复算
+
+# 前端（web/ 是 D:\llmloop\web 的存档副本）
+web/node_modules/
+web/dist/
+web/.vite/
