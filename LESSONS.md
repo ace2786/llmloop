@@ -15,10 +15,13 @@
 
 ## L2 · wsl.exe 命令里禁止出现 shell 变量
 
-- **Seen 2×**（2026-10-27、2026-10-28）· B002、B003 · **接近升级**
+- **Seen 3×**（2026-10-27、2026-10-28、2026-10-29）· B002、B003 · **已升级为硬规则**
 - 教训：`wsl.exe -lc '...'` 里的 `$VAR`、`$(...)` 会在到达 WSL 前被 Windows 参数解析吃掉。单双引号都拦不住。
 - 正确做法：**写成 `.sh` 脚本文件再 `bash ~/xxx.sh` 执行**，变量放在脚本内部是安全的。
-- 下一步：再犯一次（第 3 个日子）就写进 `precommit_check.py`，扫 `wsl.exe` 命令字符串里是否含 `$`。
+- **第 3 次触发的场景**：`for f in a b c; do git log -- "$f"; done` 传给 wsl.exe，`$f` 变空串，
+  git 报 `fatal: empty string is not a valid pathspec`。
+- **已机械化**：`scripts/lint_wsl.py` 扫描仓库内 `.sh` 文件，发现 `wsl.exe` 与 `$` 同行即报错，
+  并已接入 pre-commit 钩子。见下。
 
 ## L3 · 装完 GPU 库必须实算一次
 
