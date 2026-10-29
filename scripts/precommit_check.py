@@ -48,7 +48,7 @@ def iter_files():
     for p in ROOT.rglob("*"):
         if not p.is_file():
             continue
-        if any(part in SKIP_DIRS for part in p.parts):
+        if any(part in SKIP_DIRS or part.startswith(".venv") for part in p.parts):
             continue
         if p.suffix.lower() not in CODE_EXT:
             continue
