@@ -64,3 +64,6 @@ out/grade_*.html
 web/node_modules/
 web/dist/
 web/.vite/
+
+# 题库核对页（由 scripts/qbank_aid.py make 重新生成）
+out/qbank*.html
