@@ -67,3 +67,6 @@ web/.vite/
 
 # 题库核对页（由 scripts/qbank_aid.py make 重新生成）
 out/qbank*.html
+
+# 备份文件（修正前的版本在 git 历史里，不需要单独存）
+*.bak
