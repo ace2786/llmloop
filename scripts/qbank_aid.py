@@ -17,17 +17,54 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "out"
 SRC = OUT / "select_140.csv"
+DATA = ROOT / "data"
 
 COLS = [
     "序号", "优先级", "issue", "issue链接", "草稿答案（待核对）", "文档原文",
     "所在段落上下文", "出处（文件#块号）", "问题（你来写）", "核对结果",
 ]
+
+# 从原文里抽「这条讲的是哪个参数/配置项」
+TABLE_CELL = re.compile(r"^\s*\|?\s*`?([a-zA-Z_][a-zA-Z0-9_.]{2,})`?\s*\|", re.M)
+YAML_KEY = re.compile(r"^\s*([a-zA-Z_][a-zA-Z0-9_.]{2,})\s*:", re.M)
+BACKTICK = re.compile(r"`([a-zA-Z_][a-zA-Z0-9_.]{2,})`")
+# 答案开头的「支持 X」「使用 X」也能提示主题
+CJK_HEAD = re.compile(r"^(支持|使用|设置|通过|可以)")
+# 模型名/产品名：Qwen3-4B-Instruct-2507、Meta-Llama-3-8B 这种
+MODEL_NAME = re.compile(r"\b[A-Z][A-Za-z0-9]*(?:[-.][A-Za-z0-9]+){1,}")
+
+
+def topic_of(quote: str, answer: str) -> str:
+    """猜这条原文讲的是什么（参数名/配置项/模型名）。机械提取，不编。"""
+    for pat in (TABLE_CELL, YAML_KEY, BACKTICK):
+        m = pat.search(quote or "")
+        if m:
+            return m.group(1)
+    # 原文没有标识符，就从答案里找
+    m = BACKTICK.search(answer or "")
+    if m:
+        return m.group(1)
+    m = MODEL_NAME.search(answer or "")
+    return m.group(0) if m else ""
+
+
+def load_reasons() -> dict[str, str]:
+    """从 located.json 取「当初为什么选这段」，里面常含 issue 问什么。"""
+    p = DATA / "located.json"
+    if not p.exists():
+        return {}
+    try:
+        d = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {str(k): str(v.get("reason") or "") for k, v in d.items()}
 
 
 def load_flags() -> dict[str, list[str]]:
@@ -59,6 +96,7 @@ def do_make() -> int:
         rows = list(csv.DictReader(f))
 
     flags = load_flags()
+    reasons = load_reasons()
     items = [
         {
             "i": r["序号"],
@@ -70,6 +108,8 @@ def do_make() -> int:
             "seg": r["出处（文件#块号）"],
             "url": r["issue链接"],
             "flag": flags.get(r["序号"].strip(), []),
+            "topic": topic_of(r["文档原文"], r["草稿答案（待核对）"]),
+            "reason": reasons.get(r["issue"].strip(), "")[:200],
         }
         for r in rows
     ]
