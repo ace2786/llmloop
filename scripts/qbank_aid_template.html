@@ -83,6 +83,13 @@
   details.reason summary{cursor:pointer; color:#6b6a64}
   details.reason p{margin:6px 0 0; line-height:1.6}
 
+  .asktitle{font-size:16px; font-weight:600; line-height:1.5; margin-bottom:8px;
+            color:#1f1e1b; word-break:break-word}
+  .askbody{font-size:14px; color:#4a4943; line-height:1.7; white-space:pre-wrap;
+           word-break:break-word; max-height:230px; overflow:auto;
+           background:#fbfaf7; padding:10px 12px; border-radius:6px}
+  .askbody:empty{display:none}
+
   .warn{background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 12px;
         border-radius:8px; font-size:13px; margin-bottom:14px}
   .flag{background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; padding:10px 12px;
@@ -119,6 +126,12 @@
         <summary>当初为什么选这条原文（AI 匹配说明，仅供参考）</summary>
         <p id="reasonText"></p>
       </details>
+    </div>
+
+    <div class="card" id="askCard">
+      <div class="lab">用户原提问（题目要从它改写）</div>
+      <div class="asktitle" id="askTitle"></div>
+      <div class="askbody" id="askBody"></div>
     </div>
 
     <div class="card">
@@ -184,6 +197,10 @@ function render(){
   $('ans').textContent = it.ans || '（空）';
   $('quote').textContent = it.quote || '（没有原文引用）';
   $('ctx').textContent = it.ctx || '（无上下文）';
+
+  // 用户原提问（老师要求：题目必须从真实提问改写）
+  $('askTitle').textContent = it.qtitle || '（未获取到原文）';
+  $('askBody').textContent = it.qbody || '';
 
   // 这条原文讲什么（机械提取，不用猜）
   const tp = $('topic');

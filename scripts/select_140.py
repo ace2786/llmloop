@@ -31,17 +31,40 @@ OUT = ROOT / "out"
 
 
 def load_issues() -> dict[str, dict]:
-    """从 data/issues/page_*.json 建 issue 号 → 原始数据 的映射。"""
+    """合并所有 issue 来源：本地缓存 + 后来补抓的 issue_detail.json。
+
+    注意：PR 和 issue 共用编号，PR 不是用户提问，必须排除。
+    """
     m: dict[str, dict] = {}
-    for f in sorted(glob.glob(str(DATA / "issues" / "page_*.json"))):
+    for f in sorted(glob.glob(str(DATA / "issues" / "*.json"))):
         try:
-            for it in json.loads(Path(f).read_text(encoding="utf-8")):
-                num = str(it.get("number") or "")
-                if num:
-                    m[num] = it
+            d = json.loads(Path(f).read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             continue
+        items = d.get("items", []) if isinstance(d, dict) else d
+        for it in items:
+            if isinstance(it, dict) and it.get("number"):
+                m[str(it["number"])] = it
+    detail = DATA / "issues" / "issue_detail.json"
+    if detail.exists():
+        try:
+            m.update(json.loads(detail.read_text(encoding="utf-8")))
+        except (OSError, json.JSONDecodeError):
+            pass
     return m
+
+
+def issue_text(it: dict | None) -> tuple[str, str] | None:
+    """返回 (标题, 正文) ；不可用（PR / 已删除 / 空标题）返回 None。"""
+    if not it:
+        return None
+    if it.get("is_pr") or it.get("gone"):
+        return None
+    title = (it.get("title") or "").strip()
+    if not title:
+        return None
+    body = " ".join((it.get("body") or "").split())[:400]
+    return title, body
 
 
 def quality(r: dict) -> float:
@@ -75,14 +98,21 @@ def main() -> int:
 
     cands = json.loads(src.read_text(encoding="utf-8"))
     issues = load_issues()
-    for c in cands:
-        c["score"] = quality(c)
-        it = issues.get(c["issue"]) or {}
-        c["title"] = it.get("title", "")
-        c["body"] = " ".join((it.get("body") or "").split())[:300]
-        c["url"] = it.get("html_url", "")
 
-    print(f"核验过的候选 {len(cands)} 条，覆盖 {len({c['seg'] for c in cands})} 个真实段落")
+    # 只保留「有真实用户提问」的候选——老师要求题目来自真实 issue
+    kept, dropped = [], 0
+    for c in cands:
+        txt = issue_text(issues.get(str(c["issue"])))
+        if txt is None:
+            dropped += 1
+            continue
+        c["title"], c["body"] = txt
+        c["score"] = quality(c)
+        kept.append(c)
+    cands = kept
+    print(f"候选 {len(kept) + dropped} 条 → 有真实提问的 {len(kept)} 条（剔除 {dropped} 条：PR/已删除/无原文）")
+
+    print(f"覆盖 {len({c['seg'] for c in cands})} 个真实段落")
 
     by_seg: dict[str, list[dict]] = defaultdict(list)
     for c in cands:
@@ -120,6 +150,7 @@ def main() -> int:
         w = csv.writer(f)
         w.writerow([
             "序号", "优先级", "issue", "issue链接",
+            "用户原提问（标题）", "用户原提问（正文）",
             "草稿答案（待核对）", "文档原文", "所在段落上下文", "出处（文件#块号）",
             "问题（你来写）", "核对结果",
         ])
@@ -127,6 +158,7 @@ def main() -> int:
             w.writerow([
                 i, p["priority"], p["issue"],
                 f"https://github.com/hiyouga/LlamaFactory/issues/{p['issue']}",
+                p.get("title", ""), p.get("body", ""),
                 p["answer"], (p["quote"] or "")[:400],
                 (p.get("chunk_text") or "")[:300], p["seg"],
                 "", "",

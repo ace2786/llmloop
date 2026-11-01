@@ -110,6 +110,8 @@ def do_make() -> int:
             "flag": flags.get(r["序号"].strip(), []),
             "topic": topic_of(r["文档原文"], r["草稿答案（待核对）"]),
             "reason": reasons.get(r["issue"].strip(), "")[:200],
+            "qtitle": r.get("用户原提问（标题）", ""),
+            "qbody": r.get("用户原提问（正文）", ""),
         }
         for r in rows
     ]
