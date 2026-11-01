@@ -9,7 +9,7 @@ from .db import connect, execute
 router = APIRouter(prefix="/apps/{app_id}/questions", tags=["questions"])
 
 SPLITS = ("optimize", "valid", "test")
-RATIO = (0.6, 0.2, 0.2)
+RATIO = (0.3, 0.3, 0.4)
 
 
 class ImportPayload(BaseModel):

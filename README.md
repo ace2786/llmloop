@@ -123,7 +123,7 @@ llmloop/
 │   ├── db.py                # 建表与连接
 │   ├── auth.py              # 注册/登录/登出/token 校验
 │   ├── apps.py              # 应用接入（含 app_key）
-│   └── questions.py         # 题目导入、6:2:2 切分、分页、搜索、删除
+│   └── questions.py         # 题目导入、3:3:4 切分、分页、搜索、删除
 │
 ├── bugs/                    # ★ bug 数据库
 │   ├── README.md            # 链路说明：trace → 最小复现 → eval case → CI 闸门

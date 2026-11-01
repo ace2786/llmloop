@@ -184,7 +184,55 @@ cmd_check() {
   $PY scripts/precommit_check.py
 }
 
+cmd_serve() {
+  need_env
+  ensure_venv
+
+  echo "== 启动本机服务 =="
+
+  # 1) Ollama（评测要用本地模型）
+  if curl -s -m 2 http://127.0.0.1:11434/api/version >/dev/null 2>&1; then
+    echo "  [ok] Ollama 已在运行"
+  else
+    echo "  [..] 启动 Ollama"
+    (ollama serve >/tmp/ollama.log 2>&1 &)
+    sleep 4
+    curl -s -m 3 http://127.0.0.1:11434/api/version >/dev/null 2>&1 \
+      && echo "  [ok] Ollama 起来了" || echo "  [!!] Ollama 没起来，看 /tmp/ollama.log"
+  fi
+
+  # 2) 后端
+  if curl -s -m 2 http://127.0.0.1:8020/health >/dev/null 2>&1; then
+    echo "  [ok] 后端已在运行"
+  else
+    echo "  [..] 启动后端（uvicorn :8020）"
+    ($PY -m server.main >/tmp/api.log 2>&1 &)
+    for _ in 1 2 3 4 5 6 7 8 9 10; do
+      sleep 1
+      curl -s -m 2 http://127.0.0.1:8020/health >/dev/null 2>&1 && break
+    done
+    curl -s -m 2 http://127.0.0.1:8020/health >/dev/null 2>&1 \
+      && echo "  [ok] 后端起来了" || echo "  [!!] 后端没起来，看 /tmp/api.log"
+  fi
+
+  # 3) 前端（在 Windows 侧跑，WSL 里 npm 依赖不通用）
+  if curl -s -m 2 http://127.0.0.1:5173 >/dev/null 2>&1; then
+    echo "  [ok] 前端已在运行"
+  else
+    echo "  [--] 前端需要在 Windows 侧启动："
+    echo "       cd D:\\llmloop\\web && npm run dev"
+  fi
+
+  echo
+  echo "  后端接口   http://127.0.0.1:8020/docs"
+  echo "  健康检查   http://127.0.0.1:8020/health"
+  echo "  前端页面   http://127.0.0.1:5173"
+  echo
+  echo "  跑评测：   $PY scripts/run_eval.py --split test"
+}
+
 case "${1:-}" in
+  serve)  cmd_serve ;;
   status) cmd_status ;;
   init)   cmd_init ;;
   v0)     cmd_v0 ;;
@@ -195,7 +243,7 @@ case "${1:-}" in
   report) cmd_report "$@" ;;
   check)  cmd_check ;;
   *)
-    echo "用法：bash run.sh {status|init|v0|blind|merge|v1|test|report|check}"
+    echo "用法：bash run.sh {serve|status|init|v0|blind|merge|v1|test|report|check}"
     echo ""
     cmd_status
     ;;
