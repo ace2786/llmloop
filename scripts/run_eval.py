@@ -23,6 +23,7 @@ import argparse
 import csv
 import json
 import re
+import shutil
 import sys
 import time
 import urllib.request
@@ -173,6 +174,18 @@ def main() -> int:
         print(f"  {src:<18} {len(g):>3} 道　对 {ok}　部分对 {half}　严格 {ok/len(g):.1%}")
     print()
     print(f"已写出：{dst}")
+
+    # 顺手复制一份到 Windows 侧，方便现场直接双击打开（录屏时不用去 WSL 里找）
+    win_dir = Path("/mnt/d/llmloop")
+    if win_dir.is_dir():
+        wname = f"评测结果_{stamp}{'_norag' if a.no_rag else ''}.csv"
+        wdst = win_dir / wname
+        try:
+            shutil.copy2(dst, wdst)
+            print(f"Windows 路径：D:\\llmloop\\{wname}")
+            print("（现场演示：直接双击这个文件就能看到逐题结果）")
+        except OSError as e:
+            print(f"（复制到 D 盘失败：{e}，不影响结果）")
     return 0
 
 
