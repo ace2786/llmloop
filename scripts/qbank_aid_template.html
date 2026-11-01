@@ -110,6 +110,8 @@
 
 <main>
   <section>
+    <div class="flag" id="errBox" style="display:none"></div>
+    <div class="warn" id="storageWarn" style="display:none"></div>
     <div class="card">
       <div class="meta" style="margin-bottom:10px">
         <span id="seq" class="pill opt">#1</span>
@@ -171,17 +173,69 @@
   </aside>
 </main>
 
+<div id="csvBox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+     z-index:99; padding:40px 20px; overflow:auto">
+  <div style="max-width:900px; margin:0 auto; background:#fff; border-radius:10px; padding:18px">
+    <div style="font-weight:600; margin-bottom:8px">下载被拦截，请手动复制</div>
+    <div style="font-size:13px; color:#6b6a64; margin-bottom:10px">
+      全选复制下面的内容，粘到记事本里存成 <code>qbank_result.csv</code>（编码选 UTF-8）。
+    </div>
+    <textarea id="csvText" style="width:100%; height:320px; font-family:ui-monospace,monospace;
+      font-size:12px; padding:10px; border:1px solid #e3e1da; border-radius:8px"></textarea>
+    <div style="text-align:right; margin-top:10px">
+      <button onclick="document.getElementById('csvBox').style.display='none'"
+        style="padding:8px 16px; border-radius:6px; border:1px solid #e3e1da; background:#fff; cursor:pointer">
+        关闭
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 const DATA = /*__DATA__*/[];
 const KEY = 'qbank_140_v1';
 
+// ★ 预览面板是沙箱 iframe，localStorage 可能被禁。
+//   以前 save() 没有 try/catch，一抛异常就把整个点击流程打断，表现为「点了没反应」。
+let storageOK = true;
+let warned = false;
+
 let state = {};
 try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+// 清掉不属于当前数据集的旧键（题库换过版本，旧序号会对不上）
+try {
+  const valid = new Set(DATA.map(x => x.i));
+  Object.keys(state).forEach(k => { if (!valid.has(k)) delete state[k]; });
+} catch (e) { state = {}; }
 let idx = 0;
 
 const $ = id => document.getElementById(id);
 
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+function warnStorage(){
+  if (warned) return;
+  warned = true;
+  const b = $('storageWarn');
+  b.style.display = 'block';
+  b.textContent = '⚠ 这个环境不能保存进度（预览面板限制）。进度只存在内存里，刷新就没了。'
+    + '建议：做完立刻点「导出 CSV」，或者把文件下载到本地用浏览器打开。';
+}
+
+function save(){
+  if (!storageOK) return;
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state));
+  } catch (e) {
+    storageOK = false;
+    warnStorage();
+  }
+}
+
+// ★ 任何未捕获错误都显示出来，不要静默失败
+window.addEventListener('error', ev => {
+  const b = $('errBox');
+  b.style.display = 'block';
+  b.textContent = '✗ 页面出错：' + (ev.message || ev.error || '未知') + '（请把这条发给王子凡）';
+});
 
 function rec(i){ return state[DATA[i].i] || (state[DATA[i].i] = {q:'', v:''}); }
 
@@ -299,18 +353,31 @@ document.addEventListener('keydown', e => {
 
 $('export').onclick = () => {
   const rows = [['序号','issue','问题','核对结果']];
-  DATA.forEach((it, i) => {
+  DATA.forEach((it) => {
     const r = state[it.i] || {};
     rows.push([it.i, it.issue, (r.q || '').replace(/\r?\n/g, ' '), r.v || '']);
   });
   const csv = '\ufeff' + rows.map(r =>
     r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')
   ).join('\r\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
-  a.download = 'qbank_result.csv';
-  a.click();
-  URL.revokeObjectURL(a.href);
+
+  // 沙箱里可能禁止下载，降级成「弹出文本框自己复制」
+  try {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+    a.download = 'qbank_result.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    $('msg').textContent = '已下载 qbank_result.csv';
+  } catch (e) {
+    const box = $('csvBox');
+    box.style.display = 'block';
+    $('csvText').value = csv;
+    $('csvText').select();
+    $('msg').textContent = '下载被拦截，请复制下面的内容';
+  }
 };
 
 $('reset').onclick = () => {
