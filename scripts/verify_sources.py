@@ -36,6 +36,11 @@ def main() -> int:
     questions = json.loads((DATA / "questions.json").read_text(encoding="utf-8"))
     located = json.loads((DATA / "located.json").read_text(encoding="utf-8"))
     drafts = json.loads((DATA / "answer_drafts.json").read_text(encoding="utf-8"))
+    # ★ draft id → 真实 issue 号的映射。located/answer_drafts 的键是 draft id，
+    #   不是 issue 号；之前当成 issue 号用，导致抓错 issue 原文。
+    draft_meta = {
+        str(x["id"]): x for x in json.loads((DATA / "questions_draft.json").read_text(encoding="utf-8"))
+    }
     chunks = [
         json.loads(line)
         for line in (DATA / "chunks.jsonl").read_text(encoding="utf-8").splitlines()
@@ -49,7 +54,9 @@ def main() -> int:
     rows = []
     stat = Counter()
     for k, d in drafts.items():
-        if k in used or k not in located or not d.get("ok"):
+        # k 是 draft id；真正去重要比 issue 号
+        real_issue = str((draft_meta.get(k) or {}).get("issue") or "")
+        if real_issue in used or k not in located or not d.get("ok"):
             continue
         quote = norm(d.get("quote") or "")
         claimed_path = d.get("doc_path") or ""
@@ -83,7 +90,8 @@ def main() -> int:
 
         rows.append(
             {
-                "issue": k,
+                "draft_id": k,
+                "issue": real_issue,
                 "answer": (d.get("answer") or "").strip(),
                 "quote": (d.get("quote") or "").strip(),
                 "claimed": f"{claimed_path} > {claimed_head}",
