@@ -1,0 +1,1572 @@
+[
+  {
+    "question": "`adamw_betas` 应该怎么设？默认是多少？",
+    "answer": "内部 AdamW betas。默认值为 [0.9, 0.95]。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > optim_config",
+    "evidence": "| `adamw_betas` | `list[float]` | `[0.9, 0.95]` | 内部 AdamW betas |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "adamw_betas",
+    "split": ""
+  },
+  {
+    "question": "`adamw_eps` 应该怎么设？默认是多少？",
+    "answer": "内部 AdamW epsilon。默认值为 1e-8。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > optim_config",
+    "evidence": "| `adamw_eps` | `float` | `1e-8` | 内部 AdamW epsilon |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "adamw_eps",
+    "split": ""
+  },
+  {
+    "question": "`apollo_layerwise` 这个参数是做什么的？默认值多少？",
+    "answer": "是否启用层级更新以进一步节省内存。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_layerwise | bool | 是否启用层级更新以进一步节省内存。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_layerwise",
+    "split": ""
+  },
+  {
+    "question": "`apollo_proj` 可以填哪些值？默认是哪个？",
+    "answer": "支持 svd, random；默认值为 random。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_proj | Literal[“svd”, “random”] | APOLLO 低秩投影算法类型（svd 或 random）。 | random |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_proj",
+    "split": ""
+  },
+  {
+    "question": "`apollo_proj_type` 可以填哪些值？默认是哪个？",
+    "answer": "支持 std, right, left；默认值为 std。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_proj_type | Literal[“std”, “right”, “left”] | APOLLO 投影类型。 | std |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_proj_type",
+    "split": ""
+  },
+  {
+    "question": "`apollo_rank` 这个参数是做什么的？默认值多少？",
+    "answer": "APOLLO 梯度的秩。默认值为 16。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_rank | int | APOLLO 梯度的秩。 | 16 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_rank",
+    "split": ""
+  },
+  {
+    "question": "`apollo_scale` 应该怎么设？默认是多少？",
+    "answer": "APOLLO 缩放系数。默认值为 32.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_scale | float | APOLLO 缩放系数。 | 32.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_scale",
+    "split": ""
+  },
+  {
+    "question": "`apollo_scale_front` 应该怎么设？默认是多少？",
+    "answer": "是否在梯度缩放前使用范数增长限制器。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_scale_front | bool | 是否在梯度缩放前使用范数增长限制器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_scale_front",
+    "split": ""
+  },
+  {
+    "question": "`apollo_scale_type` 可以填哪些值？默认是哪个？",
+    "answer": "支持 channel, tensor；默认值为 channel。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_scale_type | Literal[“channel”, “tensor”] | APOLLO 缩放类型（channel 或 tensor）。 | channel |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_scale_type",
+    "split": ""
+  },
+  {
+    "question": "`apollo_target` 默认值是多少？",
+    "answer": "默认值为 all。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_target | str | 适用 APOLLO 的模块名称。使用逗号分隔多个模块，使用 all 指定所有线性模块。 | all |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_target",
+    "split": ""
+  },
+  {
+    "question": "`apollo_update_interval` 应该怎么设？默认是多少？",
+    "answer": "更新 APOLLO 投影的步数间隔。默认值为 200。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| apollo_update_interval | int | 更新 APOLLO 投影的步数间隔。 | 200 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "apollo_update_interval",
+    "split": ""
+  },
+  {
+    "question": "`badam_mask_mode` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 adjacent。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_mask_mode | Literal | BAdam 优化器的掩码模式，可选值为 adjacent 或 scatter。 | adjacent |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_mask_mode",
+    "split": ""
+  },
+  {
+    "question": "`badam_mode` 应该怎么设？默认是多少？",
+    "answer": "BAdam 的使用模式，可选值为 layer 或 ratio。默认值为 layer。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_mode | Literal | BAdam 的使用模式，可选值为 layer 或 ratio。 | layer |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_mode",
+    "split": ""
+  },
+  {
+    "question": "`badam_switch_interval` 这个参数是做什么的？默认值多少？",
+    "answer": "layer-wise BAdam 中块更新步数间隔。使用 -1 禁用块更新。默认值为 50。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_switch_interval | Optional[int] | layer-wise BAdam 中块更新步数间隔。使用 -1 禁用块更新。 | 50 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_switch_interval",
+    "split": ""
+  },
+  {
+    "question": "`badam_switch_mode` 这个参数是做什么的？默认值多少？",
+    "answer": "layer-wise BAdam 中块更新策略，可选值有： ascending, descending, random, fixed。默认值为 ascending。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_switch_mode | Optional[Literal] | layer-wise BAdam 中块更新策略，可选值有： ascending, descending, random, fixed。 | ascending |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_switch_mode",
+    "split": ""
+  },
+  {
+    "question": "`badam_update_ratio` 应该怎么设？默认是多少？",
+    "answer": "ratio-wise BAdam 中的更新比例。默认值为 0.05。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_update_ratio | float | ratio-wise BAdam 中的更新比例。 | 0.05 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_update_ratio",
+    "split": ""
+  },
+  {
+    "question": "`badam_verbose` 默认值是多少？",
+    "answer": "默认值为 0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| badam_verbose | int | BAdam 优化器的详细输出级别，0 表示无输出，1 表示输出块前缀，2 表示输出可训练参数。 | 0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "badam_verbose",
+    "split": ""
+  },
+  {
+    "question": "`batch_size` 应该怎么设？默认是多少？",
+    "answer": "每个GPU使用的批量大小。默认值为 4。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| batch_size | int | 每个GPU使用的批量大小。 | 4 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "batch_size",
+    "split": ""
+  },
+  {
+    "question": "`batching_strategy` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 normal。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 批处理配置",
+    "evidence": "| `batching_strategy` | `str` | `normal` | `normal`、`padding_free`、`dynamic_batching` 或 `dynamic_padding_free` |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "batching_strategy",
+    "split": ""
+  },
+  {
+    "question": "`batching_workers` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 16。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 批处理配置",
+    "evidence": "| `batching_workers` | `int` | `16` | 数据加载 worker 数 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "batching_workers",
+    "split": ""
+  },
+  {
+    "question": "`bf16` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 true。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度",
+    "evidence": "| `bf16` | `bool` | `true` | 是否使用 bf16 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "bf16",
+    "split": ""
+  },
+  {
+    "question": "`block_diag_attn` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用块对角注意力，无需手动指定。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| block_diag_attn | bool | 是否使用块对角注意力，无需手动指定。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "block_diag_attn",
+    "split": ""
+  },
+  {
+    "question": "`buffer_size` 应该怎么设？默认是多少？",
+    "answer": "启用 streaming 时用于随机选择样本的 buffer 大小。默认值为 16384。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| buffer_size | int | 启用 streaming 时用于随机选择样本的 buffer 大小。 | 16384 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "buffer_size",
+    "split": ""
+  },
+  {
+    "question": "`cast_trainable_params_to_fp32` 应该怎么设？默认是多少？",
+    "answer": "是否将可训练参数转换为 fp32。默认值为 true。",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > peft_config > Freeze",
+    "evidence": "| `cast_trainable_params_to_fp32` | `bool` | `true` | 是否将可训练参数转换为 fp32 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "cast_trainable_params_to_fp32",
+    "split": ""
+  },
+  {
+    "question": "`chunk_size` 应该怎么设？默认是多少？",
+    "answer": "chunk size；可选 `16`、`32`、`64`。默认值为 64。",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > kernel_config > Flash Linear Attention",
+    "evidence": "| `chunk_size` | `int` | `64` | chunk size；可选 `16`、`32`、`64` |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "chunk_size",
+    "split": ""
+  },
+  {
+    "question": "`compute_accuracy` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| compute_accuracy | bool | 是否在评估时计算 token 级别的准确率。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "compute_accuracy",
+    "split": ""
+  },
+  {
+    "question": "`compute_dtype` 默认值是多少？",
+    "answer": "默认值为 float16。",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > quant_config",
+    "evidence": "| `compute_dtype` | `str \\| torch.dtype` | `float16` | 4-bit 计算和存储 dtype |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "compute_dtype",
+    "split": ""
+  },
+  {
+    "question": "`cp_mode` 默认值是多少？",
+    "answer": "默认值为 ulysses。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 分布式与优化器",
+    "evidence": "| `cp_mode` | `str` | `ulysses` | Context Parallel 实现 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "cp_mode",
+    "split": ""
+  },
+  {
+    "question": "`cp_size` 应该怎么设？默认是多少？",
+    "answer": "Context Parallel 大小。默认值为 1。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 分布式与优化器",
+    "evidence": "| `cp_size` | `int` | `1` | Context Parallel 大小 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "cp_size",
+    "split": ""
+  },
+  {
+    "question": "`create_new_adapter` 默认值是多少？",
+    "answer": "默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| create_new_adapter | bool | 是否创建一个具有随机初始化权重的新适配器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "create_new_adapter",
+    "split": ""
+  },
+  {
+    "question": "`cutoff_len` 默认值是多少？",
+    "answer": "默认值为 2048。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| cutoff_len | int | 输入的最大 token 数，超过该长度会被截断。 | 2048 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "cutoff_len",
+    "split": ""
+  },
+  {
+    "question": "`data_shared_file_system` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 false。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| data_shared_file_system | Optional[bool] | 多机多卡时，不同机器存放数据集的路径是否是共享文件系统。数据集处理在该值为true时只在第一个node发生，为false时在每个node都处理一次。 | false |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "data_shared_file_system",
+    "split": ""
+  },
+  {
+    "question": "`dataset_dir` 这个参数是做什么的？默认值多少？",
+    "answer": "存储数据集的文件夹路径，可以是字符串或字典。当为字符串时，表示数据集目录的路径，例如 data ；当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。默认值为 data。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| dataset_dir | Union[str, Dict[str, Any]] | 存储数据集的文件夹路径，可以是字符串或字典。当为字符串时，表示数据集目录的路径，例如 data ；当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。 | data |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "dataset_dir",
+    "split": ""
+  },
+  {
+    "question": "`disable_gradient_checkpointing` 这个参数是做什么的？默认值多少？",
+    "answer": "是否禁用梯度检查点。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| disable_gradient_checkpointing | bool | 是否禁用梯度检查点。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "disable_gradient_checkpointing",
+    "split": ""
+  },
+  {
+    "question": "`disable_shuffling` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| disable_shuffling | bool | 是否禁用训练集的随机打乱。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "disable_shuffling",
+    "split": ""
+  },
+  {
+    "question": "`dist_timeout` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 18000。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 分布式与优化器",
+    "evidence": "| `dist_timeout` | `int` | `18000` | 进程组初始化超时，秒 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "dist_timeout",
+    "split": ""
+  },
+  {
+    "question": "`do_sample` 默认值是多少？",
+    "answer": "默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| do_sample | bool | 是否使用采样策略生成文本。如果设置为 False，将使用 greedy decoding。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "do_sample",
+    "split": ""
+  },
+  {
+    "question": "`double_quantization` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+    "evidence": "| double_quantization | bool | 是否在量化过程中使用 double quantization，通常用于 “bitsandbytes” int4 量化训练。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "double_quantization",
+    "split": ""
+  },
+  {
+    "question": "`download_mode` 这个参数是做什么的？默认值多少？",
+    "answer": "评估数据集的下载模式，如果数据集已经存在则重复使用，否则则下载。默认值为 DownloadMode.REUSE_DATASET_IF_EXISTS。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| download_mode | str | 评估数据集的下载模式，如果数据集已经存在则重复使用，否则则下载。 | DownloadMode.REUSE_DATASET_IF_EXISTS |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "download_mode",
+    "split": ""
+  },
+  {
+    "question": "`dpo_label_smoothing` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 0.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| dpo_label_smoothing | float | 标签平滑系数，取值范围为 [0,0.5]。 | 0.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "dpo_label_smoothing",
+    "split": ""
+  },
+  {
+    "question": "`enable_activation_checkpointing` 应该怎么设？默认是多少？",
+    "answer": "是否启用激活值重算。默认值为 true。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 批处理配置",
+    "evidence": "| `enable_activation_checkpointing` | `bool` | `true` | 是否启用激活值重算 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "enable_activation_checkpointing",
+    "split": ""
+  },
+  {
+    "question": "`enable_liger_kernel` 应该怎么设？默认是多少？",
+    "answer": "是否启用 liger 内核以加速训练。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| enable_liger_kernel | bool | 是否启用 liger 内核以加速训练。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "enable_liger_kernel",
+    "split": ""
+  },
+  {
+    "question": "`ep_dispatcher` 应该怎么设？默认是多少？",
+    "answer": "专家 token dispatcher。默认值为 eager。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo",
+    "evidence": "| `ep_dispatcher` | `str` | `eager` | 专家 token dispatcher |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ep_dispatcher",
+    "split": ""
+  },
+  {
+    "question": "`eval_on_each_dataset` 默认值是多少？",
+    "answer": "默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| eval_on_each_dataset | Optional[bool] | 是否在每个评估数据集上分开计算loss，默认concate后为整体计算。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "eval_on_each_dataset",
+    "split": ""
+  },
+  {
+    "question": "`export_device` 可以填哪些值？默认是哪个？",
+    "answer": "支持 cpu, auto；默认值为 cpu。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+    "evidence": "| export_device | Literal[“cpu”, “auto”] | 导出模型时使用的设备，auto 可自动加速导出。 | cpu |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "export_device",
+    "split": ""
+  },
+  {
+    "question": "`export_legacy_format` 应该怎么设？默认是多少？",
+    "answer": "True： .bin 格式保存。 False： .safetensors 格式保存。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+    "evidence": "| export_legacy_format | bool | True： .bin 格式保存。 False： .safetensors 格式保存。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "export_legacy_format",
+    "split": ""
+  },
+  {
+    "question": "`export_quantization_maxlen` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 1024。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+    "evidence": "| export_quantization_maxlen | int | 用于量化的模型输入的最大长度。 | 1024 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "export_quantization_maxlen",
+    "split": ""
+  },
+  {
+    "question": "`export_quantization_nsamples` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 128。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+    "evidence": "| export_quantization_nsamples | int | 量化时使用的样本数量。 | 128 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "export_quantization_nsamples",
+    "split": ""
+  },
+  {
+    "question": "`export_size` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 5。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶",
+    "evidence": "| export_size | int | 导出模型的文件分片大小（以GB为单位）。 | 5 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "export_size",
+    "split": ""
+  },
+  {
+    "question": "`flash_attn` 可以填哪些值？默认是哪个？",
+    "answer": "支持 auto, disabled, sdpa, fa2；默认值为 auto。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| flash_attn | Literal[“auto”, “disabled”, “sdpa”, “fa2”] | 是否启用 FlashAttention 来加速训练和推理。可选值为 auto, disabled, sdpa, fa2。 | auto |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "flash_attn",
+    "split": ""
+  },
+  {
+    "question": "`freeze_multi_modal_projector` 默认值是多少？",
+    "answer": "默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| freeze_multi_modal_projector | bool | MLLM 训练时是否冻结多模态投影器。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "freeze_multi_modal_projector",
+    "split": ""
+  },
+  {
+    "question": "`freeze_trainable_layers` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 2。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Freeze¶",
+    "evidence": "| freeze_trainable_layers | int | 可训练层的数量。正数表示最后 n 层被设置为可训练的，负数表示前 n 层被设置为可训练的。 | 2 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "freeze_trainable_layers",
+    "split": ""
+  },
+  {
+    "question": "`freeze_trainable_modules` 应该怎么设？默认是多少？",
+    "answer": "可训练层的名称。使用 all 来指定所有模块。默认值为 all。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Freeze¶",
+    "evidence": "| freeze_trainable_modules | str | 可训练层的名称。使用 all 来指定所有模块。 | all |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "freeze_trainable_modules",
+    "split": ""
+  },
+  {
+    "question": "`freeze_vision_tower` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| freeze_vision_tower | bool | MLLM 训练时是否冻结视觉塔。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "freeze_vision_tower",
+    "split": ""
+  },
+  {
+    "question": "`fsdp_ignored_modules` 这个参数是做什么的？默认值多少？",
+    "answer": "外层 FSDP2 忽略的额外模块。默认值为 []。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo",
+    "evidence": "| `fsdp_ignored_modules` | `list[str]` | `[]` | 外层 FSDP2 忽略的额外模块 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "fsdp_ignored_modules",
+    "split": ""
+  },
+  {
+    "question": "`fsdp_implementation` 默认值是多少？",
+    "answer": "默认值为 native。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo",
+    "evidence": "| `fsdp_implementation` | `str` | `native` | `native` 或 `custom` |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "fsdp_implementation",
+    "split": ""
+  },
+  {
+    "question": "`full_determinism` 默认值是多少？",
+    "answer": "默认值为 false。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度",
+    "evidence": "| `full_determinism` | `bool` | `false` | 是否启用完整确定性模式 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "full_determinism",
+    "split": ""
+  },
+  {
+    "question": "`galore_layerwise` 默认值是多少？",
+    "answer": "默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_layerwise | bool | 是否启用逐层更新以进一步节省内存。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_layerwise",
+    "split": ""
+  },
+  {
+    "question": "`galore_proj_type` 应该怎么设？默认是多少？",
+    "answer": "GaLore 投影的类型，可选值有： std, reverse_std, right, left, full。默认值为 std。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_proj_type | Literal | GaLore 投影的类型，可选值有： std, reverse_std, right, left, full。 | std |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_proj_type",
+    "split": ""
+  },
+  {
+    "question": "`galore_rank` 这个参数是做什么的？默认值多少？",
+    "answer": "GaLore 梯度的秩。默认值为 16。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_rank | int | GaLore 梯度的秩。 | 16 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_rank",
+    "split": ""
+  },
+  {
+    "question": "`galore_scale` 这个参数是做什么的？默认值多少？",
+    "answer": "GaLore 的缩放系数。默认值为 0.25。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_scale | float | GaLore 的缩放系数。 | 0.25 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_scale",
+    "split": ""
+  },
+  {
+    "question": "`galore_target` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 all。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_target | str | 应用 GaLore 的模块名称。使用逗号分隔多个模块，使用 all 指定所有线性模块。 | all |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_target",
+    "split": ""
+  },
+  {
+    "question": "`galore_update_interval` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 200。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| galore_update_interval | int | 更新 GaLore 投影的步数间隔。 | 200 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "galore_update_interval",
+    "split": ""
+  },
+  {
+    "question": "`hook_modules` 这个参数是做什么的？默认值多少？",
+    "answer": "EFSDP hook 的模块模式。默认值为 []。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo",
+    "evidence": "| `hook_modules` | `list[str]` | `[]` | EFSDP hook 的模块模式 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "hook_modules",
+    "split": ""
+  },
+  {
+    "question": "`ignore_pad_token_for_loss` 这个参数是做什么的？默认值多少？",
+    "answer": "计算 loss 时是否忽略 pad token。默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| ignore_pad_token_for_loss | bool | 计算 loss 时是否忽略 pad token。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ignore_pad_token_for_loss",
+    "split": ""
+  },
+  {
+    "question": "`image_max_pixels` 应该怎么设？默认是多少？",
+    "answer": "图像输入的最大像素数。默认值为 768 x 768。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| image_max_pixels | int | 图像输入的最大像素数。 | 768 x 768 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "image_max_pixels",
+    "split": ""
+  },
+  {
+    "question": "`image_min_pixels` 这个参数是做什么的？默认值多少？",
+    "answer": "图像输入的最小像素数。默认值为 32 x 32。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| image_min_pixels | int | 图像输入的最小像素数。 | 32 x 32 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "image_min_pixels",
+    "split": ""
+  },
+  {
+    "question": "`include_effective_tokens_per_second` 这个参数是做什么的？默认值多少？",
+    "answer": "是否计算有效的每秒 token 数。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| include_effective_tokens_per_second | bool | 是否计算有效的每秒 token 数。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "include_effective_tokens_per_second",
+    "split": ""
+  },
+  {
+    "question": "`include_kernels` 应该怎么设？默认是多少？",
+    "answer": "`auto` 或逗号分隔的 FLA 算子名称。默认值为 auto。",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > kernel_config > Flash Linear Attention",
+    "evidence": "| `include_kernels` | `str` | `auto` | `auto` 或逗号分隔的 FLA 算子名称 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "include_kernels",
+    "split": ""
+  },
+  {
+    "question": "`infer_backend` 可以填哪些值？默认是哪个？",
+    "answer": "支持 huggingface, vllm；默认值为 huggingface。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| infer_backend | Literal[“huggingface”, “vllm”] | 推理时使用的后端引擎，支持 huggingface 或 vllm。 | huggingface |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "infer_backend",
+    "split": ""
+  },
+  {
+    "question": "`infer_dtype` 可以填哪些值？默认是哪个？",
+    "answer": "支持 auto, float16, bfloat16, float32；默认值为 auto。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| infer_dtype | Literal[“auto”, “float16”, “bfloat16”, “float32”] | 推理时使用的模型权重和激活值的数据类型。支持 auto, float16, bfloat16, float32。 | auto |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "infer_dtype",
+    "split": ""
+  },
+  {
+    "question": "`kto_chosen_weight` 默认值是多少？",
+    "answer": "默认值为 1.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| kto_chosen_weight | float | KTO 训练中 chosen 标签 loss 的权重。 | 1.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "kto_chosen_weight",
+    "split": ""
+  },
+  {
+    "question": "`kto_rejected_weight` 默认值是多少？",
+    "answer": "默认值为 1.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| kto_rejected_weight | float | KTO 训练中 rejected 标签 loss 的权重。 | 1.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "kto_rejected_weight",
+    "split": ""
+  },
+  {
+    "question": "`lang` 默认值是多少？",
+    "answer": "默认值为 en。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| lang | str | 评估使用的语言，可选值为 en、zh。 | en |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "lang",
+    "split": ""
+  },
+  {
+    "question": "`learning_rate` 这个参数是做什么的？默认值多少？",
+    "answer": "训练及优化器插件使用的学习率。默认值为 1e-4。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度",
+    "evidence": "| `learning_rate` | `float` | `1e-4` | 训练及优化器插件使用的学习率 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "learning_rate",
+    "split": ""
+  },
+  {
+    "question": "`length_penalty` 默认值是多少？",
+    "answer": "默认值为 1.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| length_penalty | float | 在使用 beam_search 时对生成文本长度的惩罚系数。length_penalty > 0 鼓励模型生成更长的序列，length_penalty < 0 会鼓励模型生成更短的序列。 | 1.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "length_penalty",
+    "split": ""
+  },
+  {
+    "question": "`lora_dropout` 这个参数是做什么的？默认值多少？",
+    "answer": "LoRA 微调中的 dropout 率。默认值为 0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| lora_dropout | float | LoRA 微调中的 dropout 率。 | 0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "lora_dropout",
+    "split": ""
+  },
+  {
+    "question": "`lora_rank` 应该怎么设？默认是多少？",
+    "answer": "LoRA 微调的本征维数 r，r 越大可训练的参数越多。默认值为 8。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| lora_rank | int | LoRA 微调的本征维数 r，r 越大可训练的参数越多。 | 8 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "lora_rank",
+    "split": ""
+  },
+  {
+    "question": "`lora_target` 默认值是多少？",
+    "answer": "默认值为 all。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| lora_target | str | 应用 LoRA 方法的模块名称。使用逗号分隔多个模块，使用 all 指定所有模块。 | all |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "lora_target",
+    "split": ""
+  },
+  {
+    "question": "`loraplus_lr_embedding` 默认值是多少？",
+    "answer": "默认值为 1e-6。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| loraplus_lr_embedding | Optional[float] | LoRA+ 嵌入层的学习率。 | 1e-6 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "loraplus_lr_embedding",
+    "split": ""
+  },
+  {
+    "question": "`low_cpu_mem_usage` 应该怎么设？默认是多少？",
+    "answer": "是否使用节省内存的模型加载方式。默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| low_cpu_mem_usage | bool | 是否使用节省内存的模型加载方式。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "low_cpu_mem_usage",
+    "split": ""
+  },
+  {
+    "question": "`mask_history` 应该怎么设？默认是多少？",
+    "answer": "是否仅使用当前对话轮次进行训练。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| mask_history | bool | 是否仅使用当前对话轮次进行训练。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "mask_history",
+    "split": ""
+  },
+  {
+    "question": "`max_length` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 1024。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| max_length | int | 文本最大长度（包括输入文本和生成文本的长度）。 | 1024 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "max_length",
+    "split": ""
+  },
+  {
+    "question": "`micro_batch_size` 应该怎么设？默认是多少？",
+    "answer": "基础 micro-batch 大小。默认值为 1。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度",
+    "evidence": "| `micro_batch_size` | `int` | `1` | 基础 micro-batch 大小 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "micro_batch_size",
+    "split": ""
+  },
+  {
+    "question": "`mix_strategy` 可以填哪些值？默认是哪个？",
+    "answer": "支持 concat, interleave_under, interleave_over；默认值为 concat。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| mix_strategy | Literal[“concat”, “interleave_under”, “interleave_over”] | 数据集混合策略，支持 concat、 interleave_under、 interleave_over。 | concat |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "mix_strategy",
+    "split": ""
+  },
+  {
+    "question": "`model_class` 这个参数是做什么的？默认值多少？",
+    "answer": "`llm`、`cls` 或 `other`。默认值为 llm。",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > ModelArguments",
+    "evidence": "| `model_class` | `str` | `llm` | `llm`、`cls` 或 `other` |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "model_class",
+    "split": ""
+  },
+  {
+    "question": "`model_revision` 默认值是多少？",
+    "answer": "默认值为 main。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| model_revision | str | 所使用的特定模型版本。 | main |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "model_revision",
+    "split": ""
+  },
+  {
+    "question": "`mp_replicate_size` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 1。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 分布式与优化器",
+    "evidence": "| `mp_replicate_size` | `int` | `1` | FSDP 二维 Mesh 的参数复制维度大小 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "mp_replicate_size",
+    "split": ""
+  },
+  {
+    "question": "`n_shot` 应该怎么设？默认是多少？",
+    "answer": "few-shot 的示例数量。默认值为 5。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| n_shot | int | few-shot 的示例数量。 | 5 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "n_shot",
+    "split": ""
+  },
+  {
+    "question": "`neat_packing` 这个参数是做什么的？默认值多少？",
+    "answer": "是否启用不使用 cross-attention 的 sequences packing。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| neat_packing | bool | 是否启用不使用 cross-attention 的 sequences packing。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "neat_packing",
+    "split": ""
+  },
+  {
+    "question": "`nesterov` 应该怎么设？默认是多少？",
+    "answer": "是否启用 Nesterov。默认值为 true。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > optim_config",
+    "evidence": "| `nesterov` | `bool` | `true` | 是否启用 Nesterov |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "nesterov",
+    "split": ""
+  },
+  {
+    "question": "`ns_steps` 应该怎么设？默认是多少？",
+    "answer": "Newton-Schulz 步数。默认值为 5。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > optim_config",
+    "evidence": "| `ns_steps` | `int` | `5` | Newton-Schulz 步数 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ns_steps",
+    "split": ""
+  },
+  {
+    "question": "`num_beams` 应该怎么设？默认是多少？",
+    "answer": "用于 beam_search 的束宽度。值为 1 表示不使用 beam_search。默认值为 1。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| num_beams | int | 用于 beam_search 的束宽度。值为 1 表示不使用 beam_search。 | 1 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "num_beams",
+    "split": ""
+  },
+  {
+    "question": "`offload_folder` 这个参数是做什么的？默认值多少？",
+    "answer": "卸载模型权重的路径。默认值为 offload。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| offload_folder | str | 卸载模型权重的路径。 | offload |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "offload_folder",
+    "split": ""
+  },
+  {
+    "question": "`offload_params` 应该怎么设？默认是多少？",
+    "answer": "是否 offload 参数。默认值为 false。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDP2",
+    "evidence": "| `offload_params` | `bool` | `false` | 是否 offload 参数 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "offload_params",
+    "split": ""
+  },
+  {
+    "question": "`overwrite_cache` 这个参数是做什么的？默认值多少？",
+    "answer": "是否覆盖缓存的训练和评估数据集。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| overwrite_cache | bool | 是否覆盖缓存的训练和评估数据集。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "overwrite_cache",
+    "split": ""
+  },
+  {
+    "question": "`pin_memory` 默认值是多少？",
+    "answer": "默认值为 true。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDP2",
+    "evidence": "| `pin_memory` | `bool` | `true` | 是否使用 pinned memory |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pin_memory",
+    "split": ""
+  },
+  {
+    "question": "`pissa_convert` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| pissa_convert | bool | 是否将 PiSSA 适配器转换为正常的 LoRA 适配器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pissa_convert",
+    "split": ""
+  },
+  {
+    "question": "`pissa_init` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| pissa_init | bool | 是否初始化 PiSSA 适配器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pissa_init",
+    "split": ""
+  },
+  {
+    "question": "`pissa_iter` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 16。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| pissa_iter | Optional[int] | PiSSA 中 FSVD 执行的迭代步数。使用 -1 将其禁用。 | 16 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pissa_iter",
+    "split": ""
+  },
+  {
+    "question": "`plot_loss` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| plot_loss | bool | 是否保存训练过程中的损失曲线。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "plot_loss",
+    "split": ""
+  },
+  {
+    "question": "`ppo_buffer_size` 默认值是多少？",
+    "answer": "默认值为 1。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| ppo_buffer_size | int | PPO 训练中的 mini-batch 大小。 | 1 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ppo_buffer_size",
+    "split": ""
+  },
+  {
+    "question": "`ppo_epochs` 应该怎么设？默认是多少？",
+    "answer": "PPO 训练迭代次数。默认值为 4。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| ppo_epochs | int | PPO 训练迭代次数。 | 4 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ppo_epochs",
+    "split": ""
+  },
+  {
+    "question": "`ppo_score_norm` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| ppo_score_norm | bool | 是否在 PPO 训练中使用归一化分数。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ppo_score_norm",
+    "split": ""
+  },
+  {
+    "question": "`ppo_target` 这个参数是做什么的？默认值多少？",
+    "answer": "PPO 训练中自适应 KL 控制的目标 KL 值。默认值为 6.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| ppo_target | float | PPO 训练中自适应 KL 控制的目标 KL 值。 | 6.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ppo_target",
+    "split": ""
+  },
+  {
+    "question": "`ppo_whiten_rewards` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| ppo_whiten_rewards | bool | PPO 训练中是否对奖励进行归一化。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ppo_whiten_rewards",
+    "split": ""
+  },
+  {
+    "question": "`pref_beta` 这个参数是做什么的？默认值多少？",
+    "answer": "偏好损失中的 beta 参数。默认值为 0.1。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| pref_beta | float | 偏好损失中的 beta 参数。 | 0.1 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pref_beta",
+    "split": ""
+  },
+  {
+    "question": "`pref_ftx` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 0.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| pref_ftx | float | DPO 训练中的 sft loss 系数。 | 0.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pref_ftx",
+    "split": ""
+  },
+  {
+    "question": "`pref_loss` 可以填哪些值？默认是哪个？",
+    "answer": "支持 sigmoid, hinge, ipo, kto_pair, orpo, simpo；默认值为 sigmoid。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| pref_loss | Literal[“sigmoid”, “hinge”, “ipo”, “kto_pair”, “orpo”, “simpo”] | DPO 训练中使用的偏好损失类型。可选值为： sigmoid, hinge, ipo, kto_pair, orpo, simpo。 | sigmoid |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pref_loss",
+    "split": ""
+  },
+  {
+    "question": "`preprocessing_batch_size` 默认值是多少？",
+    "answer": "默认值为 1000。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| preprocessing_batch_size | int | 预处理时每批次的示例数量。 | 1000 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "preprocessing_batch_size",
+    "split": ""
+  },
+  {
+    "question": "`print_param_status` 应该怎么设？默认是多少？",
+    "answer": "是否打印模型参数的状态。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| print_param_status | bool | 是否打印模型参数的状态。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "print_param_status",
+    "split": ""
+  },
+  {
+    "question": "`pure_bf16` 应该怎么设？默认是多少？",
+    "answer": "是否以纯 bf16 精度训练模型（不使用 AMP）。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| pure_bf16 | bool | 是否以纯 bf16 精度训练模型（不使用 AMP）。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "pure_bf16",
+    "split": ""
+  },
+  {
+    "question": "`quantization_method` 可以填哪些值？默认是哪个？",
+    "answer": "支持 bitsandbytes, hqq, eetq；默认值为 bitsandbytes。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+    "evidence": "| quantization_method | Literal[“bitsandbytes”, “hqq”, “eetq”] | 指定用于量化的算法，支持 “bitsandbytes”, “hqq” 和 “eetq”。 | bitsandbytes |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "quantization_method",
+    "split": ""
+  },
+  {
+    "question": "`quantization_type` 可以填哪些值？默认是哪个？",
+    "answer": "支持 fp4, nf4；默认值为 nf4。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶",
+    "evidence": "| quantization_type | Literal[“fp4”, “nf4”] | 量化时使用的数据类型，支持 “fp4” 和 “nf4”。 | nf4 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "quantization_type",
+    "split": ""
+  },
+  {
+    "question": "`ray_num_workers` 应该怎么设？默认是多少？",
+    "answer": "Ray 训练所使用的工作进程数量。默认值为 1。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 训练参数¶ > RAY¶",
+    "evidence": "| ray_num_workers | int | Ray 训练所使用的工作进程数量。 | 1 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "ray_num_workers",
+    "split": ""
+  },
+  {
+    "question": "`repetition_penalty` 默认值是多少？",
+    "answer": "默认值为 1.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| repetition_penalty | float | 对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。 | 1.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "repetition_penalty",
+    "split": ""
+  },
+  {
+    "question": "`reshard_after_forward` 默认值是多少？",
+    "answer": "默认值为 true。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > dist_config > FSDP2",
+    "evidence": "| `reshard_after_forward` | `bool` | `true` | forward 后是否重新分片 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "reshard_after_forward",
+    "split": ""
+  },
+  {
+    "question": "`resize_vocab` 这个参数是做什么的？默认值多少？",
+    "answer": "是否调整词表和嵌入层的大小。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| resize_vocab | bool | 是否调整词表和嵌入层的大小。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "resize_vocab",
+    "split": ""
+  },
+  {
+    "question": "`reward_model_type` 可以填哪些值？默认是哪个？",
+    "answer": "支持 lora, full, api；默认值为 lora。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| reward_model_type | Literal[“lora”, “full”, “api”] | PPO 训练中使用的奖励模型类型。可选值为： lora, full, api。 | lora |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "reward_model_type",
+    "split": ""
+  },
+  {
+    "question": "`sample_backend` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 hf。",
+    "doc_location": "docs/zh/configuration/inference.md > 推理参数 > SampleArguments",
+    "evidence": "| `sample_backend` | `str` | `hf` | 采样后端；可用值为 `hf` |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "sample_backend",
+    "split": ""
+  },
+  {
+    "question": "`save_ckpt_as_hf` 应该怎么设？默认是多少？",
+    "answer": "是否在中间 checkpoint 中额外保存 HF 格式模型。默认值为 false。",
+    "doc_location": "docs/zh/configuration/training.md > 训练参数 > TrainingArguments > Checkpoint 与日志配置",
+    "evidence": "| `save_ckpt_as_hf` | `bool` | `false` | 是否在中间 checkpoint 中额外保存 HF 格式模型 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "save_ckpt_as_hf",
+    "split": ""
+  },
+  {
+    "question": "`seed` 默认值是多少？",
+    "answer": "默认值为 42。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| seed | int | 用于数据加载器的随机种子。 | 42 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "seed",
+    "split": ""
+  },
+  {
+    "question": "`shift_attn` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| shift_attn | bool | 是否启用 Shift Short Attention (S^2-Attn)。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "shift_attn",
+    "split": ""
+  },
+  {
+    "question": "`simpo_gamma` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 0.5。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| simpo_gamma | float | SimPO 损失中的 reward margin。 | 0.5 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "simpo_gamma",
+    "split": ""
+  },
+  {
+    "question": "`skip_special_tokens` 默认值是多少？",
+    "answer": "默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶",
+    "evidence": "| skip_special_tokens | bool | 解码时是否忽略特殊 token。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "skip_special_tokens",
+    "split": ""
+  },
+  {
+    "question": "`split_special_tokens` 这个参数是做什么的？默认值多少？",
+    "answer": "是否在分词时将 special token 分割。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| split_special_tokens | bool | 是否在分词时将 special token 分割。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "split_special_tokens",
+    "split": ""
+  },
+  {
+    "question": "`streaming` 这个参数是做什么的？默认值多少？",
+    "answer": "字段已定义；当前训练路径不支持 streaming 数据集。默认值为 false。",
+    "doc_location": "docs/zh/configuration/data.md > 数据参数 > DatasetInfo",
+    "evidence": "| `streaming` | `bool` | `false` | 字段已定义；当前训练路径不支持 streaming 数据集 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "streaming",
+    "split": ""
+  },
+  {
+    "question": "`swanlab_mode` 可以填哪些值？默认是哪个？",
+    "answer": "支持 cloud, local；默认值为 cloud。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > SwanLab 参数¶",
+    "evidence": "| swanlab_mode | Literal[“cloud”, “local”] | SwanLab 的运行模式。 | cloud |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "swanlab_mode",
+    "split": ""
+  },
+  {
+    "question": "`swanlab_project` 应该怎么设？默认是多少？",
+    "answer": "SwanLab 中的项目名称。默认值为 “llamafactory”。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > SwanLab 参数¶",
+    "evidence": "| swanlab_project | str | SwanLab 中的项目名称。 | “llamafactory” |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "swanlab_project",
+    "split": ""
+  },
+  {
+    "question": "`task_dir` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 evaluation。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶",
+    "evidence": "| task_dir | str | 包含评估数据集的文件夹路径。 | evaluation |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "task_dir",
+    "split": ""
+  },
+  {
+    "question": "`train_from_scratch` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| train_from_scratch | bool | 是否随机初始化模型权重。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "train_from_scratch",
+    "split": ""
+  },
+  {
+    "question": "`train_on_prompt` 应该怎么设？默认是多少？",
+    "answer": "是否在输入 prompt 上进行训练。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| train_on_prompt | bool | 是否在输入 prompt 上进行训练。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "train_on_prompt",
+    "split": ""
+  },
+  {
+    "question": "`trust_remote_code` 这个参数是做什么的？默认值多少？",
+    "answer": "是否信任来自 Hub 上数据集/模型的代码执行。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| trust_remote_code | bool | 是否信任来自 Hub 上数据集/模型的代码执行。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "trust_remote_code",
+    "split": ""
+  },
+  {
+    "question": "`upcast_layernorm` 应该怎么设？默认是多少？",
+    "answer": "是否将 layernorm 层权重精度提高至 fp32。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| upcast_layernorm | bool | 是否将 layernorm 层权重精度提高至 fp32。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "upcast_layernorm",
+    "split": ""
+  },
+  {
+    "question": "`upcast_lmhead_output` 这个参数是做什么的？默认值多少？",
+    "answer": "是否将 lm_head 输出精度提高至 fp32。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| upcast_lmhead_output | bool | 是否将 lm_head 输出精度提高至 fp32。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "upcast_lmhead_output",
+    "split": ""
+  },
+  {
+    "question": "`use_adam_mini` 应该怎么设？默认是多少？",
+    "answer": "是否使用 Adam-mini 优化器。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| use_adam_mini | bool | 是否使用 Adam-mini 优化器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_adam_mini",
+    "split": ""
+  },
+  {
+    "question": "`use_apollo` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用 APOLLO 优化器。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶",
+    "evidence": "| use_apollo | bool | 是否使用 APOLLO 优化器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_apollo",
+    "split": ""
+  },
+  {
+    "question": "`use_badam` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用 BAdam 优化器。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶",
+    "evidence": "| use_badam | bool | 是否使用 BAdam 优化器。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_badam",
+    "split": ""
+  },
+  {
+    "question": "`use_cache` 应该怎么设？默认是多少？",
+    "answer": "是否在生成时使用 KV 缓存。默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| use_cache | bool | 是否在生成时使用 KV 缓存。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_cache",
+    "split": ""
+  },
+  {
+    "question": "`use_dora` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用权重分解 LoRA（Weight-Decomposed LoRA）。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| use_dora | bool | 是否使用权重分解 LoRA（Weight-Decomposed LoRA）。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_dora",
+    "split": ""
+  },
+  {
+    "question": "`use_fast_tokenizer` 默认值是多少？",
+    "answer": "默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| use_fast_tokenizer | bool | 是否使用 fast_tokenizer 。 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_fast_tokenizer",
+    "split": ""
+  },
+  {
+    "question": "`use_galore` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > GaLore¶",
+    "evidence": "| use_galore | bool | 是否使用 GaLore 算法。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_galore",
+    "split": ""
+  },
+  {
+    "question": "`use_llama_pro` 应该怎么设？默认是多少？",
+    "answer": "是否仅训练扩展块中的参数（LLaMA Pro 模式）。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶",
+    "evidence": "| use_llama_pro | bool | 是否仅训练扩展块中的参数（LLaMA Pro 模式）。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_llama_pro",
+    "split": ""
+  },
+  {
+    "question": "`use_reentrant_gc` 默认值是多少？",
+    "answer": "默认值为 True。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| use_reentrant_gc | bool | 是否启用可重入梯度检查点 | True |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_reentrant_gc",
+    "split": ""
+  },
+  {
+    "question": "`use_rslora` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用秩稳定 LoRA (Rank-Stabilized LoRA)。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶",
+    "evidence": "| use_rslora | bool | 是否使用秩稳定 LoRA (Rank-Stabilized LoRA)。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_rslora",
+    "split": ""
+  },
+  {
+    "question": "`use_swanlab` 应该怎么设？默认是多少？",
+    "answer": "是否使用 SwanLab。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > SwanLab 参数¶",
+    "evidence": "| use_swanlab | bool | 是否使用 SwanLab。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_swanlab",
+    "split": ""
+  },
+  {
+    "question": "`use_unsloth` 默认值是多少？",
+    "answer": "默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| use_unsloth | bool | 是否使用 unsloth 优化 LoRA 微调。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_unsloth",
+    "split": ""
+  },
+  {
+    "question": "`use_unsloth_gc` 这个参数是做什么的？默认值多少？",
+    "answer": "是否使用 unsloth 的梯度检查点。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶",
+    "evidence": "| use_unsloth_gc | bool | 是否使用 unsloth 的梯度检查点。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "use_unsloth_gc",
+    "split": ""
+  },
+  {
+    "question": "`val_size` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 0.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶",
+    "evidence": "| val_size | float | 验证集相对所使用的训练数据集的大小。取值在 [0,1) 之间。启用 streaming 时 val_size 应是整数。 | 0.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "val_size",
+    "split": ""
+  },
+  {
+    "question": "`video_fps` 这个参数是做什么的？默认值多少？",
+    "answer": "视频输入的采样帧率（每秒采样帧数）。默认值为 2.0。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| video_fps | float | 视频输入的采样帧率（每秒采样帧数）。 | 2.0 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "video_fps",
+    "split": ""
+  },
+  {
+    "question": "`video_max_pixels` 应该怎么设？默认是多少？",
+    "answer": "视频输入的最大像素数。默认值为 256 x 256。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| video_max_pixels | int | 视频输入的最大像素数。 | 256 x 256 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "video_max_pixels",
+    "split": ""
+  },
+  {
+    "question": "`video_maxlen` 应该怎么设？默认是多少？",
+    "answer": "视频输入的最大采样帧数。默认值为 128。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| video_maxlen | int | 视频输入的最大采样帧数。 | 128 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "video_maxlen",
+    "split": ""
+  },
+  {
+    "question": "`video_min_pixels` 这个参数是做什么的？默认值多少？",
+    "answer": "视频输入的最小像素数。默认值为 16 x 16。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶",
+    "evidence": "| video_min_pixels | int | 视频输入的最小像素数。 | 16 x 16 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "video_min_pixels",
+    "split": ""
+  },
+  {
+    "question": "`vllm_enforce_eager` 这个参数是做什么的？默认值多少？",
+    "answer": "是否禁用 vLLM 中的 CUDA graph。默认值为 False。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > vllm 推理¶",
+    "evidence": "| vllm_enforce_eager | bool | 是否禁用 vLLM 中的 CUDA graph。 | False |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "vllm_enforce_eager",
+    "split": ""
+  },
+  {
+    "question": "`vllm_gpu_util` 默认值是多少？",
+    "answer": "默认值为 0.9。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > vllm 推理¶",
+    "evidence": "| vllm_gpu_util | float | GPU使用比例，范围在(0, 1)之间。 | 0.9 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "vllm_gpu_util",
+    "split": ""
+  },
+  {
+    "question": "`vllm_max_lora_rank` 默认值是多少？",
+    "answer": "默认值为 32。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > vllm 推理¶",
+    "evidence": "| vllm_max_lora_rank | int | 推理所允许的最大的 LoRA Rank。 | 32 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "vllm_max_lora_rank",
+    "split": ""
+  },
+  {
+    "question": "`vllm_maxlen` 不填的话会用什么值？",
+    "answer": "不填时使用默认值 4096。",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > vllm 推理¶",
+    "evidence": "| vllm_maxlen | int | 最大序列长度（包括输入文本和生成文本）。 | 4096 |",
+    "source": "doc-synth",
+    "origin": "文档参数表反推（第13节退路）",
+    "param": "vllm_maxlen",
+    "split": ""
+  }
+]
