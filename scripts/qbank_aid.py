@@ -159,12 +159,16 @@ def do_make() -> int:
     ]
     n_flagged = sum(1 for it in items if it["flag"])
 
-    # 按「能直接用的排前面」重排：中文问句 → 中文陈述 → 英文
-    # 序号保持不变（导出时按序号回填，不能重编）
-    items.sort(key=lambda x: (x["qrank"], int(x["i"])))
+    # 机器建议：有审计标记 → 建议砍；没有 → 建议留
+    for it in items:
+        it["sugg"] = "砍" if it["flag"] else "留"
+
+    # 排序：建议留的排前面（先看好的，建立手感），标红的一律沉到最后
+    items.sort(key=lambda x: (1 if x["flag"] else 0, x["qrank"], int(x["i"])))
     from collections import Counter as _C
     dist = _C(it["qtype"] for it in items)
     print("  类型分布：" + "　".join(f"{k} {v}" for k, v in dist.most_common()))
+    print(f"  建议：留 {sum(1 for i in items if i['sugg']=='留')} 条，砍 {n_flagged} 条")
 
     tpl = (Path(__file__).resolve().parent / "qbank_aid_template.html").read_text(encoding="utf-8")
     html = tpl.replace("/*__DATA__*/[]", json.dumps(items, ensure_ascii=False))

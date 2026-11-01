@@ -48,6 +48,7 @@
   .pill.opt{background:#f5f4ef; color:#6b6a64}
   .pill.okpill{background:#e1f5ee; border-color:#5dcae5; color:#0f6e56; border-color:#5dcaa5}
   .pill.enpill{background:#fef3c7; border-color:#fcd34d; color:#92400e}
+  .pill.cutpill{background:#fee2e2; border-color:#fca5a5; color:#991b1b}
 
   textarea{
     width:100%; min-height:120px; resize:vertical; padding:12px; border-radius:8px;
@@ -107,6 +108,7 @@
   <span class="stat" id="pos">第 1 条</span>
   <span class="stat" id="flagged" style="color:#b91c1c"></span>
   <button id="export">导出 CSV</button>
+  <button id="applyAll" style="background:#2563eb;color:#fff;border-color:#2563eb">按建议一键填完</button>
   <button id="reset">清空进度</button>
 </header>
 
@@ -119,6 +121,7 @@
         <span id="seq" class="pill opt">#1</span>
         <span id="pri" class="pill must">必选</span>
         <span id="qtype" class="pill"></span>
+        <span id="sugg" class="pill"></span>
         <a id="issue" href="#" target="_blank" rel="noopener">issue</a>
         <span id="seg" style="font-size:12px"></span>
       </div>
@@ -252,6 +255,10 @@ function render(){
   qt.textContent = it.qtype || '';
   qt.className = 'pill ' + (it.qtype && it.qtype.indexOf('可直接用') >= 0 ? 'okpill'
     : it.qtype && it.qtype.indexOf('英文') >= 0 ? 'enpill' : 'opt');
+
+  const sg = $('sugg');
+  sg.textContent = '建议' + (it.sugg || '留');
+  sg.className = 'pill ' + (it.sugg === '砍' ? 'cutpill' : 'okpill');
   $('issue').textContent = 'issue #' + it.issue;
   $('issue').href = it.url;
   $('seg').textContent = it.seg;
@@ -387,6 +394,25 @@ $('export').onclick = () => {
     $('csvText').select();
     $('msg').textContent = '下载被拦截，请复制下面的内容';
   }
+};
+
+$('applyAll').onclick = () => {
+  const nCut = DATA.filter(x => x.sugg === '砍').length;
+  const ok = confirm(
+    '把所有 ' + DATA.length + ' 条按建议填好？\n\n' +
+    '· 建议留 ' + (DATA.length - nCut) + ' 条 → 填「对」\n' +
+    '· 建议砍 ' + nCut + ' 条 → 填「砍」\n\n' +
+    '填完你可以逐条改例外（有红标的都在最后，建议重点看一眼）。'
+  );
+  if (!ok) return;
+  DATA.forEach(it => {
+    const r = state[it.i] || (state[it.i] = {q: '', v: ''});
+    r.v = (it.sugg === '砍') ? '砍' : '对';
+    if (!r.q) r.q = it.qdefault || '';
+  });
+  save();
+  go(0);
+  $('msg').textContent = '已按建议填完 ' + DATA.length + ' 条';
 };
 
 $('reset').onclick = () => {
