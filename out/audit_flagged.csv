@@ -1,0 +1,28 @@
+﻿序号,问题类型,说明,草稿答案,文档原文
+3,答案超出原文·要改或砍,这些在原文找不到：stage: sft,可行，使用监督微调（`stage: sft`）进行训练。,Supervised Fine-Tuning(监督微调)是一种在预训练模型上使用小规模有标签数据集进行训练的方法。 相比于预训练一个全新的模型，对已有的预训练模型进行监督微调是更快速更节省成本的途径。
+10,答案超出原文·要改或砍,这些在原文找不到：1.10.0,请安装 torch 1.10.0 或更高版本。,如果您有更多需求，请安装对应依赖。
+14,答案超出原文·要改或砍,这些在原文找不到：max_samples,设置 cutoff_len 参数为与 max_samples 相同的值。,cutoff_len: 1024
+28,答案超出原文·要改或砍,这些在原文找不到：合并模型，参考,使用 `llamafactory-cli export merge_config.yaml` 合并模型，参考 `examples/merge_lora/qwen3_lora_sft.yaml` 配置文件。,"您可以通过 `llamafactory-cliexportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。
+`examples/merge_lora/qwen3"
+69,答案超出原文·要改或砍,这些在原文找不到：kernel_config,支持 Liger Kernel for Qwen3.5 需要配置 kernel_config 为 liger_kernel。,Liger Kernel 根据模型类型调用 `liger_kernel.transformers` 中对应的应用函数，可融合 RMSNorm、RoPE、SwiGLU、Cross Entropy 等训练路径。具体启用项由模型支持范围和 Lig
+73,答案超出原文·要改或砍,这些在原文找不到：model_type,qwen3系列的instruct版本在webui上消失是因为未在支持的Hugging Face `model_type`列表中。,未在上表中的模型（包括 VL / Omni）会在启动时报错。
+75,答案超出原文·要改或砍,这些在原文找不到：export_quantization_bit,使用 export_quantization_bit 参数进行量化导出，默认值为 None。,量化导出模型时使用的位数。 | None
+86,答案超出原文·要改或砍,这些在原文找不到：pin_memory: true,使用 `pin_memory: true` 可能导致高内存使用。,| `pin_memory` | `bool` | `true` | 是否使用 pinned memory |
+94,答案超出原文·要改或砍,这些在原文找不到：eval_dataset,使用 eval_dataset 参数设置验证集数据集名称，默认值为 None。,用于评估的数据集名称。使用逗号分隔多个数据集。 | None
+104,答案超出原文·要改或砍,这些在原文找不到：配置文件，指定,使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 配置文件，指定 `model_name_or_p,您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定
+9,原文偏短·多半可用,原文 23 字，但是完整配置项,使用 `template: qwen3_nothink` 设置 nothink,template: qwen3_nothink
+14,原文偏短·多半可用,原文 16 字，但是完整配置项,设置 cutoff_len 参数为与 max_samples 相同的值。,cutoff_len: 1024
+35,原文偏短·多半可用,原文 23 字，但是完整配置项,视频输入的最大像素数设置过小导致推理效果差。,视频输入的最大像素数。 | 256 x 256
+54,原文偏短·多半可用,原文 13 字，但是完整配置项,支持，默认微调方法为 lora。,微调方法 | lora |
+75,原文偏短·多半可用,原文 20 字，但是完整配置项,使用 export_quantization_bit 参数进行量化导出，默认值为 None。,量化导出模型时使用的位数。 | None
+80,原文偏短·多半可用,原文 23 字，但是完整配置项,支持Ministral3模型进行微调。,finetuning_type: freeze
+102,原文偏短·多半可用,原文 16 字，但是完整配置项,直接截断句子并加上eos_token,cutoff_len: 1024
+10,原文偏短·需确认,原文 17 字且不含赋值：'如果您有更多需求，请安装对应依赖。',请安装 torch 1.10.0 或更高版本。,如果您有更多需求，请安装对应依赖。
+109,原文偏短·需确认,原文 13 字且不含赋值：'注册模型的template',注册模型的template,注册模型的template
+113,原文偏短·需确认,原文 20 字且不含赋值：'配置中不设置 `peft_config`',可以自定义训练的special_tokens,配置中不设置 `peft_config`
+135,原文偏短·需确认,原文 9 字且不含赋值：'系统提示词（选填）',通过在历史记录中添加不同的系统提示词来设置不同的system prompt,系统提示词（选填）
+136,原文偏短·需确认,原文 9 字且不含赋值：'微调参数等其他参数',支持添加自定义参数，如微调参数等其他参数。,微调参数等其他参数
+53,原文无效·必砍,原文只有 4 字：'None',支持 freeze_audio_tower 功能,None
+98,答案过短,答案仅 6 字,不支持寒武纪,| TorchNPU | PyTorch 的昇腾设备兼容包。 |
+122,答案过短,答案仅 7 字,不支持流式输出,批量推理和 `vllm` 采样后端尚未接入该入口；
+127,答案过短,答案仅 3 字,不相同,`auto` 在 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。
