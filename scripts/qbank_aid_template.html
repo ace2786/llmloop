@@ -77,6 +77,9 @@
   .done{color:var(--green); font-size:13px; margin-top:8px; min-height:18px}
   .warn{background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 12px;
         border-radius:8px; font-size:13px; margin-bottom:14px}
+  .flag{background:#fef2f2; border:1px solid #fca5a5; color:#991b1b; padding:10px 12px;
+        border-radius:8px; font-size:13px; margin-bottom:14px; line-height:1.5}
+  .flag b{font-weight:600}
 </style>
 </head>
 <body>
@@ -85,6 +88,7 @@
   <div class="bar"><i id="bar"></i></div>
   <span class="stat">已完成 <b id="done">0</b> / <b id="total">0</b></span>
   <span class="stat" id="pos">第 1 条</span>
+  <span class="stat" id="flagged" style="color:#b91c1c"></span>
   <button id="export">导出 CSV</button>
   <button id="reset">清空进度</button>
 </header>
@@ -114,6 +118,7 @@
   </section>
 
   <aside>
+    <div class="flag" id="flag" style="display:none"></div>
     <div class="warn" id="warn" style="display:none"></div>
 
     <div class="card">
@@ -180,10 +185,23 @@ function render(){
     w.style.display = 'none';
   }
 
+  // 审计标记（机器预先筛出的问题，仅供参考，决定权在你）
+  const f = $('flag');
+  if (it.flag && it.flag.length) {
+    f.style.display = 'block';
+    f.innerHTML = '⚑ <b>审计标记：' + it.flag.join('、') + '</b><br>' +
+      '这条机器已经看出问题了，多半该砍——但最终由你判断。';
+  } else {
+    f.style.display = 'none';
+  }
+
   const done = Object.values(state).filter(x => x && x.v).length;
   $('done').textContent = done;
   $('total').textContent = DATA.length;
   $('bar').style.width = (done / DATA.length * 100) + '%';
+
+  const nf = DATA.filter(x => x.flag && x.flag.length).length;
+  $('flagged').textContent = nf ? '标红 ' + nf : '';
 }
 
 function go(n){

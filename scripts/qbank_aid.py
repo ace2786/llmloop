@@ -30,6 +30,26 @@ COLS = [
 ]
 
 
+def load_flags() -> dict[str, list[str]]:
+    """读审计结果，序号 → 命中的问题类型列表。没有就返回空。
+
+    只保留「需要人动手」的类别；「原文偏短·多半可用」是误报（完整配置项），
+    标红只会干扰，直接丢掉。
+    """
+    p = OUT / "audit_flagged.csv"
+    if not p.exists():
+        return {}
+    SKIP = {"原文偏短·多半可用"}
+    m: dict[str, list[str]] = {}
+    with p.open(encoding="utf-8-sig") as f:
+        for r in csv.DictReader(f):
+            kind = r["问题类型"]
+            if kind in SKIP:
+                continue
+            m.setdefault(r["序号"].strip(), []).append(kind)
+    return m
+
+
 def do_make() -> int:
     if not SRC.exists():
         print(f"找不到 {SRC}，先跑：python scripts/select_140.py", file=sys.stderr)
@@ -38,6 +58,7 @@ def do_make() -> int:
     with SRC.open(encoding="utf-8-sig") as f:
         rows = list(csv.DictReader(f))
 
+    flags = load_flags()
     items = [
         {
             "i": r["序号"],
@@ -48,16 +69,18 @@ def do_make() -> int:
             "ctx": r["所在段落上下文"],
             "seg": r["出处（文件#块号）"],
             "url": r["issue链接"],
+            "flag": flags.get(r["序号"].strip(), []),
         }
         for r in rows
     ]
+    n_flagged = sum(1 for it in items if it["flag"])
 
     tpl = (Path(__file__).resolve().parent / "qbank_aid_template.html").read_text(encoding="utf-8")
     html = tpl.replace("/*__DATA__*/[]", json.dumps(items, ensure_ascii=False))
     dst = OUT / "qbank.html"
     dst.write_text(html, encoding="utf-8")
 
-    print(f"已生成：{dst}（{len(items)} 条）")
+    print(f"已生成：{dst}（{len(items)} 条，其中 {n_flagged} 条被审计标红）")
     print()
     print("Windows 路径：")
     print("  \\\\wsl.localhost\\Ubuntu\\home\\ace\\llmloop\\out\\qbank.html")
