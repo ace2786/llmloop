@@ -152,9 +152,9 @@
     <div class="warn" id="warn" style="display:none"></div>
 
     <div class="card">
-      <div class="lab">问题（你来写）</div>
-      <textarea id="q" placeholder="把 issue 改写成一句提问。例如：lora_target 参数的作用和默认值是什么？"></textarea>
-      <div class="hint">Ctrl/⌘ + Enter 保存并下一条</div>
+      <div class="lab">问题（已按用户原提问预填，可直接改）</div>
+      <textarea id="q" placeholder="这里会自动填入用户原提问，你看着改就行"></textarea>
+      <div class="hint">改完按 1（对）/ 2（要改）/ 3（砍掉）—— 按完自动到下一题</div>
     </div>
 
     <div class="card">
@@ -273,7 +273,9 @@ function render(){
   } else {
     rb.style.display = 'none';
   }
-  $('q').value = r.q || '';
+  // 输入框：优先用你改过的；没改过就预填「用户原提问」（去掉标签前缀）
+  const saved = (r.q === undefined || r.q === null) ? '' : r.q;
+  $('q').value = saved !== '' ? saved : (it.qdefault || '');
   $('pos').textContent = '第 ' + (idx + 1) + ' 条';
 
   document.querySelectorAll('.verdict button').forEach(b => {

@@ -40,6 +40,24 @@ CJK_HEAD = re.compile(r"^(支持|使用|设置|通过|可以)")
 # 模型名/产品名：Qwen3-4B-Instruct-2507、Meta-Llama-3-8B 这种
 MODEL_NAME = re.compile(r"\b[A-Z][A-Za-z0-9]*(?:[-.][A-Za-z0-9]+){1,}")
 
+# issue 标题里的噪音前缀：[Feature] [Help] [Question] 【Help】 等
+TAG_PREFIX = re.compile(r"^\s*[\[【][^\]】]{1,14}[\]】]\s*")
+
+
+def draft_question(title: str) -> str:
+    """把 issue 标题收拾成一句能用的提问，作为输入框的预填内容。
+
+    只做机械清理，不改写语义：去掉 [Feature]/【Help】 这类标签前缀、压掉多余空格。
+    人可以在这个基础上改，也可以直接采用。
+    """
+    s = (title or "").strip()
+    for _ in range(3):
+        s2 = TAG_PREFIX.sub("", s)
+        if s2 == s:
+            break
+        s = s2
+    return re.sub(r"\s+", " ", s).strip()
+
 
 def topic_of(quote: str, answer: str) -> str:
     """猜这条原文讲的是什么（参数名/配置项/模型名）。机械提取，不编。"""
@@ -112,6 +130,7 @@ def do_make() -> int:
             "reason": reasons.get(r["issue"].strip(), "")[:200],
             "qtitle": r.get("用户原提问（标题）", ""),
             "qbody": r.get("用户原提问（正文）", ""),
+            "qdefault": draft_question(r.get("用户原提问（标题）", "")),
         }
         for r in rows
     ]
