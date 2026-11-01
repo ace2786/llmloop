@@ -59,6 +59,27 @@ def draft_question(title: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+CN = re.compile(r"[\u4e00-\u9fff]")
+ASK_WORD = re.compile(r"如何|怎么|怎样|是否|能否|可以|什么|哪个|为什么|多少|哪些|吗|呢")
+
+
+def qtype(title: str) -> tuple[str, int]:
+    """判断原提问能不能直接当题目用。返回 (类型, 排序权重)。
+
+    0 = 中文问句，直接可用
+    1 = 中文但非问句，改几个字
+    2 = 纯英文，需要翻译
+    """
+    t = (title or "").strip()
+    if not t:
+        return "无提问", 3
+    if not CN.search(t):
+        return "英文·需翻译", 2
+    if "？" in t or "?" in t or ASK_WORD.search(t):
+        return "中文问句·可直接用", 0
+    return "中文陈述·需改写", 1
+
+
 def topic_of(quote: str, answer: str) -> str:
     """猜这条原文讲的是什么（参数名/配置项/模型名）。机械提取，不编。"""
     for pat in (TABLE_CELL, YAML_KEY, BACKTICK):
@@ -131,10 +152,19 @@ def do_make() -> int:
             "qtitle": r.get("用户原提问（标题）", ""),
             "qbody": r.get("用户原提问（正文）", ""),
             "qdefault": draft_question(r.get("用户原提问（标题）", "")),
+            "qtype": qtype(r.get("用户原提问（标题）", ""))[0],
+            "qrank": qtype(r.get("用户原提问（标题）", ""))[1],
         }
         for r in rows
     ]
     n_flagged = sum(1 for it in items if it["flag"])
+
+    # 按「能直接用的排前面」重排：中文问句 → 中文陈述 → 英文
+    # 序号保持不变（导出时按序号回填，不能重编）
+    items.sort(key=lambda x: (x["qrank"], int(x["i"])))
+    from collections import Counter as _C
+    dist = _C(it["qtype"] for it in items)
+    print("  类型分布：" + "　".join(f"{k} {v}" for k, v in dist.most_common()))
 
     tpl = (Path(__file__).resolve().parent / "qbank_aid_template.html").read_text(encoding="utf-8")
     html = tpl.replace("/*__DATA__*/[]", json.dumps(items, ensure_ascii=False))

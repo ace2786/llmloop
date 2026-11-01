@@ -46,6 +46,8 @@
   .pill{border-radius:999px; padding:1px 9px; font-size:12px; border:1px solid var(--line)}
   .pill.must{background:#eef6ff; border-color:#bfdbfe; color:#1d4ed8}
   .pill.opt{background:#f5f4ef; color:#6b6a64}
+  .pill.okpill{background:#e1f5ee; border-color:#5dcae5; color:#0f6e56; border-color:#5dcaa5}
+  .pill.enpill{background:#fef3c7; border-color:#fcd34d; color:#92400e}
 
   textarea{
     width:100%; min-height:120px; resize:vertical; padding:12px; border-radius:8px;
@@ -116,6 +118,7 @@
       <div class="meta" style="margin-bottom:10px">
         <span id="seq" class="pill opt">#1</span>
         <span id="pri" class="pill must">必选</span>
+        <span id="qtype" class="pill"></span>
         <a id="issue" href="#" target="_blank" rel="noopener">issue</a>
         <span id="seg" style="font-size:12px"></span>
       </div>
@@ -242,9 +245,13 @@ function rec(i){ return state[DATA[i].i] || (state[DATA[i].i] = {q:'', v:''}); }
 function render(){
   const it = DATA[idx];
   const r = rec(idx);
-  $('seq').textContent = '#' + it.i;
+  $('seq').textContent = '第 ' + (idx + 1) + ' 条';
   $('pri').textContent = it.pri;
   $('pri').className = 'pill ' + (it.pri === '必选' ? 'must' : 'opt');
+  const qt = $('qtype');
+  qt.textContent = it.qtype || '';
+  qt.className = 'pill ' + (it.qtype && it.qtype.indexOf('可直接用') >= 0 ? 'okpill'
+    : it.qtype && it.qtype.indexOf('英文') >= 0 ? 'enpill' : 'opt');
   $('issue').textContent = 'issue #' + it.issue;
   $('issue').href = it.url;
   $('seg').textContent = it.seg;
@@ -276,7 +283,7 @@ function render(){
   // 输入框：优先用你改过的；没改过就预填「用户原提问」（去掉标签前缀）
   const saved = (r.q === undefined || r.q === null) ? '' : r.q;
   $('q').value = saved !== '' ? saved : (it.qdefault || '');
-  $('pos').textContent = '第 ' + (idx + 1) + ' 条';
+  $('pos').textContent = '共 ' + DATA.length + ' 条';
 
   document.querySelectorAll('.verdict button').forEach(b => {
     b.classList.toggle('on', b.dataset.v === r.v);
