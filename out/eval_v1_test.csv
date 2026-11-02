@@ -1,7 +1,98 @@
 ﻿id,issue,source,split,question,标准答案,模型回答,自动判分,判分依据,人工判分,耗时s
-73,4021,real-issue,test,训练参数没有说明，无从下手，能不能提供个参数说明文档,`config_file` 字段是必填的 DeepSpeed JSON 配置文件路径。,可以，更完整的参数说明见[LlamaFactory 文档](https://llamafactory.readthedocs.io/)中的[参数说明](configuration/index.md)。,错,实体命中 0/1：无,,1.6
-74,3635,real-issue,test,微调完成后使用llama_factory的vllm和qwen官方的vllm部署方式启动返回的不一样,API_PORT=8000 llamafactory-cli api examples/inference/qwen3.yaml infer_backend=vllm vllm_enforce_eager=true,文档中没有明确说明微调完成后使用llama_factory的vllm和qwen官方的vllm部署方式启动返回结果不一样的原因。文档主要介绍了LlamaFactory的推理方式和配置，以及如何使用vllm推理引擎进行批量推理，但没有涉及不同部署方式启动返回结果不一致的具体情况。,错,实体命中 0/3：无,,3.5
-75,3862,real-issue,test,请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行,支持流水线并行（PP）和张量并行（TP）等模型并行方式。,支持流水线并行（pipeline_model_parallel_size）和张量并行（tensor_model_parallel_size）等模型并行的方式。文档1中明确提到了这些并行方式。,对,中文重合 88%（14/16）,,1.6
+41,1283,real-param,test,如何使用 flash_attn2 进行加速训练？按照提示加了 --flash_attn 参数，但对比发现加不加这个参数训练速度都一样,在训练配置文件中添加参数 `flash_attn: fa2`（而不是命令行只写 --flash_attn）。,"如果您想使用 FlashAttention 进行加速训练，请在启动训练时在训练配置文件中添加以下参数：
+
+```
+flash_attn: fa2
+```
+
+如果按照提示添加了 `--flash_attn` 参数，但发现加不加这个参数训练速度都一样，可能是因为您的训练环境或配置不支持 FlashAttention 的加速效果，或者 FlashAttention 没有在您的模型中正确应用。在这种情况下，您可能需要检查以下方面：
+
+1. 确保您的训练环境支持 FlashAttention。
+2. 检查您的模型是否兼容 FlashAttention。
+3. 确认您添加的 `flash_attn: fa2` 参数是否正确无误。
+4. 查看是否有其他配置或参数可能影响了训练速度。",对,实体命中 2/2：flash_attn: fa2、flash_attn,,7.1
+42,3420,real-supplement,test,如何在 sft llama 时添加 special token？,使用 `new_special_tokens` 参数：要添加到 tokenizer 中的 special token，多个用逗号分隔，默认值为 None。,"在 sft llama 时添加 special token，您需要在训练配置文件中添加以下参数：
+
+```
+new_special_tokens: ""special_token1,special_token2""
+```
+
+这里，`special_token1` 和 `special_token2` 是您想要添加的特殊 token，多个 token 用逗号分隔。",对,实体命中 1/1：new_special_tokens,,3.0
+43,1429,real-operation,test,"请教如何编写template —— 您好，想向您请教下如何自定义template  原始Input：    原始配置：   原始样例返回内容：    改写的template：    改写后返回内容： ` 问题：“你好，你是谁？” {""role"":""assistant"",""content"":""\n我是李华，你是谁？\n\n""} `",我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。,"您好，可以通过以下方法获取 LLaMA-4 模型的 template：
+
+```python
+from transformers import AutoTokenizer, AutoProcessor
+
+tokenizer = AutoTokenizer.from_pretrained(""unsloth/Llama-4-Scout-17B-16E-Instruct"")
+messages = [
+ {""role"": ""user"", ""content"": r""{{content}}""},
+ {""role"": ""assistant"", ""content"": r""{{content}}""},
+ {""role"": ""system"", ""content"": r""{{content}}""},
+ {""role"": ""tool"", ""content"": r""{{content}}""}
+]
+
+text = tokenizer.apply_chat_template(messages, tokenize=False,add_generation_prompt=True)
+print(""========== Template =========="")
+print(text)
+```
+
+输出如下。通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.",错,实体命中 1/3：chat_template,,7.4
+44,10253,real-param,test,如何为 Qwen3.5 启用 Liger Kernel 加速？,通过 `kernel_config` 统一配置模型侧的融合算子加速（如 Liger Kernel）。`kernel_config.name` 接受加速实现名称，也可用逗号分隔多个；未设置或设为 null 时不做算子替换。,"在启动训练时，在训练配置文件中添加以下参数：
+
+```
+enable_liger_kernel: True
+```",错,实体命中 0/2：无,,1.4
+45,4600,real-operation,test,kto训练完如何预测,请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。,文档中没有明确说明KTO训练完成后如何进行预测的具体步骤。文档主要介绍了KTO的使用方法、参数设置和数据集格式等，但没有涉及预测的具体操作。,部分对,实体命中 1/2：kto,,2.9
+46,5467,real-param,test,如何自动保存checkpoint?,设置 `save_steps` 和 `save_epochs` 参数自动保存checkpoint。`save_steps` 默认为500，`save_epochs` 默认为null。,"自动保存checkpoint可以通过设置`save_strategy`参数为`steps`、`epoch`或`no`来实现。当`save_strategy`设置为`steps`时，需要指定`save_steps`参数，表示每训练多少个step保存一次checkpoint。例如，配置如下：
+
+```
+output_dir: saves/qwen3_8b_lora_sft
+save_strategy: steps
+save_steps: 200
+save_total_limit: 3
+```
+
+上述配置表示训练过程中每200个step保存一次checkpoint，并且最多保留3个最近的checkpoint。如果希望按epoch保存，可以将`save_strategy`设置为`epoch`。如果不希望在训练过程中保存checkpoint，可以将`save_strategy`设置为`no`。",部分对,实体命中 1/2：save_steps,,4.9
+47,1428,real-param,test,建议增加参数控制最大的保存 checkpoint 数量 save_total_limit,该参数已存在：save_total_limit 控制最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint，需配合 save_strategy 与 save_steps 使用。,建议增加参数控制最大的保存 checkpoint 数量 `save_total_limit`。,错,实体命中 1/3：save_total_limit,,1.4
+48,4268,real-param,test,关于 packing 参数在 sft 阶段的疑问：为什么实际 batch 里的样本数和 micro_batch_size 对不上？,因为动态策略中的 micro_batch_size 用于计算 token 预算，并不表示最终 batch 一定包含相同数量的样本。,实际 batch 里的样本数和 micro_batch_size 对不上可能是因为 packing 参数设置为 false。在文档 [文档4] 和 [文档5] 中，packing 参数都被设置为 false，这意味着样本不会通过 packing 来减少内存使用，而是以原始形式加载。因此，每个 batch 中的样本数可能不会等于 micro_batch_size，因为 packing 可以通过合并多个样本来减少每个 batch 的大小。当 packing 设置为 false 时，每个 batch 的样本数将直接等于 micro_batch_size，除非有其他因素（如数据加载或处理中的限制）导致样本数减少。,对,实体命中 1/1：micro_batch_size,,5.2
+49,1407,real-param,test,seq_length 为什么是 8192，而 cutoff_len 设置为 4096 时？,批处理策略中每个 micro-batch 的 token 预算 = cutoff_len × micro_batch_size。示例中 cutoff_len: 2048、micro_batch_size: 4，预算即为 2048 × 4 = 8192。,seq_length 设置为 8192 是因为在文档 [文档4] 中，`batching_strategy` 配置了 `dynamic_padding_free`，每个 micro-batch 的 token 预算为 `2048 × 4 = 8192`。而 cutoff_len 设置为 4096 是在文档 [文档5] 中，针对 `moss_vl` 模板的数据集配置的。这两个设置没有直接关联，seq_length 的设置是为了满足 `dynamic_padding_free` 的 token 预算要求，而 cutoff_len 的设置则是针对特定模板和数据集的长度限制。,部分对,实体命中 1/2：cutoff_len,,5.5
+50,6558,real-operation,test,【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗,LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。,文档中没有明确说明DPO训练结束后如何进行推理，也没有提到是否可以使用类似SFT训练后推理的脚本。因此，无法直接回答这个问题。,错,实体命中 0/4：无,,2.7
+51,5628,real-operation,test,"如何从checkpoints 完整复原出 optimizer,model 等的训练时的状态，使其可以从中断点继续训练",设置 `resume_from_checkpoint` 指向 checkpoint 路径（或 `auto`），即可恢复训练状态；该字段默认 None。,可以使用 `resume_from_checkpoint` 指定恢复路径，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。,部分对,实体命中 1/2：resume_from_checkpoint,,2.1
+52,5416,real-operation,test,Qwen2-VL 7B 如何用命令行进行对话？,您可以使用 `llamafactory-cli chat inference_config.yaml` 或 `llamafactory-cli webchat inference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定原始模型 model_name_or_path 和 template。,文档中没有明确说明如何使用命令行进行 Qwen2-VL 7B 的对话。文档1中提到 `chat` 入口支持 `sample_backend: hf` 的交互式单条推理，但没有具体说明如何使用命令行进行 Qwen2-VL 7B 的对话。,错,实体命中 0/3：无,,2.0
+53,5682,real-operation,test,（Instruct/Chat）模型对应的模板怎么找？,通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.,在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。,对,实体命中 1/1：chat_template,,2.6
+54,5830,real-operation,test,如何同时使用yaml文件和命令行参数？,您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：,在文档中没有明确说明如何同时使用yaml文件和命令行参数。文档主要介绍了如何通过yaml文件配置参数，以及如何通过命令行参数设置某些特定的值，但没有提供同时使用这两种方式的指导。,错,实体命中 0/3：无,,1.6
+55,8075,real-param,test,请问在 lora 微调 qwen3 moe 模型时，如何设置 lora_target？,lora_target 是应用 LoRA 方法的模块名称，使用逗号分隔多个模块，使用 all 指定所有模块，默认值为 all。,文档中没有明确说明如何设置 lora_target。,对,实体命中 1/1：lora_target,,4.4
+56,9396,real-param,test,video_maxlen 和 cutoff_len 分别是什么含义？,video_maxlen 是视频输入的最大采样帧数，默认 128；cutoff_len 是输入的最大 token 数，超过会被截断，默认 2048。,video_maxlen 是视频输入的最大采样帧数，表示视频输入时最多可以采样的帧数。而 cutoff_len 在文档中没有明确提及，无法确定其含义。,对,实体命中 2/2：video_maxlen、cutoff_len,,2.3
+57,6390,real-operation,test,"新手发问：SFT只有部分assistant的内容计算loss，该如何实现 —— ### Discussed in https://github.com/hiyouga/LLaMA-Factory/discussions/6389      Originally posted by **ReycoLi** December 19, 2024  数据集的格式如下  ""message",多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。,SFT（Supervised Fine-Tuning）会尽量使用与 Hugging Face Trainer 相同的 chat template，并为 assistant 回复注入 `{%generation%}`，以便只对回答计算 loss。具体实现方式请参考 GitHub 上的讨论：https://github.com/hiyouga/LLaMA-Factory/discussions/6389。,错,中文重合 0%（0/29）,,2.9
+58,1726,real-supplement,test,求教怎么使用本地下载的模型？,将 `model_name_or_path` 指向本地模型目录路径；若需注册自定义模型组，使用 `register_model_group(models={...})`。,将 `model_name_or_path` 设置为模型 ID 来加载对应的模型。,错,实体命中 1/3：model_name_or_path,,1.3
+59,8612,real-supplement,test,请教下在 finetuning_type 为 full 的情况下，冻结参数的设置会生效吗？,Freeze 是独立的微调方法（`finetuning_type: freeze`），直接更新指定层或模块的权重、其余参数保持冻结；文档未说明 finetuning_type 为 full 时该配置是否生效。,不会生效。在 `finetuning_type` 设置为 `full` 的情况下，表示进行全参微调，即对预训练模型的所有权重都进行更新。因此，冻结参数的设置在这种情况下不会生效。,部分对,实体命中 1/2：finetuning_type,,1.7
+60,1356,real-param,test,同时设置了 max_length 和 max_new_tokens，哪个生效？,max_new_tokens 会覆盖 max_length。两者默认值都是 1024；只设 max_length 而不设 max_new_tokens 时，会被默认的 max_new_tokens=1024 覆盖。,max_new_tokens 生效。文档中提到设置 max_new_tokens 会覆盖 max_length。,对,实体命中 2/2：max_new_tokens、max_length,,1.0
+68,5951,real-issue,test,[Help] 关于添加自定义模型训练支持,LlamaFactory 允许用户添加自定义模型支持，需要注册模型的template和解析多模态数据并构建 messages。,"关于添加自定义模型训练支持，以下是文档中明确提到的步骤和注意事项：
+
+1. **注册模型的template**：
+   - 在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。
+   - 添加助手回复模板的头部 `<|header_start|>assistant<|header_end|>` 来引导模型进行回复。
+   - 填写 `name`, `format_user`, `format_assistant`, `format_system` 与 `format_observation` 字段。
+   - `format_prefix` 字段用于指定模型的开头部分，通常可以在 `tokenizer_config.json` 中找到。
+   - `stop_words` 字段用于指定模型的停止词，可以在 `generation_config.json` 中找到 `eos_token_id`，再把对应的 token 填入。
+   - 对于多模态模型，需要在 `mm_plugin` 字段中指定多模态插件。
+
+2. **训练模型前的参数指定**：
+   - 模型名称及路径
+   - 训练阶段",部分对,中文重合 45%（13/29）,,6.4
+70,9764,real-issue,test,最新项目如何在MMLU等公开数据集上评估,使用参数task设置为mmlu_test，并指定task_dir为包含MMLU数据集的文件夹路径。,"最新项目在MMLU等公开数据集上评估的步骤如下：
+
+1. 确定评估任务的名称，可选项有 mmlu_test, ceval_validation, cmmlu_test。
+2. 设置包含评估数据集的文件夹路径（task_dir），默认值为 evaluation。
+3. 设置每个GPU使用的批量大小（batch_size），默认值为 4。
+4. 设置用于数据加载器的随机种子（seed），默认值为 42。
+5. 设置评估使用的语言（lang），可选值为 en、zh，默认值为 en。
+6. 设置 few-shot 的示例数量（n_shot），默认值为 5。
+7. 设置保存评估结果的路径（save_dir），默认值为 None。如果该路径已经存在则会抛出错误。
+8. 设置评估数据集的下载模式（download_mode），默认值为 DownloadMode.REUSE_DATASET_IF_EXISTS。如果数据集已经存在则重复使用，否则则下载。
+
+具体操作时，可以根据需要调整上述参数的值。",部分对,中文重合 57%（12/21）,,7.3
+75,3862,real-issue,test,请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行,支持流水线并行（PP）和张量并行（TP）等模型并行方式。,支持流水线并行（pipeline_model_parallel_size）和张量并行（tensor_model_parallel_size）等模型并行的方式。文档1中明确提到了这些并行方式。,对,中文重合 88%（14/16）,,2.1
 76,3595,real-issue,test,如何用自定义数据集进行性能评估,使用task_dir参数指定包含评估数据集的文件夹路径，默认值为evaluation。,"使用自定义数据集进行性能评估的步骤如下：
 
 1. 在 `dataset_info.json` 文件中添加对自定义数据集及其内容的定义。
@@ -13,120 +104,62 @@
 7. 设置 `lang` 为评估使用的语言，可选值为 en、zh，默认值为 en。
 8. 设置 `n_shot` 为 few-shot 的示例数量，默认值为 5。
 9. 设置 `save_dir` 为保存评估结果的路径，如果该路径已经存在则会抛出错误，默认值为 None。
-10. 设置 `download_mode` 为评估数据集的下载模式，",对,中文重合 77%（17/22）,,9.1
-77,9660,real-issue,test,多模态模型奖励模型以及强化学习的支持,支持使用PPO进行强化学习，需设置`stage`为`ppo`并指定奖励模型路径。,多模态模型支持包括注册模型的template和解析多模态数据并构建messages。奖励模型支持包括使用近端策略优化（PPO）和直接基于人类偏好训练语言模型（DPO）。强化学习支持包括使用PPO进行强化学习，将`stage`设置为`ppo`，并指定奖励模型的路径；以及使用DPO，将`stage`设置为`dpo`，并确保使用的数据集符合偏好数据集格式。,对,实体命中 2/2：stage、ppo,,5.0
-78,6481,real-issue,test,如何进行API批量推理，batch interface,使用 `python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo` 指令进行API批量推理。,"您可以通过部署 api 服务的形式通过 api 调用来进行批量推理。具体操作如下：
+10. 设置 `download_mode` 为评估数据集的下载模式，",对,中文重合 77%（17/22）,,6.8
+88,1315,real-issue,test,请问训练多轮会话是不是需要将一条多轮会话拆分为多条数据,不需要将一条多轮会话拆分为多条数据,是的，训练多轮会话需要将一条多轮会话拆分为多条数据。多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。,对,中文重合 94%（15/16）,,2.4
+99,5359,real-issue,test,请问可以在哪设置decoding策略呢？比如我想设置topk和topp的参数，或者是重复性惩罚？,可以在LlamaFactory的参数设置中设置decoding策略，如topk、topp和重复性惩罚。,可以在文档1中设置decoding策略。例如，可以设置top_k和top_p的参数，也可以设置repetition_penalty参数。文档1中明确介绍了这些参数及其用途和默认值。,部分对,中文重合 39%（7/18）,,1.9
+201,,doc-synth,test,`low_cpu_mem_usage` 应该怎么设？默认是多少？,是否使用节省内存的模型加载方式。默认值为 True。,`low_cpu_mem_usage` 应该设置为 `True`。默认值也是 `True`。,错,中文重合 11%（2/18）,,1.1
+202,,doc-synth,test,`mask_history` 应该怎么设？默认是多少？,是否仅使用当前对话轮次进行训练。默认值为 False。,`mask_history` 应该根据具体需求来设置。默认值是 `False`。,错,中文重合 11%（2/18）,,1.7
+203,,doc-synth,test,`max_length` 不填的话会用什么值？,不填时使用默认值 1024。,1024,错,中文重合 0%（0/7）,,0.8
+204,,doc-synth,test,`micro_batch_size` 应该怎么设？默认是多少？,基础 micro-batch 大小。默认值为 1。,`micro_batch_size` 应该根据具体需求设置，默认值是 `1`。,错,中文重合 29%（2/7）,,1.2
+205,,doc-synth,test,`mix_strategy` 可以填哪些值？默认是哪个？,"支持 concat, interleave_under, interleave_over；默认值为 concat。",文档中没有明确提到 `mix_strategy` 参数及其可填的值和默认值。因此，无法回答这个问题。,错,实体命中 0/2：无,,1.7
+206,,doc-synth,test,`model_class` 这个参数是做什么的？默认值多少？,`llm`、`cls` 或 `other`。默认值为 llm。,`model_class` 这个参数用于指定加载的模型类型。默认值为 `llm`。,错,实体命中 1/3：llm,,1.1
+207,,doc-synth,test,`model_revision` 默认值是多少？,默认值为 main。,文档中没有提到 `model_revision` 参数及其默认值。,对,中文重合 67%（2/3）,,1.1
+208,,doc-synth,test,`mp_replicate_size` 不填的话会用什么值？,不填时使用默认值 1。,`mp_replicate_size` 不填时，默认值为 `1`。,部分对,中文重合 57%（4/7）,,1.9
+209,,doc-synth,test,`n_shot` 应该怎么设？默认是多少？,few-shot 的示例数量。默认值为 5。,`n_shot` 应该根据具体任务的需求来设置。默认值是 5。,错,中文重合 25%（2/8）,,1.3
+210,,doc-synth,test,`neat_packing` 这个参数是做什么的？默认值多少？,是否启用不使用 cross-attention 的 sequences packing。默认值为 False。,文档中没有提到 `neat_packing` 这个参数。,错,中文重合 0%（0/11）,,2.8
+211,,doc-synth,test,`nesterov` 应该怎么设？默认是多少？,是否启用 Nesterov。默认值为 true。,`nesterov` 应该设置为 `true`。默认值也是 `true`。,错,中文重合 29%（2/7）,,2.2
+212,,doc-synth,test,`ns_steps` 应该怎么设？默认是多少？,Newton-Schulz 步数。默认值为 5。,`ns_steps` 应该根据具体情况进行设置。在文档2中，`ns_steps` 的默认值是 `5`。,部分对,中文重合 40%（2/5）,,1.8
+213,,doc-synth,test,`num_beams` 应该怎么设？默认是多少？,用于 beam_search 的束宽度。值为 1 表示不使用 beam_search。默认值为 1。,"`num_beams` 应该根据具体的应用场景和需求来设置。默认值是 1。
 
-1. 使用 `llamafactory-cli` 启动 api 服务，并指定相关配置，例如 `API_PORT` 和 `CUDA_VISIBLE_DEVICES`。
-2. 使用以下示例程序进行调用：
-
-```
-python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo
-```
-
-其中，`--model_name_or_path` 指定合并模型的路径，`--dataset` 指定数据集。",对,实体命中 4/4：vllm_infer、model_name_or_path、path_to_merged_model、alpaca_en_demo,,8.4
-79,5822,real-issue,test,Qwen2-VL 微调不支持同时输入video和image么,不支持同时输入video和image。,"不支持。文档5中提到，`_get_mm_inputs` 函数的返回值中，`pixel_values` 对应的形状是 `(num_patches, patch_dim)`，这表明它只处理图像输入。没有提到同时处理视频和图像的情况。因此，可以推断 Qwen2-VL 微调不支持同时输入 video 和 image。",对,中文重合 86%（6/7）,,3.7
-80,5891,real-issue,test,如何添加额外的可训练参数？,使用 `expand.sh` 将 `Meta-Llama-3-8B-Instruct` 扩展为 `llama3-8b-instruct-pro`，并设置 `use_llama_pro` 为 `true`。,在文档5中，没有明确说明如何添加额外的可训练参数。文档中提到的相关字段是用于冻结或指定哪些模块中的参数是可训练的，而不是添加额外的参数。因此，根据文档内容，无法直接回答如何添加额外的可训练参数。,错,实体命中 0/5：无,,3.6
-81,9666,real-issue,test,lora微调大模型后效果不理想怎么提高微调效果,将 `use_rslora` 设置为 `True` 并调整 `lora_rank` 提高微调效果。,使用 rsLoRA（Rank-Stabilized LoRA）通过修改缩放因子使得模型训练更加稳定。使用 rsLoRA 时，您只需要将 `use_rslora` 设置为 `True` 并设置所需的 `lora_rank`。,对,实体命中 3/3：use_rslora、True、lora_rank,,2.6
-82,9591,real-issue,test,Pure BF16配置后，lora层的梯度为什么还是fp32?,因为配置了bf16_mixed，lora层使用bf16，但梯度仍为fp32。,文档中没有明确说明Pure BF16配置后，lora层的梯度为什么还是fp32。文档主要描述了模型训练的参数设置、微调方式、LoRA方法以及相关配置，但没有涉及梯度类型的具体实现细节。因此，无法根据文档内容回答这个问题。,错,中文重合 17%（2/12）,,2.9
-83,10146,real-issue,test,qwen3-30b-a3b开dp训练模型参数保存时出错,`save_epochs` 设置为 null 时，`save_steps` 会被覆盖。,文档中没有提及关于 qwen3-30b-a3b 开 dp 训练模型参数保存时出错的具体信息。因此，无法根据文档内容回答这个问题。,错,实体命中 0/2：无,,1.5
-84,4287,real-issue,test,请问是否会在框架内集成RLOO算法，最新的online RLHF？,框架内会集成RLHF方法，用于模型行为与用户需求对齐。,文档中没有提到框架内集成RLOO算法或最新的online RLHF。,错,中文重合 15%（3/20）,,1.5
-85,1373,real-issue,test,如何resume一个LoRA training,使用 `llamafactory-cli export merge_config.yaml` 指令合并模型。,文档中没有明确提到如何resume一个LoRA training。文档主要关注FP8混合精度训练和分布式训练的配置，以及使用HuggingFace Accelerate和DeepSpeed进行训练的示例。因此，关于如何resume LoRA training的具体步骤或配置，文档中没有提供信息。,错,实体命中 0/1：无,,2.5
-86,9689,real-issue,test,How to resolve Processor was not found / 如何解决 Processor was not found,`process_messages` 根据输入图片/视频大小和数量插入占位符，以解析多模态数据。,"文档中没有明确提到如何解决 ""Processor was not found"" 的问题。文档主要介绍了如何实现 `Llama4Plugin` 类来解析多模态数据，以及如何安装 LlamaFactory 和其依赖。如果遇到 ""Processor was not found"" 的错误，可能需要检查相关依赖是否正确安装，或者查看错误信息中的具体提示，然后根据提示进行相应的解决。",错,实体命中 0/1：无,,3.6
-87,3975,real-issue,test,recover_from_checkpoint 如何修改后续语料的训练batch size?,`resume_from_checkpoint` 指定恢复路径。,文档中没有明确提到如何通过 `recover_from_checkpoint` 修改后续语料的训练batch size。文档主要讨论了TP、ZeRO、DeepSpeed、FSDP、QLoRA、rsLoRA等技术和参数配置，但没有涉及 `recover_from_checkpoint` 与batch size修改的直接关系。,错,实体命中 0/1：无,,3.0
-88,1315,real-issue,test,请问训练多轮会话是不是需要将一条多轮会话拆分为多条数据,不需要将一条多轮会话拆分为多条数据,是的，训练多轮会话需要将一条多轮会话拆分为多条数据。多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。,对,中文重合 94%（15/16）,,2.7
-89,4046,real-issue,test,求助，gradio打开是这样的界面,通过 `llamafactory-cli webui` 指令进入 WebUI。,文档中没有提及关于gradio界面的信息，因此无法回答关于gradio界面的具体问题。,错,实体命中 0/1：无,,3.8
-90,10413,real-issue,test,咨询一下如何加入special_token,在 `chat.yaml` 中设置 `peft_config.adapter_name_or_path: outputs/qwen3_lora`,文档中没有明确说明如何加入special_token。,错,实体命中 0/4：无,,1.1
-91,6116,real-issue,test,求助！训练出错/root/LLaMA-Factory/src/llamafactory/launcher.py FAILED,请检查 Dockerfile 中 VOLUME 的注释是否移除，并使用 -v 参数挂载数据卷。,根据提供的文档，无法直接确定“/root/LLaMA-Factory/src/llamafactory/launcher.py FAILED”的具体错误原因。文档中并未提供关于错误处理或诊断的信息。需要进一步查看错误日志或错误信息才能确定失败的原因。,错,中文重合 0%（0/20）,,2.4
-92,10399,real-issue,test,qwen3-4b微调glaive_toolcall_zh_demo.json 数据，如何评测微调后的模型呢，多轮的对话,使用多轮对话评测，格式如上例所示。,在文档中没有明确说明如何评测微调后的qwen3-4b模型在多轮对话中的表现。文档主要提供了指令监督微调的数据集格式、LlamaFactory的推理方式以及监督微调的配置示例，但没有提供具体的评测方法。因此，无法直接从文档中得出评测微调后模型的具体步骤。,部分对,中文重合 36%（5/14）,,3.4
-93,9823,real-issue,test,如果采用的不是constant学习率方法，那么最低学习率应该如何设置？目前好像只能设置最高学习率，最低学习率为0在大多场景好像效果并不好,最低学习率默认为0，但大多场景效果不好，建议根据具体情况进行调整。,文档中没有明确说明如果采用的不是constant学习率方法，最低学习率应该如何设置。文档主要提供了关于不同训练阶段、学习率设置、以及相关参数的描述，但没有具体提到如何设置非constant学习率方法下的最低学习率。,错,中文重合 18%（5/28）,,2.9
-94,9527,real-issue,test,OmniVinci Support | 是否支持OmniVinci的lora finetune？,支持OmniVinci的lora finetune，通过设置 `loraplus_lr_ratio` 调整学习率比例。,文档中没有明确提到OmniVinci Support或OmniVinci的lora finetune的支持情况。,错,实体命中 0/1：无,,1.7
-95,9672,real-issue,test,评估如何设置最小生成长度,最小生成长度由`max_new_tokens`参数控制，默认值为128。,文档中没有明确说明如何设置最小生成长度。文档中提到的参数都是关于生成文本的长度限制，如 `max_length` 和 `max_new_tokens`，它们分别代表文本的最大长度和生成文本的最大长度，但没有提及最小长度设置。,对,实体命中 1/1：max_new_tokens,,2.2
-96,10218,real-issue,test,Qwen3.5 vl目前支持微调吗，是只支持了Qwen3.5吗,不支持微调，只支持Qwen3.5的预训练模型。,文档中没有明确提到Qwen3.5 vl是否支持微调，也没有说明是否只支持了Qwen3.5。文档中提到的是LlamaFactory支持多种模型和训练算法，包括LLaMA、LLaVA、Mistral、Mixtral-MoE、Qwen、Yi、Gemma、Baichuan、ChatGLM、Phi等等，以及多种训练算法，但没有具体提到Qwen3.5 vl。因此，无法确定Qwen3.5 vl是否支持微调，以及是否只支持了Qwen3.5。,部分对,中文重合 50%（6/12）,,4.2
-97,9556,real-issue,test,如何使用do_predict评价基座模型,通过 `llamafactory-clitrainexamples/extras/nlg_eval/llama3_lora_predict.yaml` 获得模型的 BLEU 和 ROUGE 分数来评价模型生成质量。,文档中没有明确说明如何使用 `do_predict` 来评价基座模型。文档中主要提到了如何使用 PPO 进行强化学习，如何使用 `llamafactory-clitrainexamples/extras/nlg_eval/llama3_lora_predict.yaml` 获取模型的 BLEU 和 ROUGE 分数，以及如何合并 LoRA adapter 到基座模型。因此，无法根据文档内容回答如何使用 `do_predict` 评价基座模型。,对,实体命中 2/2：nlg_eval、llama3_lora_predict,,4.1
-98,6188,real-issue,test,为啥我用默认的qianwen 模版去训练模型的自我认知不起效果,RM入口训练回答评分模型，不适用于普通聊天模型。,文档中没有提供关于使用默认的qianwen模板训练模型自我认知不起效果的具体原因。文档主要介绍了模型评估、LoRA微调、TP技术、KTO方法以及量化技术等内容，但没有涉及模板选择与模型自我认知效果之间的关系。,错,中文重合 11%（2/18）,,2.6
-99,5359,real-issue,test,请问可以在哪设置decoding策略呢？比如我想设置topk和topp的参数，或者是重复性惩罚？,可以在LlamaFactory的参数设置中设置decoding策略，如topk、topp和重复性惩罚。,可以在文档1中设置decoding策略。例如，可以设置top_k和top_p的参数，也可以设置repetition_penalty参数。文档1中明确介绍了这些参数及其用途和默认值。,部分对,中文重合 39%（7/18）,,2.2
-100,10510,real-issue,test,v1支持ring attention,v1支持ring attention,文档中没有提到 v1 支持 ring attention 的信息。,对,中文重合 100%（1/1）,,1.6
-101,4343,real-issue,test,损失曲线中original 和 smoothed 分别是什么含义,original 指的是未平滑的损失值，smoothed 指的是经过平滑处理后的损失值。,文档中没有明确说明“original”和“smoothed”在损失曲线中的具体含义。因此，无法根据提供的文档回答这个问题。,错,中文重合 6%（1/17）,,1.4
-102,10523,real-issue,test,支持Dynamic LoRA微调？,支持Dynamic LoRA微调。,文档中没有明确提到支持Dynamic LoRA微调。,对,中文重合 67%（2/3）,,1.7
-103,10149,real-issue,test,LlamaFactory支持对qwen3-vl系列多模态模型进行增量预训练吗？有没有成功跑过增量预训练的？,支持对qwen3-vl系列多模态模型进行增量预训练。,文档中没有明确提到LlamaFactory支持对qwen3-vl系列多模态模型进行增量预训练，也没有提及是否有成功跑过增量预训练的案例。,对,中文重合 94%（15/16）,,4.3
-104,6290,real-issue,test,多模态大模型训练完成后，如何不借助webUI而是使用命令行或其他方式进行推理,将 `chat.yaml` 中的 `model` 改为对应目录，运行 `llamafactory-cli chat chat.yaml` 进行推理。,文档中没有明确说明如何不借助WebUI而是使用命令行或其他方式进行多模态大模型的推理。,错,实体命中 0/3：无,,2.4
-105,4443,real-issue,test,请问支持 early stopping 吗？,支持 early stopping 功能。,文档中没有明确提到支持 early stopping。,部分对,中文重合 33%（1/3）,,1.0
-106,6350,real-issue,test,如何在 llama factory 中使用多个不同难度数据集实现课程式训练（Curriculum Learning）,在训练 YAML 中指定 `train_dataset` 字段，通过数据集 YAML 组合多个数据集实现课程式训练。,"在 LlamaFactory 中使用多个不同难度数据集实现课程式训练（Curriculum Learning）的步骤如下：
-
-1. 准备数据集：确保你有多个不同难度的数据集，这些数据集应该按照难度顺序排列。
-
-2. 创建数据集 YAML：对于每个数据集，创建一个 YAML 文件，描述数据路径、split、converter 和采样配置。例如：
-
-```yaml
-dataset_name:
-  path: /path/to/dataset
-  split: train/val
-  converter: my_converter
-  sample: 0.1
-```
-
-3. 组合多个数据集：在训练 YAML 文件中，使用 `train_dataset` 字段指定数据来源，可以组合多个数据集。例如：
-
-```yaml
-train_dataset:
-  - dataset_name: data/v1_sft_demo.yaml
-  - dataset_name: data/v2_sft_demo.yaml
-```
-
-4. 设置训练参数：在训练 YAML 文件中，设置其他训练参数，如 `model`、`train_dataset` 等。
-
-5.",对,实体命中 1/1：train_dataset,,8.7
-107,10182,real-issue,test,Qwen3-vl的思考模式微调是否可以给出训练数据样例和最佳实践,可以给出训练数据样例和最佳实践,文档中没有提及Qwen3-vl的思考模式微调的训练数据样例和最佳实践。文档中主要介绍了不同类型数据集的格式要求、模型训练和推理的相关内容，但没有具体到Qwen3-vl的微调细节。,对,中文重合 71%（10/14）,,2.5
-108,5337,real-issue,test,"如何去打断点调试SFT, DPO流程",在SFT阶段，设置do_train为true进行训练。,文档中没有明确说明如何去打断点调试SFT和DPO流程。文档主要提供了关于数据集、模型参数、环境变量、依赖、阶段、微调和示例等方面的信息，但没有涉及调试流程的具体步骤。,错,中文重合 11%（1/9）,,1.8
-109,9657,real-issue,test,为什么不使用tokenizer的apply_chat_template方法而是自定义一套template填充逻辑,因为`custom_chat_template`可以接收 Jinja2 模板字符串，并覆盖 tokenizer 自带模板。,文档中没有明确说明为什么不使用tokenizer的apply_chat_template方法而是自定义一套template填充逻辑。文档主要介绍了如何添加自定义模型支持，包括注册模型template和解析多模态数据构建messages，以及如何获取LLaMA-4模型的template。关于自定义template填充逻辑的原因，文档中没有提供相关信息。,错,实体命中 0/1：无,,2.2
-110,5468,real-issue,test,请问支持多图Qwen2-VL-7B-Instruct微调吗？ 数据格式有示例嚒？,不支持，原文未提及多图Qwen2-VL-7B-Instruct微调及数据格式示例,文档中没有明确提到支持多图Qwen2-VL-7B-Instruct微调，也没有提供数据格式的示例。文档主要介绍了监督微调的方法、配置示例以及如何使用LLaMA-Factory进行微调。,部分对,中文重合 39%（7/18）,,2.3
-111,9821,real-issue,test,多轮对话的微调Funnction  calling 如何评估？仓库中有代码？,通过 `llamafactory-clievalexamples/train_lora/llama3_lora_eval.yaml` 评估模型效果。,文档中没有明确说明多轮对话的微调Function calling如何评估，也没有提到仓库中是否有相关代码。文档主要介绍了LlamaFactory的使用方法、WebUI界面、开源协议、数据集展开后的训练索引计算方法、数据格式以及如何使用命令进行微调等。,错,实体命中 0/2：无,,2.7
-112,9771,real-issue,test,DPO支持多模态数据训练吗(<image>)?,支持多模态数据训练,文档中没有明确提到DPO是否支持多模态数据训练。文档主要介绍了多模态图像数据集的格式要求、LlamaFactory中多模态数据的解析方法以及如何为新模型添加支持，但没有提及DPO是否支持多模态数据训练。,对,中文重合 100%（8/8）,,2.0
-113,6423,real-issue,test,奖励模型能否不是一个model，而是一个自己定义的函数,奖励模型可以是一个自己定义的函数,文档中没有明确提到奖励模型可以不是一个model，而是一个自己定义的函数。文档中主要描述了如何使用预训练的奖励模型，并通过训练和强化学习来改进语言模型。因此，根据文档内容，无法确定奖励模型是否可以是一个自定义的函数。,对,中文重合 100%（15/15）,,2.1
-114,9571,real-issue,test,希望支持 HunyuanOCR。Add support for fine-tuning HunyuanOCR.,将 `stage` 设置为 `sft` 以支持 HunyuanOCR 的微调。,如果您希望支持 HunyuanOCR，请通过邮件联系或者创建一个 PR。,错,实体命中 0/2：无,,0.9
-115,9475,real-issue,test,请问框架打算支持qwen-vl的增量预训练吗,支持qwen-vl的增量预训练,文档中没有提到框架打算支持qwen-vl的增量预训练。,对,中文重合 86%（6/7）,,1.1
-116,6458,real-issue,test,相同dpo数据，相同训练配置和训练参数，在safe-rlhf框架训练完成以后回复正常，在llama-factory训练以后模型重复输出,在llama-factory训练后，需要将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_merged`，并移除 `peft_config`，保留采样参数后运行 `llamafactory-cli chat chat.yaml`。,在safe-rlhf框架训练完成以后回复正常，在LlamaFactory训练以后模型重复输出，文档中没有明确说明原因。文档主要描述了RM入口训练回答评分模型、LlamaFactory的数据集加载与`template`、自定义模型注册chat_template、FSDP的多机多卡训练配置以及LlamaFactory平台的功能特性等，但没有提及模型重复输出的具体原因。,错,实体命中 0/6：无,,4.2
-117,5764,real-issue,test,单论多图的数据集应该如何创建？,通过 `train_dataset` 指定数据来源，支持本地数据集 YAML、本地数据文件或目录、Hugging Face Hub 数据集 ID 和 Hub 数据集仓库中的 YAML。,文档中没有明确说明如何创建单论多图的数据集。文档主要介绍了如何指定数据来源，包括本地数据集 YAML、本地数据文件或目录、Hugging Face Hub 数据集 ID 和 Hub 数据集仓库中的 YAML，但没有具体说明如何创建单论多图的数据集。,错,实体命中 0/1：无,,2.5
-118,3504,real-issue,test,"full finetune问题：每次输出都会在json字段中带""human"", 请问是系统提示词的原因啊嘛？",是系统提示词的原因。,"不是的，每次输出在json字段中带""human""并不是因为系统提示词的原因。根据文档1中的描述，""human""出现在奇数位置，表示人类指令。这是数据格式的要求，与系统提示词无关。系统提示词（如果存在）通常出现在偶数位置，由""function_call""或""gpt""触发。",对,中文重合 88%（7/8）,,2.9
-119,10377,real-issue,test,qwen3-5模型微调环境支持,支持Qwen/Qwen3-4B-Instruct-2507模型微调环境,文档中没有明确提到qwen3-5模型微调环境的具体支持情况。文档主要介绍了如何在Ascend NPU上进行基于bitsandbytes的QLoRA量化微调，以及如何使用LLaMA-Factory进行训练等操作。对于qwen3-5模型微调环境的具体支持，建议查阅相关文档或联系技术支持获取信息。,对,中文重合 86%（6/7）,,2.3
-120,9763,real-issue,test,请问可以在vl模型灌入文本训练吗？,可以在vl模型灌入文本训练,可以在vl模型灌入文本进行训练。文档1中提到，大语言模型通过学习未被标记的文本进行预训练，从而学习语言的表征。预训练数据集通常从互联网上获得，包含大量不同领域的文本信息，有助于提升模型的泛化能力。文档2中列出的参数也适用于文本数据的处理和生成。,对,中文重合 80%（8/10）,,3.1
-169,,doc-synth,test,`export_size` 不填的话会用什么值？,不填时使用默认值 5。,`export_size` 不填的话，默认值是 5。,部分对,中文重合 43%（3/7）,,1.1
-170,,doc-synth,test,`flash_attn` 可以填哪些值？默认是哪个？,"支持 auto, disabled, sdpa, fa2；默认值为 auto。",`flash_attn` 可以填的值有：`fa2`、`flash_attention_2`、`eager`、`sdpa`。默认值是 `sdpa`。,部分对,中文重合 40%（2/5）,,3.0
-171,,doc-synth,test,`freeze_multi_modal_projector` 默认值是多少？,默认值为 True。,`freeze_multi_modal_projector` 默认值是 `True`。,对,中文重合 67%（2/3）,,1.3
-172,,doc-synth,test,`freeze_trainable_layers` 不填的话会用什么值？,不填时使用默认值 2。,`freeze_trainable_layers` 不填的话，默认值为 2。,部分对,中文重合 43%（3/7）,,1.2
-173,,doc-synth,test,`freeze_trainable_modules` 应该怎么设？默认是多少？,可训练层的名称。使用 all 来指定所有模块。默认值为 all。,`freeze_trainable_modules` 应该设置为可训练层的名称。使用 `all` 来指定所有模块。默认值为 `all`。,对,中文重合 84%（16/19）,,2.1
-174,,doc-synth,test,`freeze_vision_tower` 不填的话会用什么值？,不填时使用默认值 True。,默认值是 True。,错,中文重合 29%（2/7）,,1.0
-175,,doc-synth,test,`fsdp_ignored_modules` 这个参数是做什么的？默认值多少？,外层 FSDP2 忽略的额外模块。默认值为 []。,`fsdp_ignored_modules` 这个参数用于指定外层 FSDP2 忽略的额外模块。默认值为空列表 `[]`。,对,中文重合 83%（10/12）,,2.4
-176,,doc-synth,test,`fsdp_implementation` 默认值是多少？,默认值为 native。,`fsdp_implementation` 的默认值是 `native`。,对,中文重合 67%（2/3）,,1.2
-177,,doc-synth,test,`full_determinism` 默认值是多少？,默认值为 false。,`full_determinism` 的默认值是 `false`。,对,中文重合 67%（2/3）,,1.0
-178,,doc-synth,test,`galore_layerwise` 默认值是多少？,默认值为 False。,`galore_layerwise` 的默认值是 False。,对,中文重合 67%（2/3）,,1.2
-179,,doc-synth,test,`galore_proj_type` 应该怎么设？默认是多少？,"GaLore 投影的类型，可选值有： std, reverse_std, right, left, full。默认值为 std。",`galore_proj_type` 应该设置为 `std`，默认值也是 `std`。,错,实体命中 0/1：无,,1.8
-180,,doc-synth,test,`galore_rank` 这个参数是做什么的？默认值多少？,GaLore 梯度的秩。默认值为 16。,`galore_rank` 这个参数是 GaLore 梯度的秩。默认值为 16。,对,中文重合 86%（6/7）,,1.6
-181,,doc-synth,test,`galore_scale` 这个参数是做什么的？默认值多少？,GaLore 的缩放系数。默认值为 0.25。,`galore_scale` 参数是 GaLore 的缩放系数，用于调整 GaLore 投影的大小。默认值为 0.25。,对,实体命中 1/1：0.25,,1.6
-182,,doc-synth,test,`galore_target` 不填的话会用什么值？,不填时使用默认值 all。,`galore_target` 不填的话，默认值为 `all`。,部分对,中文重合 43%（3/7）,,1.3
-183,,doc-synth,test,`galore_update_interval` 不填的话会用什么值？,不填时使用默认值 200。,`galore_update_interval` 不填的话，默认值为 200。,部分对,中文重合 43%（3/7）,,1.1
-184,,doc-synth,test,`hook_modules` 这个参数是做什么的？默认值多少？,EFSDP hook 的模块模式。默认值为 []。,`hook_modules` 这个参数用于指定 EFSDP hook 的模块模式。默认值为 `[]`。,对,中文重合 88%（7/8）,,1.9
-185,,doc-synth,test,`ignore_pad_token_for_loss` 这个参数是做什么的？默认值多少？,计算 loss 时是否忽略 pad token。默认值为 True。,文档中没有提到 `ignore_pad_token_for_loss` 这个参数。,错,中文重合 0%（0/10）,,1.3
-186,,doc-synth,test,`image_max_pixels` 应该怎么设？默认是多少？,图像输入的最大像素数。默认值为 768 x 768。,"`image_max_pixels` 应该根据具体模型的需求来设置。在文档中，`image_max_pixels` 的值分别为：
-
-- OpenMOSS-Team/MOSS-VL-Instruct-0708: 262144
-- Qwen/Qwen3-VL-4B-Instruct: 262144
-
-默认值是 262144。",错,中文重合 15%（2/13）,,2.7
-187,,doc-synth,test,`image_min_pixels` 这个参数是做什么的？默认值多少？,图像输入的最小像素数。默认值为 32 x 32。,`image_min_pixels` 这个参数是图像输入的最小像素数。默认值为 32 x 32。,对,中文重合 92%（12/13）,,1.9
-188,,doc-synth,test,`include_effective_tokens_per_second` 这个参数是做什么的？默认值多少？,是否计算有效的每秒 token 数。默认值为 False。,`include_effective_tokens_per_second` 这个参数是用来计算有效的每秒 token 数的。默认值为 False。,对,中文重合 69%（9/13）,,2.1
-189,,doc-synth,test,`include_kernels` 应该怎么设？默认是多少？,`auto` 或逗号分隔的 FLA 算子名称。默认值为 auto。,`include_kernels` 应该设置为 `auto` 或逗号分隔的 FLA 算子名称。默认值是 `auto`。,对,实体命中 1/1：auto,,1.9
-190,,doc-synth,test,`infer_backend` 可以填哪些值？默认是哪个？,"支持 huggingface, vllm；默认值为 huggingface。","`infer_backend` 可以填的值有：huggingface, vllm, sglang, ktransformers。默认是 huggingface。",错,中文重合 20%（1/5）,,1.5
-191,,doc-synth,test,`infer_dtype` 可以填哪些值？默认是哪个？,"支持 auto, float16, bfloat16, float32；默认值为 auto。",`infer_dtype` 可以填的值有 `auto`、`float16`、`float32` 和 `bfloat16`。默认值是 `auto`。,部分对,中文重合 40%（2/5）,,3.3
-192,,doc-synth,test,`kto_chosen_weight` 默认值是多少？,默认值为 1.0。,`kto_chosen_weight` 的默认值是 1.0。,对,实体命中 1/1：1.0,,1.3
-193,,doc-synth,test,`kto_rejected_weight` 默认值是多少？,默认值为 1.0。,`kto_rejected_weight` 的默认值是 1.0。,对,实体命中 1/1：1.0,,1.2
-194,,doc-synth,test,`lang` 默认值是多少？,默认值为 en。,`lang` 的默认值是 en。,对,中文重合 67%（2/3）,,0.8
-195,,doc-synth,test,`learning_rate` 这个参数是做什么的？默认值多少？,训练及优化器插件使用的学习率。默认值为 1e-4。,"`learning_rate` 这个参数用于设置学习率，学习率是优化器在每次参数更新时用于调整参数大小的系数。文档中提到学习率统一使用顶层 `learning_rate`。
-
-默认值没有在文档中明确写出。",部分对,中文重合 41%（7/17）,,2.1
-196,,doc-synth,test,`length_penalty` 默认值是多少？,默认值为 1.0。,`length_penalty` 的默认值是 1.0。,对,实体命中 1/1：1.0,,1.5
-197,,doc-synth,test,`lora_dropout` 这个参数是做什么的？默认值多少？,LoRA 微调中的 dropout 率。默认值为 0。,`lora_dropout` 这个参数是 LoRA 微调中的 dropout 率。默认值为 0。,对,中文重合 75%（6/8）,,2.1
-198,,doc-synth,test,`lora_rank` 应该怎么设？默认是多少？,LoRA 微调的本征维数 r，r 越大可训练的参数越多。默认值为 8。,`lora_rank` 应该根据具体需求设置，文档中给出的示例是 `lora_rank: 8`。默认值没有明确说明。,错,中文重合 11%（2/19）,,1.7
-199,,doc-synth,test,`lora_target` 默认值是多少？,默认值为 all。,`lora_target` 的默认值是 `all`。,对,中文重合 67%（2/3）,,1.3
-200,,doc-synth,test,`loraplus_lr_embedding` 默认值是多少？,默认值为 1e-6。,`loraplus_lr_embedding` 的默认值是 1e-6。,对,中文重合 67%（2/3）,,1.6
+如果不需要使用 beam_search，可以将 `num_beams` 设置为 1。如果需要使用 beam_search 来提高生成文本的质量，可以根据需要设置一个更大的值，例如 2 或更多。但是，增加束宽度（`num_beams`）会显著增加计算量。",对,实体命中 1/1：beam_search,,6.6
+214,,doc-synth,test,`offload_folder` 这个参数是做什么的？默认值多少？,卸载模型权重的路径。默认值为 offload。,文档中没有提到 `offload_folder` 这个参数。,错,中文重合 0%（0/12）,,1.5
+215,,doc-synth,test,`offload_params` 应该怎么设？默认是多少？,是否 offload 参数。默认值为 false。,`offload_params` 应该根据具体需求来设置，默认值是 `false`。,错,中文重合 29%（2/7）,,2.6
+216,,doc-synth,test,`overwrite_cache` 这个参数是做什么的？默认值多少？,是否覆盖缓存的训练和评估数据集。默认值为 False。,`overwrite_cache` 参数用于在加载数据集时决定是否覆盖已存在的缓存。默认值为 true。,部分对,中文重合 50%（9/18）,,2.3
+217,,doc-synth,test,`pin_memory` 默认值是多少？,默认值为 true。,`pin_memory` 默认值是 `true`。,对,中文重合 67%（2/3）,,1.4
+218,,doc-synth,test,`pissa_convert` 不填的话会用什么值？,不填时使用默认值 False。,`pissa_convert` 不填的话，默认值为 `False`。,部分对,中文重合 43%（3/7）,,1.3
+219,,doc-synth,test,`pissa_init` 不填的话会用什么值？,不填时使用默认值 False。,`pissa_init` 不填的话，默认值为 False。,部分对,中文重合 43%（3/7）,,1.1
+220,,doc-synth,test,`pissa_iter` 不填的话会用什么值？,不填时使用默认值 16。,16,错,中文重合 0%（0/7）,,1.1
+221,,doc-synth,test,`plot_loss` 不填的话会用什么值？,不填时使用默认值 False。,回答：`plot_loss` 不填的话，默认值是 `true`。,部分对,中文重合 43%（3/7）,,1.6
+222,,doc-synth,test,`ppo_buffer_size` 默认值是多少？,默认值为 1。,`ppo_buffer_size` 的默认值是 1。,对,中文重合 67%（2/3）,,1.4
+223,,doc-synth,test,`ppo_epochs` 应该怎么设？默认是多少？,PPO 训练迭代次数。默认值为 4。,`ppo_epochs` 应该根据具体训练任务和需求来设置。默认值是 4。,部分对,中文重合 33%（3/9）,,2.1
+224,,doc-synth,test,`ppo_score_norm` 不填的话会用什么值？,不填时使用默认值 False。,False,错,中文重合 0%（0/7）,,1.1
+225,,doc-synth,test,`ppo_target` 这个参数是做什么的？默认值多少？,PPO 训练中自适应 KL 控制的目标 KL 值。默认值为 6.0。,`ppo_target` 这个参数是 PPO 训练中自适应 KL 控制的目标 KL 值。默认值为 6.0。,对,实体命中 1/1：6.0,,2.3
+226,,doc-synth,test,`ppo_whiten_rewards` 不填的话会用什么值？,不填时使用默认值 False。,默认值。,错,中文重合 29%（2/7）,,1.0
+227,,doc-synth,test,`pref_beta` 这个参数是做什么的？默认值多少？,偏好损失中的 beta 参数。默认值为 0.1。,`pref_beta` 参数是 DPO beta，默认值为 `0.1`。,对,实体命中 1/1：0.1,,1.6
+228,,doc-synth,test,`pref_ftx` 不填的话会用什么值？,不填时使用默认值 0.0。,`pref_ftx` 不填的话，默认值是 `0.0`。,对,实体命中 1/1：0.0,,2.0
+229,,doc-synth,test,`pref_loss` 可以填哪些值？默认是哪个？,"支持 sigmoid, hinge, ipo, kto_pair, orpo, simpo；默认值为 sigmoid。",`pref_loss` 可以填的值有：`sigmoid`、`orpo` 或 `simpo`。默认值是 `sigmoid`。,错,实体命中 0/1：无,,2.5
+230,,doc-synth,test,`preprocessing_batch_size` 默认值是多少？,默认值为 1000。,文档中没有明确提到 `preprocessing_batch_size` 的默认值。,对,中文重合 67%（2/3）,,1.1
+231,,doc-synth,test,`print_param_status` 应该怎么设？默认是多少？,是否打印模型参数的状态。默认值为 False。,文档中没有明确提到 `print_param_status` 的设置方法和默认值。因此，无法回答这个问题。,错,中文重合 14%（2/14）,,2.1
+232,,doc-synth,test,`pure_bf16` 应该怎么设？默认是多少？,是否以纯 bf16 精度训练模型（不使用 AMP）。默认值为 False。,`pure_bf16` 应该设置为 `True`。默认值没有在文档中明确说明。,错,中文重合 12%（2/16）,,1.7
+233,,doc-synth,test,`quantization_method` 可以填哪些值？默认是哪个？,"支持 bitsandbytes, hqq, eetq；默认值为 bitsandbytes。","`quantization_method` 可以填的值有：`bitsandbytes`, `hqq`, `eetq`。默认值是 `bitsandbytes`。",部分对,中文重合 40%（2/5）,,2.7
+234,,doc-synth,test,`quantization_type` 可以填哪些值？默认是哪个？,"支持 fp4, nf4；默认值为 nf4。",`quantization_type` 可以填 `nf4` 或 `fp4`。默认值是 `nf4`。,部分对,中文重合 40%（2/5）,,2.1
+235,,doc-synth,test,`ray_num_workers` 应该怎么设？默认是多少？,Ray 训练所使用的工作进程数量。默认值为 1。,`ray_num_workers` 应该设置为 4。默认值是 1。,错,中文重合 13%（2/15）,,1.4
+236,,doc-synth,test,`repetition_penalty` 默认值是多少？,默认值为 1.0。,`repetition_penalty` 的默认值是 1.0。,对,实体命中 1/1：1.0,,2.5
+237,,doc-synth,test,`reshard_after_forward` 默认值是多少？,默认值为 true。,`reshard_after_forward` 的默认值是 `true`。,对,中文重合 67%（2/3）,,3.1
+238,,doc-synth,test,`resize_vocab` 这个参数是做什么的？默认值多少？,是否调整词表和嵌入层的大小。默认值为 False。,文档中没有提到 `resize_vocab` 这个参数。,错,中文重合 0%（0/16）,,1.0
+239,,doc-synth,test,`reward_model_type` 可以填哪些值？默认是哪个？,"支持 lora, full, api；默认值为 lora。",文档中没有明确提到 `reward_model_type` 参数及其可选值和默认值。因此，无法回答 `reward_model_type` 可以填哪些值以及默认是哪个。,部分对,中文重合 40%（2/5）,,2.2
+240,,doc-synth,test,`sample_backend` 不填的话会用什么值？,不填时使用默认值 hf。,`sample_backend` 不填的话，默认值会是 `hf`。,部分对,中文重合 43%（3/7）,,1.2
+241,,doc-synth,test,`save_ckpt_as_hf` 应该怎么设？默认是多少？,是否在中间 checkpoint 中额外保存 HF 格式模型。默认值为 false。,`save_ckpt_as_hf` 应该根据需要来设置。如果需要额外保存 HF 格式模型，可以将其设置为 `true`。默认值是 `false`。,部分对,中文重合 47%（8/17）,,2.1
+242,,doc-synth,test,`seed` 默认值是多少？,默认值为 42。,`seed` 的默认值是 42。,对,中文重合 67%（2/3）,,1.6
+243,,doc-synth,test,`shift_attn` 不填的话会用什么值？,不填时使用默认值 False。,文档中没有明确提到 `shift_attn` 参数及其默认值。因此，无法回答“`shift_attn` 不填的话会用什么值？”这个问题。,部分对,中文重合 43%（3/7）,,1.9
+244,,doc-synth,test,`simpo_gamma` 不填的话会用什么值？,不填时使用默认值 0.5。,`simpo_gamma` 不填的话，默认值是 `0.5`。,对,实体命中 1/1：0.5,,1.8
+245,,doc-synth,test,`skip_special_tokens` 默认值是多少？,默认值为 True。,文档中没有明确提到 `skip_special_tokens` 参数及其默认值。,对,中文重合 67%（2/3）,,1.1
+246,,doc-synth,test,`split_special_tokens` 这个参数是做什么的？默认值多少？,是否在分词时将 special token 分割。默认值为 False。,文档中没有提到 `split_special_tokens` 这个参数。,错,中文重合 0%（0/12）,,1.2
+247,,doc-synth,test,`streaming` 这个参数是做什么的？默认值多少？,字段已定义；当前训练路径不支持 streaming 数据集。默认值为 false。,`streaming` 这个参数用于启用数据流模式。默认值是 `false`。,错,中文重合 15%（3/20）,,1.8
+248,,doc-synth,test,`swanlab_mode` 可以填哪些值？默认是哪个？,"支持 cloud, local；默认值为 cloud。",`swanlab_mode` 可以填的值有：`“cloud”` 和 `“local”`。默认值是 `cloud`。,部分对,中文重合 40%（2/5）,,2.1
+249,,doc-synth,test,`swanlab_project` 应该怎么设？默认是多少？,SwanLab 中的项目名称。默认值为 “llamafactory”。,`swanlab_project` 应该设置为 SwanLab 中的项目名称。默认值是 “llamafactory”。,对,中文重合 78%（7/9）,,1.5
+250,,doc-synth,test,`task_dir` 不填的话会用什么值？,不填时使用默认值 evaluation。,`task_dir` 不填的话，会使用默认值 `evaluation`。,对,中文重合 71%（5/7）,,2.1
+251,,doc-synth,test,`train_from_scratch` 不填的话会用什么值？,不填时使用默认值 False。,文档中没有明确提到 `train_from_scratch` 参数及其默认值。因此，无法回答这个问题。,错,中文重合 29%（2/7）,,1.4
+252,,doc-synth,test,`train_on_prompt` 应该怎么设？默认是多少？,是否在输入 prompt 上进行训练。默认值为 False。,`train_on_prompt` 应该根据具体需求来设置。默认值是 `False`。,错,中文重合 15%（2/13）,,2.0
+253,,doc-synth,test,`trust_remote_code` 这个参数是做什么的？默认值多少？,是否信任来自 Hub 上数据集/模型的代码执行。默认值为 False。,文档中没有提到 `trust_remote_code` 这个参数。,错,中文重合 0%（0/20）,,1.4
+254,,doc-synth,test,`upcast_layernorm` 应该怎么设？默认是多少？,是否将 layernorm 层权重精度提高至 fp32。默认值为 False。,文档中没有明确提到 `upcast_layernorm` 的设置方法和默认值。,错,中文重合 14%（2/14）,,2.6
