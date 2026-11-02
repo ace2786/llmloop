@@ -204,6 +204,15 @@ def main() -> int:
         w.writerows(rows)
 
     total = len(rows)
+    empty = sum(1 for r in rows if not r["模型回答"].strip())
+    if empty > total * 0.5:
+        print()
+        print(f"!! 中止：{empty}/{total} 道题没有拿到回答。")
+        print(f"!! 这多半是模型服务没起来（Ollama 挂了，或 {a.model} 不可用），")
+        print("!! 不是模型答错。这份结果不能用来报指标。")
+        print(f"!! 结果文件仍保留以便排查：{dst}")
+        return 2
+
     acc = Counter(r["自动判分"] for r in rows)
     print()
     print(f"总耗时 {(time.time()-t0)/60:.1f} 分钟，平均 {sum(r['耗时s'] for r in rows)/max(total,1):.1f}s/题")
