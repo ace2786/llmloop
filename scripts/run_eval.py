@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
 import shutil
 import sys
@@ -39,6 +40,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "out"
 OLLAMA = "http://127.0.0.1:11434/api/generate"
+ZHIPU = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 
 THINK = re.compile(r"<think>.*?</think>", re.S)
 BACKTICK = re.compile(r"`([^`]{1,40})`")
@@ -46,16 +48,47 @@ IDENT = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b")
 NUM = re.compile(r"\b\d+(?:\.\d+)*\b")
 
 
-def load_chunks() -> tuple[list[dict], BM25Okapi]:
-    chunks = []
-    for line in (DATA / "chunks.jsonl").read_text(encoding="utf-8").splitlines():
-        if line.strip():
-            chunks.append(json.loads(line))
-    corpus = [tokenize(c["text"]) for c in chunks]
-    return chunks, BM25Okapi(corpus)
+def _load_env() -> None:
+    """读 .env 里的 key（不覆盖已有环境变量）。"""
+    p = ROOT / ".env"
+    if not p.exists():
+        return
+    for line in p.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+def ask_glm(prompt: str, model: str, num_predict: int = 220) -> tuple[str, float]:
+    """调智谱免费模型。被测助手用云端免费模型是任务书第 7 节允许的。"""
+    _load_env()
+    key = os.environ.get("ZHIPU_API_KEY", "")
+    if not key:
+        raise RuntimeError("ZHIPU_API_KEY 未设置，无法调用 " + model)
+    body = json.dumps({
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+        "max_tokens": num_predict,
+    }).encode()
+    req = urllib.request.Request(
+        ZHIPU, data=body,
+        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
+    )
+    t0 = time.time()
+    with urllib.request.urlopen(req, timeout=120) as r:
+        d = json.load(r)
+    ans = THINK.sub("", d["choices"][0]["message"]["content"]).strip()
+    return ans, time.time() - t0
 
 
 def ask(model: str, prompt: str, num_predict: int = 220) -> tuple[str, float]:
+    # glm / 云端模型走智谱接口，其余走本地 Ollama
+    if model.startswith("glm"):
+        return ask_glm(prompt, model, num_predict)
+
     body = json.dumps({
         "model": model,
         "prompt": prompt,
@@ -68,6 +101,15 @@ def ask(model: str, prompt: str, num_predict: int = 220) -> tuple[str, float]:
         d = json.load(r)
     ans = THINK.sub("", d.get("response", "")).strip()
     return ans, time.time() - t0
+
+
+def load_chunks() -> tuple[list[dict], BM25Okapi]:
+    chunks = []
+    for line in (DATA / "chunks.jsonl").read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            chunks.append(json.loads(line))
+    corpus = [tokenize(c["text"]) for c in chunks]
+    return chunks, BM25Okapi(corpus)
 
 
 def hard_entities(s: str) -> list[str]:
@@ -140,7 +182,8 @@ def main() -> int:
             got, dt = ask(a.model, prompt)
         except Exception as e:  # noqa: BLE001
             got, dt = "", 0.0
-            print(f"  [{i}/{len(qs)}] 失败：{type(e).__name__}")
+            detail = getattr(e, "reason", "") or str(e)
+            print(f"  [{i}/{len(qs)}] 失败：{type(e).__name__} {str(detail)[:120]}")
 
         tag, why = judge(q["answer"], got)
         rows.append({
@@ -153,7 +196,8 @@ def main() -> int:
             print(f"  [{i}/{len(qs)}] 累计 {(time.time()-t0)/60:.1f} 分钟")
 
     stamp = time.strftime("%m%d_%H%M")
-    dst = Path(a.out) if a.out else OUT / f"eval_{a.split}_{stamp}{'_norag' if a.no_rag else ''}.csv"
+    mtag = a.model.replace(":", "-").replace("/", "-")
+    dst = Path(a.out) if a.out else OUT / f"eval_{a.split}_{mtag}_{stamp}{'_norag' if a.no_rag else ''}.csv"
     with dst.open("w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()

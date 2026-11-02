@@ -1,0 +1,81 @@
+﻿question,source,issue,glm-4-flash,qwen3-4b-local,avg
+训练参数没有说明，无从下手，能不能提供个参数说明文档,real-issue,4021,0.0,0.0,0.0
+微调完成后使用llama_factory的vllm和qwen官方的vllm部署方式启动返回的不一样,real-issue,3635,0.0,0.0,0.0
+如何进行API批量推理，batch interface,real-issue,6481,0.0,0.0,0.0
+如何添加额外的可训练参数？,real-issue,5891,0.0,0.0,0.0
+Pure BF16配置后，lora层的梯度为什么还是fp32?,real-issue,9591,0.0,0.0,0.0
+qwen3-30b-a3b开dp训练模型参数保存时出错,real-issue,10146,0.0,0.0,0.0
+请问是否会在框架内集成RLOO算法，最新的online RLHF？,real-issue,4287,0.0,0.0,0.0
+如何resume一个LoRA training,real-issue,1373,0.0,0.0,0.0
+How to resolve Processor was not found / 如何解决 Processor was not found,real-issue,9689,0.0,0.0,0.0
+recover_from_checkpoint 如何修改后续语料的训练batch size?,real-issue,3975,0.0,0.0,0.0
+求助，gradio打开是这样的界面,real-issue,4046,0.0,0.0,0.0
+咨询一下如何加入special_token,real-issue,10413,0.0,0.0,0.0
+求助！训练出错/root/LLaMA-Factory/src/llamafactory/launcher.py FAILED,real-issue,6116,0.0,0.0,0.0
+如果采用的不是constant学习率方法，那么最低学习率应该如何设置？目前好像只能设置最高学习率，最低学习率为0在大多场景好像效果并不好,real-issue,9823,0.0,0.0,0.0
+OmniVinci Support | 是否支持OmniVinci的lora finetune？,real-issue,9527,0.0,0.0,0.0
+为啥我用默认的qianwen 模版去训练模型的自我认知不起效果,real-issue,6188,0.0,0.0,0.0
+损失曲线中original 和 smoothed 分别是什么含义,real-issue,4343,0.0,0.0,0.0
+多模态大模型训练完成后，如何不借助webUI而是使用命令行或其他方式进行推理,real-issue,6290,0.0,0.0,0.0
+"如何去打断点调试SFT, DPO流程",real-issue,5337,0.0,0.0,0.0
+多轮对话的微调Funnction  calling 如何评估？仓库中有代码？,real-issue,9821,0.0,0.0,0.0
+希望支持 HunyuanOCR。Add support for fine-tuning HunyuanOCR.,real-issue,9571,0.0,0.0,0.0
+相同dpo数据，相同训练配置和训练参数，在safe-rlhf框架训练完成以后回复正常，在llama-factory训练以后模型重复输出,real-issue,6458,0.0,0.0,0.0
+单论多图的数据集应该如何创建？,real-issue,5764,0.0,0.0,0.0
+`export_size` 不填的话会用什么值？,doc-synth,,0.0,0.0,0.0
+`galore_proj_type` 应该怎么设？默认是多少？,doc-synth,,0.0,0.0,0.0
+`ignore_pad_token_for_loss` 这个参数是做什么的？默认值多少？,doc-synth,,0.0,0.0,0.0
+`image_max_pixels` 应该怎么设？默认是多少？,doc-synth,,0.0,0.0,0.0
+`learning_rate` 这个参数是做什么的？默认值多少？,doc-synth,,0.0,0.0,0.0
+`lora_rank` 应该怎么设？默认是多少？,doc-synth,,0.0,0.0,0.0
+多模态模型奖励模型以及强化学习的支持,real-issue,9660,0.5,0.0,0.25
+qwen3-4b微调glaive_toolcall_zh_demo.json 数据，如何评测微调后的模型呢，多轮的对话,real-issue,10399,0.5,0.0,0.25
+Qwen3.5 vl目前支持微调吗，是只支持了Qwen3.5吗,real-issue,10218,0.5,0.0,0.25
+`flash_attn` 可以填哪些值？默认是哪个？,doc-synth,,0.5,0.0,0.25
+`freeze_vision_tower` 不填的话会用什么值？,doc-synth,,0.5,0.0,0.25
+`galore_target` 不填的话会用什么值？,doc-synth,,0.5,0.0,0.25
+`galore_update_interval` 不填的话会用什么值？,doc-synth,,0.5,0.0,0.25
+`infer_backend` 可以填哪些值？默认是哪个？,doc-synth,,0.5,0.0,0.25
+评估如何设置最小生成长度,real-issue,9672,1.0,0.0,0.5
+如何使用do_predict评价基座模型,real-issue,9556,0.0,1.0,0.5
+请问可以在哪设置decoding策略呢？比如我想设置topk和topp的参数，或者是重复性惩罚？,real-issue,5359,0.5,0.5,0.5
+请问支持 early stopping 吗？,real-issue,4443,0.5,0.5,0.5
+如何在 llama factory 中使用多个不同难度数据集实现课程式训练（Curriculum Learning）,real-issue,6350,1.0,0.0,0.5
+请问支持多图Qwen2-VL-7B-Instruct微调吗？ 数据格式有示例嚒？,real-issue,5468,0.5,0.5,0.5
+qwen3-5模型微调环境支持,real-issue,10377,1.0,0.0,0.5
+`freeze_multi_modal_projector` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`freeze_trainable_layers` 不填的话会用什么值？,doc-synth,,0.5,0.5,0.5
+`freeze_trainable_modules` 应该怎么设？默认是多少？,doc-synth,,1.0,0.0,0.5
+`fsdp_implementation` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`full_determinism` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`galore_layerwise` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`infer_dtype` 可以填哪些值？默认是哪个？,doc-synth,,0.5,0.5,0.5
+`lang` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`lora_target` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+`loraplus_lr_embedding` 默认值是多少？,doc-synth,,1.0,0.0,0.5
+如何用自定义数据集进行性能评估,real-issue,3595,1.0,0.5,0.75
+Qwen2-VL 微调不支持同时输入video和image么,real-issue,5822,0.5,1.0,0.75
+"full finetune问题：每次输出都会在json字段中带""human"", 请问是系统提示词的原因啊嘛？",real-issue,3504,1.0,0.5,0.75
+请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行,real-issue,3862,1.0,1.0,1.0
+lora微调大模型后效果不理想怎么提高微调效果,real-issue,9666,1.0,1.0,1.0
+请问训练多轮会话是不是需要将一条多轮会话拆分为多条数据,real-issue,1315,1.0,1.0,1.0
+v1支持ring attention,real-issue,10510,1.0,1.0,1.0
+支持Dynamic LoRA微调？,real-issue,10523,1.0,1.0,1.0
+LlamaFactory支持对qwen3-vl系列多模态模型进行增量预训练吗？有没有成功跑过增量预训练的？,real-issue,10149,1.0,1.0,1.0
+Qwen3-vl的思考模式微调是否可以给出训练数据样例和最佳实践,real-issue,10182,1.0,1.0,1.0
+为什么不使用tokenizer的apply_chat_template方法而是自定义一套template填充逻辑,real-issue,9657,1.0,1.0,1.0
+DPO支持多模态数据训练吗(<image>)?,real-issue,9771,1.0,1.0,1.0
+奖励模型能否不是一个model，而是一个自己定义的函数,real-issue,6423,1.0,1.0,1.0
+请问框架打算支持qwen-vl的增量预训练吗,real-issue,9475,1.0,1.0,1.0
+请问可以在vl模型灌入文本训练吗？,real-issue,9763,1.0,1.0,1.0
+`fsdp_ignored_modules` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`galore_rank` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`galore_scale` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`hook_modules` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`image_min_pixels` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`include_effective_tokens_per_second` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
+`include_kernels` 应该怎么设？默认是多少？,doc-synth,,1.0,1.0,1.0
+`kto_chosen_weight` 默认值是多少？,doc-synth,,1.0,1.0,1.0
+`kto_rejected_weight` 默认值是多少？,doc-synth,,1.0,1.0,1.0
+`length_penalty` 默认值是多少？,doc-synth,,1.0,1.0,1.0
+`lora_dropout` 这个参数是做什么的？默认值多少？,doc-synth,,1.0,1.0,1.0
