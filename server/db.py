@@ -35,6 +35,44 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE INDEX IF NOT EXISTS idx_apps_user ON apps(user_id);
 CREATE INDEX IF NOT EXISTS idx_questions_app_split ON questions(app_id, split);
+
+-- 评测任务：一次评测 = 一行。status 五态：pending/running/done/failed/canceled
+CREATE TABLE IF NOT EXISTS eval_runs (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_id       INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+    model        TEXT NOT NULL,
+    split        TEXT NOT NULL DEFAULT 'test',
+    topk         INTEGER NOT NULL DEFAULT 3,
+    status       TEXT NOT NULL DEFAULT 'pending',
+    total        INTEGER NOT NULL DEFAULT 0,
+    correct      INTEGER NOT NULL DEFAULT 0,
+    partial      INTEGER NOT NULL DEFAULT 0,
+    wrong        INTEGER NOT NULL DEFAULT 0,
+    strict_acc   REAL,
+    loose_acc    REAL,
+    duration_sec REAL,
+    error        TEXT,
+    created_at   TEXT NOT NULL DEFAULT (datetime('now')),
+    finished_at  TEXT
+);
+
+-- 逐题结果：一次评测 = 多行。verdict 三态：对/部分对/错
+CREATE TABLE IF NOT EXISTS eval_cases (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_id       INTEGER NOT NULL REFERENCES eval_runs(id) ON DELETE CASCADE,
+    question_id  INTEGER,
+    question     TEXT NOT NULL,
+    reference    TEXT,
+    answer       TEXT,
+    verdict      TEXT,
+    reason       TEXT,
+    source       TEXT,
+    doc_location TEXT,
+    latency_ms   INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_runs_app ON eval_runs(app_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_cases_run ON eval_cases(run_id);
 """
 
 

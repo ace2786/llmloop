@@ -33,6 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from lib.text import tokenize  # noqa: E402
+from lib.judge import hard_entities, judge  # noqa: E402,F401
 
 from rank_bm25 import BM25Okapi  # noqa: E402
 
@@ -112,36 +113,8 @@ def load_chunks() -> tuple[list[dict], BM25Okapi]:
     return chunks, BM25Okapi(corpus)
 
 
-def hard_entities(s: str) -> list[str]:
-    out = [m.strip() for m in BACKTICK.findall(s) if m.strip()]
-    out += [w for w in IDENT.findall(s) if "_" in w]
-    out += [n for n in NUM.findall(s) if "." in n]
-    seen, uniq = set(), []
-    for e in out:
-        k = e.lower()
-        if k and k not in seen:
-            seen.add(k)
-            uniq.append(e)
-    return uniq
-
-
-def judge(std: str, got: str) -> tuple[str, str]:
-    """返回 (判定, 依据)。判定只作参考，人工可改。"""
-    if not got.strip():
-        return "错", "模型没输出"
-    ents = hard_entities(std)
-    if not ents:
-        # 没有硬实体，退化成中文关键词重合
-        cn = re.sub(r"[^\u4e00-\u9fff]", "", std)
-        grams = {cn[i:i + 2] for i in range(len(cn) - 1)}
-        hit = sum(1 for g in grams if g in got)
-        ratio = hit / len(grams) if grams else 0
-        tag = "对" if ratio >= 0.6 else ("部分对" if ratio >= 0.3 else "错")
-        return tag, f"中文重合 {ratio:.0%}（{hit}/{len(grams)}）"
-    hit = [e for e in ents if e.lower() in got.lower()]
-    ratio = len(hit) / len(ents)
-    tag = "对" if ratio >= 0.999 else ("部分对" if ratio >= 0.4 else "错")
-    return tag, f"实体命中 {len(hit)}/{len(ents)}：{'、'.join(hit[:4]) or '无'}"
+# 判分逻辑已抽到 lib/judge.py，脚本和接口共用同一份。
+# 不要在这里再写一份——两套判分 = 两套结论。
 
 
 def main() -> int:
