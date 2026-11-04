@@ -215,12 +215,12 @@ cmd_serve() {
       && echo "  [ok] 后端起来了" || echo "  [!!] 后端没起来，看 /tmp/api.log"
   fi
 
-  # 3) 前端（在 Windows 侧跑，WSL 里 npm 依赖不通用）
+  # 3) 前端（在 WSL 里跑，依赖已装在 web/node_modules）
   if curl -s -m 2 http://127.0.0.1:5173 >/dev/null 2>&1; then
     echo "  [ok] 前端已在运行"
   else
-    echo "  [--] 前端需要在 Windows 侧启动："
-    echo "       cd D:\\llmloop\\web && npm run dev"
+    echo "  [--] 前端没起，另开一个终端："
+    echo "       cd ~/llmloop/web && npm run dev"
   fi
 
   echo

@@ -95,8 +95,13 @@ export function Sidebar({
           label="题库"
           active={active === 'questions'}
           onClick={() => {
-            if (lastAppId) go(`/apps/${lastAppId}/questions`)
-            else onSoon('先从「应用」里选一个应用，再进题库')
+            if (lastAppId) {
+              go(`/apps/${lastAppId}/questions`)
+            } else {
+              // 还没进过任何应用：直接送到应用列表，并说清下一步点哪里
+              go('/apps')
+              onSoon('在应用卡片上点「题库管理」进入题库')
+            }
           }}
         />
 
