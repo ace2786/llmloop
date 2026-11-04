@@ -104,7 +104,7 @@ export default function LoginPage() {
           </li>
           <li>
             <span className="dot" />
-            导入测试题，自动按 6:2:2 切成优化 / 验证 / 测试三份
+            导入测试题，自动按 3:3:4 切成优化 / 验证 / 测试三份
           </li>
           <li>
             <span className="dot" />

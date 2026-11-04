@@ -355,7 +355,7 @@ export default function QuestionsPage({ appId }: { appId: number }) {
         <div>
           <h1 className="page-title">{app ? app.name : '测试集管理'}</h1>
           <p className="page-sub">
-            导入题目后由后端按 <strong>6:2:2</strong> 洗牌切分；这里看到的每个数字都来自接口。
+            导入题目后由后端按 <strong>3:3:4</strong> 洗牌切分；这里看到的每个数字都来自接口。
           </p>
         </div>
         <div className="page-head-actions">
@@ -628,7 +628,7 @@ export default function QuestionsPage({ appId }: { appId: number }) {
               query
                 ? `没有包含「${query}」的题目，换个关键词试试。`
                 : currentTotal === 0
-                  ? '在上面粘贴题目并导入，后端会自动切分成 6:2:2。'
+                  ? '在上面粘贴题目并导入，后端会自动切分成 3:3:4。'
                   : '当前页超出范围，试试回到第一页。'
             }
             action={
