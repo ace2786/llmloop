@@ -34,6 +34,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from lib.text import tokenize  # noqa: E402
 from lib.judge import hard_entities, judge  # noqa: E402,F401
+from lib.llm import ask  # noqa: E402
 
 from rank_bm25 import BM25Okapi  # noqa: E402
 
@@ -49,59 +50,7 @@ IDENT = re.compile(r"\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b")
 NUM = re.compile(r"\b\d+(?:\.\d+)*\b")
 
 
-def _load_env() -> None:
-    """读 .env 里的 key（不覆盖已有环境变量）。"""
-    p = ROOT / ".env"
-    if not p.exists():
-        return
-    for line in p.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
-
-
-def ask_glm(prompt: str, model: str, num_predict: int = 220) -> tuple[str, float]:
-    """调智谱免费模型。被测助手用云端免费模型是任务书第 7 节允许的。"""
-    _load_env()
-    key = os.environ.get("ZHIPU_API_KEY", "")
-    if not key:
-        raise RuntimeError("ZHIPU_API_KEY 未设置，无法调用 " + model)
-    body = json.dumps({
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0,
-        "max_tokens": num_predict,
-    }).encode()
-    req = urllib.request.Request(
-        ZHIPU, data=body,
-        headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
-    )
-    t0 = time.time()
-    with urllib.request.urlopen(req, timeout=120) as r:
-        d = json.load(r)
-    ans = THINK.sub("", d["choices"][0]["message"]["content"]).strip()
-    return ans, time.time() - t0
-
-
-def ask(model: str, prompt: str, num_predict: int = 220) -> tuple[str, float]:
-    # glm / 云端模型走智谱接口，其余走本地 Ollama
-    if model.startswith("glm"):
-        return ask_glm(prompt, model, num_predict)
-
-    body = json.dumps({
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-        "options": {"num_predict": num_predict, "temperature": 0, "top_p": 0.9},
-    }).encode()
-    req = urllib.request.Request(OLLAMA, data=body, headers={"Content-Type": "application/json"})
-    t0 = time.time()
-    with urllib.request.urlopen(req, timeout=180) as r:
-        d = json.load(r)
-    ans = THINK.sub("", d.get("response", "")).strip()
-    return ans, time.time() - t0
+# 模型调用已抽到 lib/llm.py（统一调用层），脚本和接口共用同一份。
 
 
 def load_chunks() -> tuple[list[dict], BM25Okapi]:

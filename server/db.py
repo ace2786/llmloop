@@ -99,6 +99,10 @@ def init_db() -> None:
     conn = connect()
     try:
         conn.executescript(SCHEMA)
+        # 迁移：老库的 questions 表没有 source 列，补上（题目来源：real-issue / doc-synth 等）
+        cols = [r[1] for r in conn.execute("PRAGMA table_info(questions)")]
+        if "source" not in cols:
+            conn.execute("ALTER TABLE questions ADD COLUMN source TEXT")
         conn.commit()
     finally:
         conn.close()
