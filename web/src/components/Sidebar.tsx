@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { navigate, type Route } from '../router'
 
-export type NavKey = 'apps' | 'questions' | 'evals' | 'loop' | 'settings'
+export type NavKey = 'apps' | 'questions' | 'assistant' | 'evals' | 'loop' | 'settings'
 
 const ICONS: Record<NavKey, ReactNode> = {
   apps: (
@@ -18,6 +18,12 @@ const ICONS: Record<NavKey, ReactNode> = {
       <circle cx="4.5" cy="6" r="1.1" />
       <circle cx="4.5" cy="12" r="1.1" />
       <circle cx="4.5" cy="18" r="1.1" />
+    </>
+  ),
+  assistant: (
+    <>
+      <path d="M20 14.5a2.5 2.5 0 0 1-2.5 2.5H8l-4 3V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5z" />
+      <path d="M8.5 9.5h7M8.5 13h4" />
     </>
   ),
   evals: (
@@ -64,7 +70,11 @@ export function Sidebar({
   onSoon,
 }: SidebarProps) {
   const active = (
-    route.name === 'questions' ? 'questions' : route.name === 'apps' ? 'apps' : null
+    route.name === 'questions' ? 'questions'
+      : route.name === 'assistant' ? 'assistant'
+        : route.name === 'evals' || route.name === 'evalDetail' ? 'evals'
+          : route.name === 'apps' ? 'apps'
+            : null
   ) as NavKey | null
 
   const go = (path: string) => {
@@ -92,7 +102,7 @@ export function Sidebar({
 
         <NavItem
           item="questions"
-          label="题库"
+          label="测试集"
           active={active === 'questions'}
           onClick={() => {
             if (lastAppId) {
@@ -100,7 +110,21 @@ export function Sidebar({
             } else {
               // 还没进过任何应用：直接送到应用列表，并说清下一步点哪里
               go('/apps')
-              onSoon('在应用卡片上点「题库管理」进入题库')
+              onSoon('在应用卡片上点「测试集」进入题库')
+            }
+          }}
+        />
+
+        <NavItem
+          item="assistant"
+          label="助手"
+          active={active === 'assistant'}
+          onClick={() => {
+            if (lastAppId) {
+              go(`/apps/${lastAppId}/assistant`)
+            } else {
+              go('/apps')
+              onSoon('在应用卡片上点「打开助手」')
             }
           }}
         />
@@ -109,8 +133,14 @@ export function Sidebar({
           item="evals"
           label="评测"
           active={active === 'evals'}
-          tag="阶段 2"
-          onClick={() => onSoon('评测页面在阶段 2 接入')}
+          onClick={() => {
+            if (lastAppId) {
+              go(`/apps/${lastAppId}/evals`)
+            } else {
+              go('/apps')
+              onSoon('在应用卡片上点「评测」进入')
+            }
+          }}
         />
 
         <NavItem

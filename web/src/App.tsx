@@ -5,6 +5,9 @@ import { Sidebar } from './components/Sidebar'
 import LoginPage from './pages/LoginPage'
 import AppsPage from './pages/AppsPage'
 import QuestionsPage from './pages/QuestionsPage'
+import AssistantPage from './pages/AssistantPage'
+import EvalsPage from './pages/EvalsPage'
+import EvalDetailPage from './pages/EvalDetailPage'
 
 const LAST_APP_KEY = 'llmloop.lastAppId'
 
@@ -31,7 +34,10 @@ function Root() {
   const [lastAppId, setLastAppId] = useState<number | null>(readLastAppId)
 
   // useRoute 每次渲染都返回新对象，依赖里只能用稳定的字符串
-  const activeAppId = route.name === 'questions' ? route.appId : null
+  const activeAppId =
+    route.name === 'questions' || route.name === 'assistant' || route.name === 'evals'
+      ? route.appId
+      : null
   const routeKey = activeAppId ? `questions:${activeAppId}` : route.name
 
   // 已登录却停在 /login（或根路径）时，直接送进应用列表
@@ -154,6 +160,12 @@ function Root() {
         <main className="main">
           {route.name === 'questions' ? (
             <QuestionsPage key={route.appId} appId={route.appId} />
+          ) : route.name === 'assistant' ? (
+            <AssistantPage key={route.appId} appId={route.appId} />
+          ) : route.name === 'evals' ? (
+            <EvalsPage key={route.appId} appId={route.appId} />
+          ) : route.name === 'evalDetail' ? (
+            <EvalDetailPage key={route.runId} runId={route.runId} />
           ) : (
             <AppsPage />
           )}

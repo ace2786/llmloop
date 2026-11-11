@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from . import apps, auth, evals, questions
+from . import apps, auth, chat, evals, questions
 from .db import init_db
 
 
@@ -33,6 +33,7 @@ app.include_router(auth.router)
 app.include_router(apps.router)
 app.include_router(questions.router)
 app.include_router(evals.router)
+app.include_router(chat.router)
 
 
 @app.get("/health", tags=["meta"])

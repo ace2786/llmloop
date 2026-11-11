@@ -73,6 +73,21 @@ CREATE TABLE IF NOT EXISTS eval_cases (
 
 CREATE INDEX IF NOT EXISTS idx_runs_app ON eval_runs(app_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_cases_run ON eval_cases(run_id);
+
+-- 助手对话记录：被测应用的问答，带用户反馈（有用/没用/有错误）
+CREATE TABLE IF NOT EXISTS chat_messages (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_id          INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+    question        TEXT NOT NULL,
+    answer          TEXT,
+    references_json TEXT,
+    rating          TEXT,
+    comment         TEXT,
+    latency_ms      INTEGER,
+    created_at      TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_chat_app ON chat_messages(app_id, created_at DESC);
 """
 
 
