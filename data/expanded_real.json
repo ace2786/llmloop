@@ -1,0 +1,192 @@
+[
+  {
+    "issue": 3682,
+    "question": "请问推理的时候，instruction与input是按照如下方式拼接的吗？",
+    "answer": "是的，instruction与input会拼接成人类的最终输入。",
+    "source": "real-issue",
+    "doc_location": "webdocs/getting_started__data_preparation.md > 数据处理¶ > Alpaca¶ > 指令监督微调数据集¶",
+    "evidence": "```\n[\n {\n \"instruction\": \"人类指令（必填）\",\n \"input\": \"人类输入（选填）\",\n \"output\": \"模型回答（必填）\",\n \"system\": \"系统提示词（选填）\",\n \"history\": [\n [\"第一轮指令（选填）\", \"第一轮回答（选填）\"],\n [\"第二轮指令（选填）\", \"第二轮回答（选填）\"]\n ]\n }\n]\n\n```\n下面提供一个 alpaca 格式 多轮 对话的例子，对于单轮对话只需省略 `history` 列即可。\n\n```\n[\n {\n \"instruction\": \"今天的天气怎么样？\",\n \"input\": \"\",\n \"output\": \"今天的天气不错，是晴天。\",\n \"history\": [\n [\n \"今天会下雨吗？\",\n \"今天不会下雨，是个好天气。\"\n ],\n [\n \"今天适合出去玩吗？\",\n \"非常适合，空气质量",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/3682",
+    "doc_score": 65.63
+  },
+  {
+    "issue": 7372,
+    "question": "如何单机多卡微调一个模型，把模型参数分开加载到不同的GPU",
+    "answer": "使用 FSDP 引擎进行分布式训练，设置 `ShardingStrategy` 为 `FULL_SHARD` 可实现模型参数分开加载到不同 GPU。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__distributed.md > deepspeed_config.yaml > FSDP¶",
+    "evidence": "PyTorch 的全切片数据并行技术 FSDP （Fully Sharded Data Parallel）能让我们处理更多更大的模型。LlamaFactory支持使用 FSDP 引擎进行分布式训练。\nFSDP 的参数 `ShardingStrategy` 的不同取值决定了模型的划分方式：\n`FULL_SHARD`: 将模型参数、梯度和优化器状态都切分到不同的GPU上，类似ZeRO-3。\n`SHARD_GRAD_OP`: 将梯度、优化器状态切分到不同的GPU上，每个GPU仍各自保留一份完整的模型参数。类似ZeRO-2。\n`NO_SHARD`: 不切分任何参数。类似ZeRO-0。",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/7372",
+    "doc_score": 51.28
+  },
+  {
+    "issue": 6385,
+    "question": "如何把我训练的奖励模型放到ppo的工作管线里",
+    "answer": "将训练的奖励模型放到 PPO 工作管线里，需将 `stage` 设置为 `ppo`，并指定奖励模型的路径。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶",
+    "evidence": "| 参数名称 | 类型 | 介绍 | 默认值 |\n| pref_beta | float | 偏好损失中的 beta 参数。 | 0.1 |\n| pref_ftx | float | DPO 训练中的 sft loss 系数。 | 0.0 |\n| pref_loss | Literal[“sigmoid”, “hinge”, “ipo”, “kto_pair”, “orpo”, “simpo”] | DPO 训练中使用的偏好损失类型。可选值为： sigmoid, hinge, ipo, kto_pair, orpo, simpo。 | sigmoid |\n| dpo_label_smoothing | float | 标签平滑系数，取值范围为 [0,0.5]。 | 0.0 |\n| kto_chosen_weight | float | KTO 训练中 chosen 标签 loss 的权重。",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/6385",
+    "doc_score": 50.44
+  },
+  {
+    "issue": 6481,
+    "question": "如何进行API批量推理，batch interface",
+    "answer": "通过部署API服务的形式通过api调用来进行批量推理。",
+    "source": "real-issue",
+    "doc_location": "webdocs/getting_started__inference.md > 推理¶",
+    "evidence": "LlamaFactory 支持多种推理方式。\n您可以使用 `llamafactory-clichatinference_config.yaml` 或 `llamafactory-cliwebchatinference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定原始模型 `model_name_or_path` 和 `template` ，并根据是否是微调模型指定 `adapter_name_or_path` 和 `finetuning_type`。\n如果您希望向模型输入大量数据集并保存推理结果，您可以启动 vllm 推理引擎对大量数据集进行快速的批量推理。您也可以通过 部署 api 服务的形式通过 api 调用来进行批量推理。\n默认情况下，模型推理将使用 Huggingface 引擎。 您也可以指定 `infer_backend:vllm` 以使用 vllm 推理",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/6481",
+    "doc_score": 43.15
+  },
+  {
+    "issue": 1990,
+    "question": "Help：训练中断后，可以加载最近的checkpoint，再接着训练吗？",
+    "answer": "可以，训练中断后可加载最近的 checkpoint 继续训练。",
+    "source": "real-issue",
+    "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶",
+    "evidence": "如果训练过程中中断，或希望从已有 checkpoint 继续训练，可以使用 `resume_from_checkpoint` 指定恢复路径。\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nresume_from_checkpoint: saves/qwen3_8b_lora_sft/checkpoint-1000\n\n```\n通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。\n备注\n如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/1990",
+    "doc_score": 41.73
+  },
+  {
+    "issue": 3571,
+    "question": "How to specify visible gpu in full sft/lora sft?",
+    "answer": "使用 `CUDA_VISIBLE_DEVICES` 指定可见的 GPU。例如：`CUDA_VISIBLE_DEVICES=0,1`。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__distributed.md > 分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactory-cli¶",
+    "evidence": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。\n\n```\nFORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n如果 `CUDA_VISIBLE_DEVICES` 没有指定，则默认使用所有GPU。如果需要指定GPU，例如第0、1个GPU，可以使用：\n\n```\nFORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/3571",
+    "doc_score": 38.42
+  },
+  {
+    "issue": 1029,
+    "question": "sft时候 训练脚本如何设置让模型按epoch保存",
+    "answer": "将 `save_strategy` 设置为 `epoch`。",
+    "source": "real-issue",
+    "doc_location": "webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存策略¶",
+    "evidence": "LlamaFactory 的 checkpoint 保存行为主要由以下参数控制：\n`save_strategy`：控制保存策略，通常可设为 `steps`、`epoch` 或 `no`。\n`save_steps`：当 `save_strategy:steps` 时，每训练多少个 step 保存一次 checkpoint。\n`save_total_limit`：最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint。\n一个按 step 定期保存 checkpoint 的示例如下：\n\n```\noutput_dir: saves/qwen3_8b_lora_sft\nsave_strategy: steps\nsave_steps: 200\nsave_total_limit: 3\n\n```\n上述配置表示训练过程中每 200 个 step 保存一次 checkpoi",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/1029",
+    "doc_score": 37.32
+  },
+  {
+    "issue": 1429,
+    "question": "请教如何编写template",
+    "answer": "根据文档1，可以通过在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶",
+    "evidence": "我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。\n在实际应用中，我们往往会在用户输入的信息后添加助手回复模板的头部 `<|header_start|>assistant<|header_end|>` 来引导模型进行回复。\n因此我们可以看到，用户消息和工具输出的模板中都附有了助手回复的头部，而助手消息格式 `format_assitant` 也因此省略了助手回复的头部，只保留其内容部分 `{{content}}<|eot|。>`。\n我们可以根据上面的输出完成 `name`, `format_user`, `format_assistant`, `format_system` 与 `format_observation` 字段的填写。\n`format_prefi",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/1429",
+    "doc_score": 33.87
+  },
+  {
+    "issue": 5401,
+    "question": "use LLaMA Pro， 如何配置扩展参数",
+    "answer": "在扩展 LLaMA Pro 模型时，需要指定 `use_llama_pro` 为 `true`。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__extras.md > 额外选项¶ > LLaMA Pro¶",
+    "evidence": "为了解决大语言模型的遗忘问题， LLaMA Pro 通过在原有模型上增加新模块以适应新的任务，使其在多个新任务上的表现均优于原始模型。 LlamaFactory 支持 LLaMA Pro 的使用。 您可以使用运行 `expand.sh` 将 `Meta-Llama-3-8B-Instruct` 扩展为 `llama3-8b-instruct-pro`。\n对于 LLaMA Pro 模型进行训练时，您需要指定 `use_llama_pro` 为 `true`。",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/5401",
+    "doc_score": 28.95
+  },
+  {
+    "issue": 4399,
+    "question": "cli是否支持既使用yaml文件里的参数，又能在后面--附加其他传入参数",
+    "answer": "是的，可以同时使用yaml文件中的参数和附加参数。",
+    "source": "real-issue",
+    "doc_location": "webdocs/getting_started__sft.md > SFT 训练¶ > 命令行¶",
+    "evidence": "您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n也可以通过追加参数更新 yaml 文件中的参数:\n\n```\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \\\n learning_rate=1e-5 \\\n logging_steps=1\n\n```\n备注\nLlamaFactory 默认使用所有可见的计算设备。根据需求可通过 `CUDA_VISIBLE_DEVICES` 或 `ASCEND_RT_VISIBLE_DEVICES` 指定计算设备。\n`examples/train_lora/qwen",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/4399",
+    "doc_score": 24.96
+  },
+  {
+    "issue": 4601,
+    "question": "怎样使用accelerate库进行微调呢？",
+    "answer": "使用 `accelerate` 指令生成配置文件，然后启动 DeepSpeed 引擎进行微调。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__distributed.md > accelerate_multiNode_config.yaml > DeepSpeed¶ > 多机多卡¶ > accelerate¶",
+    "evidence": "您还可以使用 `accelerate` 指令启动 DeepSpeed 引擎。 首先通过以下命令生成 DeepSpeed 配置文件：\n\n```\naccelerate config\n\n```\n下面提供一个配置文件示例：\n\n```",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/4601",
+    "doc_score": 22.12
+  },
+  {
+    "issue": 4381,
+    "question": "如何设置单机多卡训练\n### Reminder\n\n- [X] I have read the README and searched the existing issues.\n\n### System Info\n\nllama-factory v0.8.2\n\n### Reproduction\n\n如何设置单机多卡训练\n\n### Expected behavior\n\n_No response_\n\n### Others\n\n_No response_",
+    "answer": "使用 `accelerate config` 生成配置文件，或通过 `llamafactory-cli` 指定 DeepSpeed 配置文件进行单机多卡训练。",
+    "source": "real-issue",
+    "doc_location": "webdocs/index.md > Welcome to LlamaFactory!¶ > Documentation¶",
+    "evidence": "开始使用\n安装\n数据处理\nWebUI\nSFT 训练\n模型保存、LoRA 合并与量化\n推理\n评估\n常见问题\n高级选项\n加速\nFlashAttention\nUnsloth\nLiger Kernel\n调优算法\nFull Parameter Fine-tuning\nFreeze\nLoRA\nLoRA+\nrsLoRA\nDoRA\nPiSSA\nGalore\nBAdam\n分布训练\nNativeDDP\n单机多卡\n多机多卡\nDeepSpeed\n单机多卡\n多机多卡\nDeepSpeed 配置文件\nFSDP\n单机多卡\n多机多卡\nFSDP2\nRay\n单机多卡\n多机多卡\nMegatron Bridge\n当前范围\n安装\n快速开始\n并行与批大小\n配置字段\n并行\n重计算与融合\n优化器与精度\n数据与 checkpoint\n数据流\nCheckpoint\nLoRA\n与 MCA 的区别\n限制与排障\n量化\nPTQ\nGPTQ\nQAT\nAW",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/4381",
+    "doc_score": 21.39
+  },
+  {
+    "issue": 3473,
+    "question": "How to select Badam optimizer in the web interface?",
+    "answer": "在 Web UI 中提交同一份 YAML 时，需在启动环境中设置 `USE_MEGATRON_BRIDGE=1` 以启用 BAdam 优化器。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__megatron_bridge.md > extra_config: /path/to/overrides.json > 限制与排障¶",
+    "evidence": "不要同时设置 `USE_MEGATRON_BRIDGE` 和 `USE_MCA`。\n不要搭配 DeepSpeed、量化模型或 Hugging Face Trainer callback。\n部分 GPU（例如 V100）保存 distributed optimizer 时，异步 D2H copy 可能失败；LlamaFactory 会改用同步拷贝。\npip 安装的 `megatron-core` 若已带 `helpers_cpp`，会跳过源码树里的 `make` 编译。\nWeb UI 可以提交同一份 YAML，但仍需在启动环境中设置 `USE_MEGATRON_BRIDGE=1`。\n更多上游概念见 Megatron Bridge 文档。",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/3473",
+    "doc_score": 19.13
+  },
+  {
+    "issue": 7172,
+    "question": "sft只保存模型权重不保存优化器参数怎么设置",
+    "answer": "设置 `save_only_model: true` 可以只保存模型权重，不保存优化器参数。",
+    "source": "real-issue",
+    "doc_location": "docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 不同后端的保存格式",
+    "evidence": "| 训练后端 | 默认 checkpoint | `save_ckpt_as_hf: true` |\n|----------|-------------------|--------------------------|\n| FSDP2 / FSDPTurbo | 保存用于续训的分布式 checkpoint | 额外在 checkpoint 中生成 `hf_model` 目录 |\n| DeepSpeed | 保存 DeepSpeed 训练状态 | 额外在 checkpoint 中生成 `hf_model` 目录 |\n| 单设备 / DDP | 模型权重使用 HF 格式保存 | 不生成额外的 `hf_model` 目录 |\n\nFSDP2、FSDPTurbo 和 DeepSpeed 启用 `save_ckpt_as_hf` 后，仍会保留用于恢复训练的原始 checkpoint，同时额外保存 H",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/7172",
+    "doc_score": 18.23
+  },
+  {
+    "issue": 1181,
+    "question": "如何设置Lora微调的 rank",
+    "answer": "设置LoRA微调的rank参数为`r`，默认值为`8`。",
+    "source": "real-issue",
+    "doc_location": "docs/zh/configuration/model.md > 模型参数 > init_config",
+    "evidence": "`init_config` 当前只使用 `name` 选择模型初始化设备：\n\n| 字段 | 类型 | 默认值 | 说明 |\n|------|------|--------|------|\n| `name` | `str` | 必填 | 初始化插件名称 |\n\n| `name` 取值 | 初始化设备 |\n|-------------|------------|\n| `init_on_default` | 当前分布式设备 |\n| `init_on_meta` | meta device |\n| `init_on_rank0` | rank 0 使用 CPU，其余 rank 使用 meta |\n\nmeta 初始化不能与量化同时使用。",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/1181",
+    "doc_score": 18.12
+  },
+  {
+    "issue": 7548,
+    "question": "llama-factory是否支持pipeline 并行训练",
+    "answer": "是的，LlamaFactory支持pipeline并行训练。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__megatron_bridge.md > Megatron Bridge¶ > 配置字段¶ > 并行¶",
+    "evidence": "| 字段 | 默认值 | 说明 |\n| tensor_model_parallel_size | 1 | 张量并行 TP |\n| pipeline_model_parallel_size | 1 | 流水线并行 PP |\n| expert_model_parallel_size | 1 | MoE 专家并行 EP |\n| context_parallel_size | 1 | 上下文并行 CP |\n| virtual_pipeline_model_parallel_size | None | 交错流水线 VPP |\n| sequence_parallel | false | 序列并行，需 TP > 1 |\n````````````````````````",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/7548",
+    "doc_score": 16.32
+  },
+  {
+    "issue": 8593,
+    "question": "强化学习中如何接入自己训练的reward model",
+    "answer": "在强化学习中接入自己训练的 reward model，需将 `stage` 设置为 `ppo`，并指定奖励模型的路径，如 `reward_model: saves/llama3-8b/lora/reward`。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__trainers.md > 训练方法¶ > Post-training¶ > RLHF¶ > PPO¶",
+    "evidence": "在训练奖励完模型之后，我们可以开始进行模型的强化学习部分。与监督学习不同，在强化学习中我们没有标注好的数据。语言模型接受prompt作为输入，其输出作为奖励模型的输入。奖励模型评价语言模型的输出，并将评价返回给语言模型。确保两个模型都能良好运行是一个具有挑战性的任务。 一种实现方式是使用近端策略优化（PPO，Proximal Policy Optimization）。其主要思想是：我们既希望语言模型的输出能够尽可能地获得奖励模型的高评价，又不希望语言模型的变化过于“激进”。 通过这种方法，我们可以使得模型在学习趋近人类偏好的同时不过多地丢失其原有的解决问题的能力。\n在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。 下面是一个示例：\n\n```\n...\nstage: ppo\nreward_model: saves/llama3-8b/lo",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/8593",
+    "doc_score": 14.75
+  },
+  {
+    "issue": 4603,
+    "question": "你好，请问 KTO是否支持history？",
+    "answer": "是的，KTO支持history。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__trainers.md > 训练方法¶ > Post-training¶ > KTO¶",
+    "evidence": "KTO(Kahneman-Taversky Optimization) 的出现是为了解决成对的偏好数据难以获得的问题。 KTO使用了一种新的损失函数使其只需二元的标记数据， 即只需标注回答的好坏即可训练，并取得与 DPO 相似甚至更好的效果。\n在使用 KTO 时，请将 `stage` 设置为 `kto` ，设置偏好优化相关参数并使用 KTO 数据集。\n以下是一个示例：\n\n```\nmodel_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct\n...\nstage: kto\npref_beta: 0.1\n...\ndataset: kto_en_demo\n\n```",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/4603",
+    "doc_score": 14.69
+  },
+  {
+    "issue": 4154,
+    "question": "How to override the parameter in the yaml file?",
+    "answer": "可以通过追加参数更新 yaml 文件中的参数。例如：`llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml learning_rate=1e-5 logging_steps=1`。",
+    "source": "real-issue",
+    "doc_location": "webdocs/advanced__distributed.md > 分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactory-cli¶",
+    "evidence": "您可以使用 llamafactory-cli 启动 NativeDDP 引擎。\n\n```\nFORCE_TORCHRUN=1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```\n如果 `CUDA_VISIBLE_DEVICES` 没有指定，则默认使用所有GPU。如果需要指定GPU，例如第0、1个GPU，可以使用：\n\n```\nFORCE_TORCHRUN=1 CUDA_VISIBLE_DEVICES=0,1 llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n\n```",
+    "url": "https://github.com/hiyouga/LlamaFactory/issues/4154",
+    "doc_score": 14.15
+  }
+]
