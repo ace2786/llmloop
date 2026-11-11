@@ -372,11 +372,11 @@ export default function AppsPage() {
                       <span className="app-pending-label">待接入</span>
                       <button
                         type="button"
-                        className="btn btn-sm btn-disabled"
-                        disabled
-                        title="后端还没有 /apps/{id}/evaluate 接口"
+                        className="btn btn-sm"
+                        onClick={() => navigate(`/apps/${app.id}/evals`)}
+                        title="打开评测页，在最终测试集上跑一次"
                       >
-                        发起评测 <NotWired />
+                        发起评测
                       </button>
                       <button
                         type="button"
@@ -394,7 +394,7 @@ export default function AppsPage() {
           </div>
 
           <p className="page-note">
-            「发起评测」「优化循环」依赖后端 B 区接口（尚未排期），因此按钮置灰。
+            「发起评测」已接入，点开后在最终测试集上跑一次；「优化循环」尚未接入，按钮置灰。
             页面不会用任何假数据填充这些区域。
           </p>
         </>
