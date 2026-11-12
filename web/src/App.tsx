@@ -8,6 +8,7 @@ import QuestionsPage from './pages/QuestionsPage'
 import AssistantPage from './pages/AssistantPage'
 import EvalsPage from './pages/EvalsPage'
 import EvalDetailPage from './pages/EvalDetailPage'
+import LoopPage from './pages/LoopPage'
 
 const LAST_APP_KEY = 'llmloop.lastAppId'
 
@@ -35,7 +36,10 @@ function Root() {
 
   // useRoute 每次渲染都返回新对象，依赖里只能用稳定的字符串
   const activeAppId =
-    route.name === 'questions' || route.name === 'assistant' || route.name === 'evals'
+    route.name === 'questions' ||
+    route.name === 'assistant' ||
+    route.name === 'evals' ||
+    route.name === 'loop'
       ? route.appId
       : null
   const routeKey = activeAppId ? `questions:${activeAppId}` : route.name
@@ -166,6 +170,8 @@ function Root() {
             <EvalsPage key={route.appId} appId={route.appId} />
           ) : route.name === 'evalDetail' ? (
             <EvalDetailPage key={route.runId} runId={route.runId} />
+          ) : route.name === 'loop' ? (
+            <LoopPage key={route.appId} appId={route.appId} />
           ) : (
             <AppsPage />
           )}

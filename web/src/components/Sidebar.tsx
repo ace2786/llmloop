@@ -73,8 +73,9 @@ export function Sidebar({
     route.name === 'questions' ? 'questions'
       : route.name === 'assistant' ? 'assistant'
         : route.name === 'evals' || route.name === 'evalDetail' ? 'evals'
-          : route.name === 'apps' ? 'apps'
-            : null
+          : route.name === 'loop' ? 'loop'
+            : route.name === 'apps' ? 'apps'
+              : null
   ) as NavKey | null
 
   const go = (path: string) => {
@@ -146,8 +147,15 @@ export function Sidebar({
         <NavItem
           item="loop"
           label="循环"
-          disabled
-          onClick={() => onSoon('优化循环下一阶段接入')}
+          active={active === 'loop'}
+          onClick={() => {
+            if (lastAppId) {
+              go(`/apps/${lastAppId}/loop`)
+            } else {
+              go('/apps')
+              onSoon('在应用卡片上点「优化循环」进入')
+            }
+          }}
         />
 
         <NavItem

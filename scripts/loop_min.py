@@ -251,7 +251,12 @@ def main() -> int:
     ap.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
     ap.add_argument("--limit", type=int, default=0, help="每题只跑前 N 道（调试用）")
     ap.add_argument("--dry-run", action="store_true", help="只诊断+提议，不跑候选评测")
+    ap.add_argument("--base-style", default="detailed", choices=["concise", "detailed"],
+                    help="起点提示词风格。默认 detailed（第一轮优化后的当前最佳）")
     a = ap.parse_args()
+
+    # 起点跟着当前最佳走：第一轮之后最佳已经是 detailed，再跑就该从 detailed 继续往上找
+    BASE_CONFIG["prompt_style"] = a.base_style
 
     chunks = load_chunks()
     t0 = time.time()

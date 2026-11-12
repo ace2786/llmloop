@@ -10,6 +10,7 @@ export type Route =
   | { name: 'assistant'; appId: number }
   | { name: 'evals'; appId: number }
   | { name: 'evalDetail'; runId: number }
+  | { name: 'loop'; appId: number }
   | { name: 'login' }
 
 function readHash(): string {
@@ -30,6 +31,9 @@ export function parseRoute(hash: string): Route {
 
   const evalDetail = path.match(/^\/evals\/(\d+)\/?$/)
   if (evalDetail) return { name: 'evalDetail', runId: Number(evalDetail[1]) }
+
+  const loop = path.match(/^\/apps\/(\d+)\/loop\/?$/)
+  if (loop) return { name: 'loop', appId: Number(loop[1]) }
 
   if (path === '/login') return { name: 'login' }
   return { name: 'apps' }

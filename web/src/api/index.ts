@@ -172,3 +172,65 @@ export const evalApi = {
     params: { verdict?: string; source?: string; page?: number; page_size?: number } = {},
   ) => request<EvalCasePage>(`/evals/${runId}/cases`, { query: params }),
 }
+
+// ---------------------------------------------------------------- 优化循环
+
+export interface OptConfig {
+  topk: number
+  use_rerank: boolean
+  recall: number
+  prompt_style: string
+}
+
+export interface OptDiagnosis {
+  n: number
+  ok: number
+  wrong: number
+  miss: number
+  gen: number
+  hit_rate: number
+}
+
+export interface OptRunBrief {
+  run_id: number
+  status: 'running' | 'done' | 'failed'
+  base_config: OptConfig | null
+  best_config: OptConfig | null
+  base_score: number | null
+  best_score: number | null
+  best_valid: number | null
+  rounds_done: number
+  rounds_planned: number
+  stop_reason: string | null
+  created_at: string
+  finished_at: string | null
+}
+
+export type OptDecision = 'kept' | 'reverted' | 'skipped' | 'error'
+
+export interface OptRound {
+  round_no: number
+  config: OptConfig | null
+  reason: string | null
+  expect: string | null
+  diagnosis: OptDiagnosis | null
+  opt_score: number | null
+  opt_delta: number | null
+  valid_score: number | null
+  valid_delta: number | null
+  decision: OptDecision
+  decision_note: string | null
+  created_at: string
+}
+
+export interface OptRunDetail extends OptRunBrief {
+  app_id: number
+  rounds: OptRound[]
+}
+
+export const optApi = {
+  list: (appId: number, limit = 20) =>
+    request<{ items: OptRunBrief[] }>(`/apps/${appId}/opt-runs`, { query: { limit } }),
+
+  detail: (runId: number) => request<OptRunDetail>(`/opt-runs/${runId}`),
+}
