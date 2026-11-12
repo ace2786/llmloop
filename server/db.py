@@ -126,6 +126,21 @@ CREATE TABLE IF NOT EXISTS opt_rounds (
 
 CREATE INDEX IF NOT EXISTS idx_opt_runs_app ON opt_runs(app_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_opt_rounds_run ON opt_rounds(opt_run_id, round_no);
+
+-- 审计日志：谁在什么时候启动了哪个实验、改了哪道题、导入了多少题
+-- 任务书第 4 节和第 16 节明确要求，属于合规项不是加分项
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER,
+    action      TEXT NOT NULL,        -- eval.start / eval.finish / question.import / question.delete / app.create / opt.start / opt.finish
+    target_type TEXT,                 -- eval_run / opt_run / question / app
+    target_id   INTEGER,
+    detail      TEXT,                 -- JSON，放当时的参数或结果
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_logs(action, created_at DESC);
 """
 
 

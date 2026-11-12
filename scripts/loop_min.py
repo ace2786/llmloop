@@ -31,6 +31,7 @@ from rank_bm25 import BM25Okapi  # noqa: E402
 from lib.judge import judge  # noqa: E402
 from lib.llm import ask, build_prompt  # noqa: E402
 from lib.text import tokenize  # noqa: E402
+from server.audit import log_action  # noqa: E402
 from server.db import connect  # noqa: E402
 
 DATA = ROOT / "data"
@@ -275,6 +276,8 @@ def main() -> int:
     )
     opt_run_id = cur.lastrowid
     conn.commit()
+    log_action(None, "opt.start", "opt_run", opt_run_id,
+               {"app_id": a.app, "rounds": a.rounds, "model": a.model})
     print(f"\n=== 优化实验 #{opt_run_id} 开始（{a.rounds} 轮）===\n")
 
     # ① 基线
@@ -390,6 +393,9 @@ def main() -> int:
     print(f"起点：{cfg_str(BASE_CONFIG)} → 严格 {base['score']:.1%}")
     print(f"终点：{cfg_str(best_cfg)} → 严格 {best_score:.1%}")
     print(f"提升：{best_score - base['score']:+.1%}（{(best_score - base['score']) * base['n']:+.0f} 道）")
+    log_action(None, "opt.finish", "opt_run", opt_run_id,
+               {"base": round(base["score"], 4), "best": round(best_score, 4),
+                "best_config": best_cfg, "rounds": a.rounds})
     for r in conn.execute(
         "SELECT round_no, config, opt_score, valid_score, decision FROM opt_rounds "
         "WHERE opt_run_id=? ORDER BY round_no", (opt_run_id,)

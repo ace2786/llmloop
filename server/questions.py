@@ -3,6 +3,7 @@ import random
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from .audit import log_action
 from .auth import current_user
 from .db import connect, execute
 
@@ -127,6 +128,11 @@ def import_questions(app_id: int, payload: ImportPayload, user: dict = Depends(c
             )
     finally:
         conn.close()
+    log_action(
+        user["id"], "question.import", "app", app_id,
+        {"count": len(rows), "replace": payload.replace,
+         "split_source": "provided" if seed == 0 else "auto"},
+    )
     return {"imported": len(rows), "seed": seed, "splits": _counts(app_id),
             "split_source": "provided" if seed == 0 else "auto"}
 
@@ -183,4 +189,5 @@ def delete_question(app_id: int, question_id: int, user: dict = Depends(current_
     ):
         raise HTTPException(404, "question not found")
     execute("DELETE FROM questions WHERE id=?", (question_id,))
+    log_action(user["id"], "question.delete", "question", question_id, {"app_id": app_id})
     return {"deleted": question_id, "splits": _counts(app_id)}

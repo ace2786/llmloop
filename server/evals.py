@@ -19,6 +19,7 @@ from lib.judge import judge
 from lib.llm import ask, build_prompt
 from lib.text import tokenize
 
+from .audit import log_action
 from .auth import current_user
 from .db import connect, execute
 
@@ -137,6 +138,11 @@ def _run_eval(run_id: int, app_id: int, model: str, split: str, topk: int) -> No
         )
         conn.commit()
         print(f"[eval {run_id}] 完成：{correct}/{total}")
+        log_action(
+            None, "eval.finish", "eval_run", run_id,
+            {"total": total, "correct": correct,
+             "strict": round(correct / total, 4) if total else 0.0},
+        )
     except Exception as e:  # noqa: BLE001
         conn.execute(
             "UPDATE eval_runs SET status='failed', error=?, finished_at=datetime('now') WHERE id=?",
@@ -144,6 +150,7 @@ def _run_eval(run_id: int, app_id: int, model: str, split: str, topk: int) -> No
         )
         conn.commit()
         print(f"[eval {run_id}] 失败：{e}")
+        log_action(None, "eval.failed", "eval_run", run_id, {"error": str(e)[:300]})
     finally:
         conn.close()
 
@@ -165,6 +172,10 @@ def start_eval(app_id: int, body: EvalStart, user=Depends(current_user)):
     run_id = execute(
         "INSERT INTO eval_runs (app_id, model, split, topk, status) VALUES (?,?,?,?,'pending')",
         (app_id, body.model, body.split, body.topk),
+    )
+    log_action(
+        user["id"], "eval.start", "eval_run", run_id,
+        {"app_id": app_id, "model": body.model, "split": body.split, "topk": body.topk},
     )
     threading.Thread(
         target=_run_eval,
