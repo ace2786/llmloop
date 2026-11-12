@@ -88,6 +88,44 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 );
 
 CREATE INDEX IF NOT EXISTS idx_chat_app ON chat_messages(app_id, created_at DESC);
+
+-- 优化循环：一次实验（跑若干轮，每轮提一个候选改动）
+CREATE TABLE IF NOT EXISTS opt_runs (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_id        INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+    base_config   TEXT NOT NULL,              -- 起点配置 JSON
+    best_config   TEXT NOT NULL,              -- 当前最佳配置 JSON
+    base_score    REAL,                       -- 起点在优化集的严格正确率
+    best_score    REAL,                       -- 当前最佳在优化集的严格正确率
+    best_valid    REAL,                       -- 当前最佳在验证集的成绩（没验证过为 NULL）
+    rounds_planned INTEGER NOT NULL DEFAULT 1,
+    rounds_done   INTEGER NOT NULL DEFAULT 0,
+    status        TEXT NOT NULL DEFAULT 'running',  -- running/done/failed
+    stop_reason   TEXT,                       -- 预算用完/连续无提升/达标/出错
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    finished_at   TEXT
+);
+
+-- 优化循环：每一轮的候选、成绩、决策
+CREATE TABLE IF NOT EXISTS opt_rounds (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    opt_run_id   INTEGER NOT NULL REFERENCES opt_runs(id) ON DELETE CASCADE,
+    round_no     INTEGER NOT NULL,
+    config       TEXT NOT NULL,               -- 候选配置 JSON
+    reason       TEXT,                        -- 模型给的理由
+    expect       TEXT,                        -- 模型写的「预期修好哪类失败」
+    diag_json    TEXT,                        -- 本轮失败归类统计
+    opt_score    REAL,                        -- 候选在优化集的严格正确率
+    opt_delta    REAL,                        -- 相对当前最佳的差值
+    valid_score  REAL,                        -- 候选在验证集的成绩（没跑为 NULL）
+    valid_delta  REAL,
+    decision     TEXT,                        -- kept / reverted / skipped / error
+    decision_note TEXT,                       -- 为什么这么判
+    created_at   TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_opt_runs_app ON opt_runs(app_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_opt_rounds_run ON opt_rounds(opt_run_id, round_no);
 """
 
 

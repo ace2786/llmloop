@@ -122,11 +122,26 @@ def ask(model: str, prompt: str, num_predict: int = 220) -> tuple[str, float]:
     return ans, time.time() - t0
 
 
-def build_prompt(question: str, contexts: list[str]) -> str:
-    """把检索到的文档块和问题拼成提示词。脚本和接口共用，保证问法一致。"""
+def build_prompt(question: str, contexts: list[str], style: str = "concise") -> str:
+    """把检索到的文档块和问题拼成提示词。脚本和接口共用，保证问法一致。
+
+    style:
+      concise  —— 只答文档明确写的内容（默认，历史上的评测都用这个）
+      detailed —— 额外要求把相关要点列全、带上默认值和参数间的关系
+                  （2026-11-11 诊断：80% 的错题是「检索命中了但没答全」，所以加了这个模式）
+    """
     prompt = "/no_think\n"
     if contexts:
         ctx = "\n\n".join(f"[文档{i+1}] {t[:900]}" for i, t in enumerate(contexts))
-        prompt += f"根据下面的文档回答问题，只答文档里明确写的内容，不要编造。\n\n{ctx}\n\n"
+        if style == "detailed":
+            prompt += (
+                "根据下面的文档回答问题。要求：\n"
+                "1. 只答文档里明确写的内容，不要编造\n"
+                "2. 把文档里与这个问题相关的要点都列出来，不要只答一句\n"
+                "3. 如果有默认值、约束条件、和别的参数的关系，都要说\n\n"
+                f"{ctx}\n\n"
+            )
+        else:
+            prompt += f"根据下面的文档回答问题，只答文档里明确写的内容，不要编造。\n\n{ctx}\n\n"
     prompt += f"问题：{question}\n回答："
     return prompt
