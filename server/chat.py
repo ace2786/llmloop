@@ -52,7 +52,10 @@ def chat(app_id: int, body: ChatIn, user=Depends(current_user)):
 
     t0 = time.time()
     try:
-        answer, dt = ask("qwen3-4b-local", build_prompt(body.question, contexts))
+        # 2026-11-12 优化循环第一轮的结论：提示词用 detailed（要求把相关要点列全、
+        # 带上默认值和参数间关系），测试集严格正确率 37.5% → 60.0%（升级 29 / 降级 3）。
+        # 依据见 scripts/loop_min.py 与 out/rerank_v2_test.csv。
+        answer, dt = ask("qwen3-4b-local", build_prompt(body.question, contexts, "detailed"))
     except Exception as e:  # noqa: BLE001
         raise HTTPException(503, f"模型服务不可用：{type(e).__name__}") from e
 
