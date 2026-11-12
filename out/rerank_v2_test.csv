@@ -1,0 +1,320 @@
+﻿id,source,split,question,标准答案,模型回答,自动判分,判分依据,命中文档,耗时s
+1,real-param,test,为什么 DPO 训练时 ref_model 不指定为初始的 SFT 完的模型，而是用每个 batch 参数更新后的 policy model 来初始化呢？,标准 DPO 需要 reference log-prob：全参训练会建立独立的 reference model；LoRA 训练复用 policy model 的基座权重，并在计算 reference log-prob 时禁用 adapter。所以 LoRA 场景下不是独立模型，而是复用 policy model 的基座。,"根据文档内容，DPO 训练时 ref_model 不指定为初始的 SFT 完的模型，而是用每个 batch 参数更新后的 policy model 来初始化的原因如下：
+
+1. 在 DPO 训练中，ref_model 的选择与训练方式有关。根据文档1，标准 DPO 需要 reference log-prob，而 ORPO 和 SimPO 的目标计算不使用 reference log-prob。这表明在 DPO 训练中，ref_model 的选择会影响 reference log-prob 的计算方式。
+
+2. 在 DPO 训练中，ref_model 的初始化方式与 policy model 的参数更新有关。根据文档1，LoRA 训练复用 policy model 的基座权重，并在计算 reference log-prob 时禁用 adapter。这表明在 DPO 训练中，ref_model 的初始化可能需要使用当前 batch 中参数更新后的 policy model，以确保 reference log-prob 的计算基于最新的参数状态。
+
+3. 在 DPO 训练中，ref",部分对,中文重合 39%（16/41）,docs/zh/feature-guide/dpo.md > 偏好优化（DPO） > 参考模型,4.4
+2,real-operation,test,export model以后如何加载微调后的llama模型？,将 `chat.yaml` 中的 `model` 改为 `outputs/qwen3_full`；完成[模型导出示例](model_export.md#导出配置)后，改为 `outputs/qwen3_merged`。这两种目录都包含完整模型权重，加载时移除此前的 `peft_config`，保留采样参数并运行 `llamafactory-cli chat chat.yaml`。,"根据文档内容，加载微调后的 llama 模型的步骤如下：
+
+1. 使用 `llamafactory-cli` 工具导出微调后的模型配置文件，例如：
+   ```bash
+   llamafactory-cli export examples/merge_lora/qwen3_lora_sft.yaml
+   ```
+
+2. 在导出配置文件后，需要将 `model_name_or_path` 设置为模型 ID 来加载对应的模型。在魔搭社区或魔乐社区中查看所有可用的模型，例如：
+   - 魔搭社区：`LLM-Research/Meta-Llama-3-8B-Instruct`
+   - 魔乐社区：`TeleAI/TeleChat-7B-pt`
+
+3. 通过设置环境变量来使用魔搭社区或魔乐社区的模型：
+   - 使用魔搭社区：`export USE_MODELSCOPE_HUB=1`（Windows 使用 `set USE_MODELSCOPE_HUB=1`）
+   - 使用魔乐社区：`export",错,实体命中 1/9：model,README_zh.md > A3 + openEuler > 利用 vLLM 部署 OpenAI API > 从魔搭社区下载,3.7
+3,real-supplement,test,rm 阶段 do_predict 的 accept_score 和 reject_score 如何理解？,rm 入口训练回答评分模型，使 chosen 回答的评分高于 rejected 回答；若某些样本的 accept_score 与 reject_score 接近，说明该样本的评分接近，难以区分接受或拒绝。,根据提供的文档内容，没有直接提到“rm 阶段 do_predict 的 accept_score 和 reject_score”的具体定义或解释。因此，无法从文档中明确回答该问题。,对,实体命中 2/2：accept_score、reject_score,webdocs/getting_started__sft.md > eval_steps: 500,1.1
+5,real-param,test,多机多卡，设置 data_shared_file_system 为 true 时每个 worker 都要算一遍 tokenize,文档说明相反：data_shared_file_system 为 true 时数据集处理只在第一个 node 发生，为 false 时每个 node 都处理一次，默认 false。若出现每个 worker 都 tokenize，应检查该值是否被设为 false。,"根据文档1中的内容，与问题相关的要点如下：
+- 参数 `data_shared_file_system` 的类型是 `Optional[bool]`，用于设置多机多卡时，不同机器存放数据集的路径是否是共享文件系统。
+- 当 `data_shared_file_system` 为 `true` 时，数据集处理只在第一个 node 发生，而每个 node 都不会处理一次。
+- 参数 `data_shared_file_system` 的默认值是 `false`，即在多机多卡时，不同机器存放数据集的路径默认不是共享文件系统。",对,实体命中 1/1：data_shared_file_system,webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶,5.8
+7,real-operation,test,请问怎么缓解大模型微调后重复输出同一句话 —— 当把max_length调小时，生成内容不完整。把max_length调大后，模型生成完内容之后，会重复输出最后一句话去达到最大max_length，请问这种现象如何缓解。谢谢！,对生成重复 token 的惩罚系数。对于已经生成过的 token 生成概率乘以 1/repetition_penalty。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。,"根据文档中的信息，缓解大模型微调后重复输出同一句话的现象，可以参考以下要点：
+
+1. `max_length` 参数用于控制文本最大长度（包括输入文本和生成文本的长度）。如果将 `max_length` 调小，生成内容可能不完整；如果调大，模型可能会重复输出最后一句话以达到最大长度。
+
+2. `max_new_tokens` 参数用于控制生成文本的最大长度。设置 `max_new_tokens` 会覆盖 `max_length` 的值。可以通过调整 `max_new_tokens` 来控制生成文本的长度，避免模型重复输出最后一句话。
+
+3. `repetition_penalty` 参数用于对生成重复 token 的惩罚系数。值小于 1.0 会提高重复 token 的生成概率，大于 1.0 则会降低重复 token 的生成概率。可以通过调整 `repetition_penalty` 来减少模型重复输出同一句话的可能性。
+
+4. `top_p` 参数用于控制生成时候选 token 集合大小的参数。通过调整",对,实体命中 2/2：repetition_penalty、1.0,webdocs/advanced__trainers.md > 训练方法¶ > Post-training¶ > RLHF¶,3.8
+12,real-param,test,我想接着checkpoint继续train 该怎么办呢,设置 `resume_from_checkpoint: auto` 并在 `output_dir` 下寻找最新的完整 checkpoint。,"根据文档内容，若想接着 checkpoint 继续训练，可以按照以下要点操作：
+
+1. 使用 `resume_from_checkpoint` 参数指定恢复路径，该参数用于从训练 checkpoint 继续训练。
+2. `resume_from_checkpoint` 恢复内容包括模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态。
+3. 通常建议 `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`。
+4. 如果设置 `resume_from_checkpoint: auto`，则会从 `output_dir` 中自动查找最新的完整 checkpoint。
+5. 未设置 `resume_from_checkpoint` 时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+6. 如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度",对,实体命中 3/3：resume_from_checkpoint: auto、output_dir、resume_from_checkpoint,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶,3.8
+14,real-param,test,从 huggingface 中加载数据集时始终为 split=train，怎么指定其他 split？,在数据集 YAML 的顶层条目里显式设置 `split` 字段。该字段默认值为 train，类型为 str。,根据文档2的内容，`train_dataset` 接受的数据来源可以是 Hugging Face Hub 数据集 ID 或 Hub 数据集仓库中的 YAML。在指定从 Hugging Face 中加载数据集时，如果始终为 split=train，可以通过在数据集 YAML 中指定 split 参数来改变默认的 split 值。具体来说，数据集 YAML 中的条目需要包含 `split` 字段，并将其设置为所需的 split 值（例如，split=validation 或 split=test）。这样就能在加载数据集时指定其他 split。,对,实体命中 1/1：split,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶,6.3
+18,real-param,test,如何设置 weight decay（权重衰减）？,在配置的 optim_config 中设置 name: muon 启用 Muon 优化器，再用 wd 字段控制 weight decay，默认值 0.1。,根据文档1，设置 `weight decay`（权重衰减）的参数是 `wd`，其类型为 `float`，默认值为 `0.1`。`wd` 用于控制权重衰减的强度，其值可以被调整，但默认情况下为 `0.1`。权重衰减是优化过程中用于正则化模型参数的一种方法，防止过拟合。在配置中，`wd` 是与 `learning_rate` 相关的参数，学习率统一使用顶层 `learning_rate`。,部分对,实体命中 1/2：0.1,docs/zh/configuration/training.md > 训练参数 > optim_config,2.3
+22,real-operation,test,vllm如何进行batch推理,通过在指令 `python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset alpaca_en_demo` 中指定模型、数据集以使用 vllm 推理框架以取得更快的推理速度。,"根据文档内容，vllm进行batch推理的方式如下：
+
+1. 使用vllm推理引擎进行批量推理时，需要通过指定命令行参数来配置模型和数据集。
+2. 命令行参数包括`--model_name_or_path`（指定模型路径）和`--dataset`（指定数据集，如alpaca_en_demo）。
+3. 默认情况下，模型推理将使用Huggingface引擎，但也可以通过指定`infer_backend:vllm`来使用vllm推理引擎以获得更快的推理速度。
+4. 在进行批量推理时，可以指定`per_device_eval_batch_size: 1`来设置每个设备的评估批处理大小。
+5. `predict_with_generate: true`表示使用生成方式进行推理。
+6. `ddp_timeout: 180000000`设置分布式数据并行的超时时间。",部分对,实体命中 2/4：model_name_or_path、alpaca_en_demo,webdocs/getting_started__inference.md > 推理¶ > 批量推理¶ > 数据集¶,3.4
+23,real-supplement,test,请问在推理或预测的时候如何指定 temperature 等参数？,在推理配置中设置 `temperature`（默认 0.95，越高越随机、越低越确定）；同时可用 `top_p`（默认 0.7）与 `top_k`（默认 50）控制候选 token 集合大小。,"根据文档1中的信息，在推理或预测时指定 temperature 等参数的方法如下：
+
+- `do_sample` 是一个布尔类型参数，用于是否使用采样策略生成文本。默认值为 True，表示使用采样策略。
+- `temperature` 是一个浮点类型参数，用于调整生成文本的随机性。默认值为 0.95，温度越高，生成的文本越随机；温度越低，生成的文本越确定。
+- `top_p` 是一个浮点类型参数，用于控制生成时候选 token 集合大小。默认值为 0.7，表示模型会先选择概率最高的若干个 token 直到其累积概率之和大于 0.7，然后在这些 token 组成的集合中进行采样。
+- `top_k` 是一个整数类型参数，用于控制生成时候选 token 集合大小。默认值为 50，表示模型会在概率最高的50个 token 组成的集合中进行采样",对,实体命中 5/5：temperature、top_p、top_k、0.95,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,4.0
+25,real-operation,test,qwen2vl-sft后如何将adapter_model.safetensors和模型原始参数合并使用,您可以通过 `llamafactory-cli export merge_config.yaml` 指令来合并模型。,"根据文档内容，以下是与问题相关的要点：
+
+1. `adapter_name_or_path` 可以使用列表，系统会按照列表顺序将每个 LoRA adapter 合并到前一步得到的模型中。
+2. `peft_config.adapter_name_or_path` 指定 adapter，用于推理模式中依次合并 adapter。
+3. `model` 必须与 adapter 训练时的基座一致，即 `Qwen/Qwen3-0.6B`。
+4. 合并后的模型保存到 `export_dir` 指定的目录，如 `outputs/qwen3_merged`。
+5. `export_size` 的单位为 GB，用于指定导出模型的大小。
+6. `infer_dtype` 支持 `auto`、`float16`、`float32` 和 `bfloat16`，用于指定推理时的数值类型。
+7. `export_legacy_format` 参数设置为 `false`，表示不使用旧格式导出模型。
+8.",错,实体命中 0/1：无,docs/zh/feature-guide/model_export.md > 模型导出 > 导出配置,4.0
+27,real-param,test,请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?,可以存储tokenizer后的数据，使用`tokenized_path`配置项加载。,"根据文档内容，预训练数据的tokenizer后数据可以存储。文档中提到在配置中使用 `tokenized_path` 以加载预处理后的数据集，这表明tokenizer后的数据可以被存储并再次加载，而无需每次都在线tokenizer。相关要点包括：
+
+1. 预训练数据的tokenizer后数据可以存储。
+2. 在配置中使用 `tokenized_path` 可以加载预处理后的数据集。
+3. 无需每次都在线tokenizer，可以直接加载已存储的tokenizer后的数据。",对,实体命中 1/1：tokenized_path,examples/README_zh.md > 目录 > 示例 > LoRA 微调 > 预处理数据集,2.1
+29,real-operation,test,请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？,您可以通过 `llamafactory-cli exportmerge_config.yaml` 指令来合并模型。其中 `merge_config.yaml` 需要您根据不同情况进行配置。,"根据文档内容，使用全参训练出的 checkpoint 与原始模型的权重进行合并的要点如下：
+
+1. 完成全参训练后，需要将 `chat.yaml` 中的 `model` 参数改为 `outputs/qwen3_full`，以指向全参训练生成的 checkpoint 目录。
+2. 完成模型导出后，需要将 `chat.yaml` 中的 `model` 参数改为 `outputs/qwen3_merged`，以指向导出后的模型目录。
+3. 在加载模型时，需要移除此前的 `peft_config` 配置，以确保加载的是完整模型权重。
+4. 全参训练生成的 checkpoint 包含完整模型权重，可以直接用于后续的推理或评估，或者通过 `llamafactory-cli chat chat.yaml` 运行进行测试。",错,实体命中 0/4：无,docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 不同后端的保存格式,3.2
+34,real-operation,test,deepspeed 单机多卡sft时，如何只保存模型,设置 `save_only_model: true`，deepspeed 训练时同样只保存模型权重。,"根据文档内容，当使用 `deepspeed` 指令启动 DeepSpeed 引擎进行单机多卡 SFT 训练时，若要只保存模型，需要在配置文件中设置相关参数。具体要点如下：
+
+1. 使用 `deepspeed` 指令启动 DeepSpeed 引擎时，不能使用 `CUDA_VISIBLE_DEVICES` 指定 GPU，需要通过其他方式指定 GPU。
+2. 在命令行中，可以通过 `--deepspeed` 参数指定 DeepSpeed 配置文件的路径，例如 `--deepspeed examples/deepspeed/ds_z3_config.json`。
+3. 在 DeepSpeed 配置文件中，需要设置 `save` 参数来控制模型保存的行为，例如设置 `save` 参数为 `true` 以启用模型保存功能。
+4. 在训练命令中，可以通过 `--output_dir` 参数指定模型保存的目录，例如 `--output_dir saves/llama3-8b/lora/full`。
+5. 在",错,实体命中 0/2：无,webdocs/advanced__distributed.md > accelerate_multiNode_config.yaml > DeepSpeed¶ > 单机多卡¶ > deepspeed¶,3.8
+36,real-supplement,test,model.chat 功能怎么在框架内批量使用呢？,使用 `llamafactory-cli chat inference_config.yaml` 或 `llamafactory-cli webchat inference_config.yaml` 进行推理与模型对话。,"根据文档内容，model.chat 功能在框架内批量使用的方式如下：
+
+1. model.chat 功能默认使用 Huggingface 引擎进行交互式单条推理，但不支持批量推理。
+2. 批量推理需要使用 vllm 推理引擎，而 vllm 推理引擎未接入 model.chat 入口。
+3. 要使用 vllm 推理引擎进行批量推理，需要通过命令行启动 vllm 推理引擎，并指定模型路径和数据集。
+4. 启动 vllm 推理引擎的命令格式为：`python scripts/vllm_infer.py --model_name_or_path path_to_merged_model --dataset dataset_name`。
+5. 在启动 vllm 推理引擎时，需要确保模型路径和数据集都存在且有效。",错,实体命中 0/2：无,webdocs/getting_started__inference.md > 推理¶,3.5
+38,real-operation,test,开启视觉模型的api之后怎么给他传图片？,多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。,"根据文档内容，开启视觉模型的api之后传图片的要点如下：
+
+1. 多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。
+2. 注意图片的数量必须与文本中所有 `<image>` 标记的数量严格一致。
+3. 数据格式应为包含 `instruction`、`input`、`output` 和 `images` 的 JSON 列表。
+4. `dataset_info.json` 中的 数据集描述 应为指定的格式，其中 `file_name` 指定数据文件名，`columns` 指定各列对应的字段。
+5. 传图片时需要确保 `images` 列中的路径正确指向图像文件。",对,实体命中 1/1：images,webdocs/getting_started__inference.md > 推理¶ > 批量推理¶ > examples/inference/qwen3_lora_sft.yaml,2.7
+39,real-operation,test,多模态模型训练时，视觉塔和多模态投影器默认会被冻结吗？,会。freeze_vision_tower 与 freeze_multi_modal_projector 的默认值都是 True，即默认冻结视觉塔与多模态投影器、只训练语言模型部分；设为 False 即可解冻。,"根据文档1中的信息，多模态模型训练时，视觉塔和多模态投影器的默认状态是被冻结的。具体来说：
+
+- `freeze_vision_tower` 参数的默认值为 `True`，表示在MLLM训练时视觉塔会被冻结。
+- `freeze_multi_modal_projector` 参数的默认值为 `True`，表示在MLLM训练时多模态投影器会被冻结。",对,实体命中 2/2：freeze_vision_tower、freeze_multi_modal_projector,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶,1.8
+40,real-param,test,如何取部分数据集训练,使用 `max_samples` 参数：设置后，每个数据集的样本数会被截断至指定的 max_samples（默认 None，即不限制）。,"根据文档内容，取部分数据集训练的要点如下：
+
+1. 使用 `train_dataset` 字段指定数据来源，可以是本地数据集 YAML、本地数据文件或目录、Hugging Face Hub 数据集 ID 或 Hub 数据集仓库中的 YAML。
+
+2. 数据集 YAML 通过条目描述数据路径、split、converter 和采样配置，并支持组合多个数据集。
+
+3. `dataset` 参数用于指定用于训练的数据集名称，可以使用逗号分隔多个数据集。
+
+4. `eval_dataset` 参数用于指定用于评估的数据集名称，也可以使用逗号分隔多个数据集。
+
+5. `eval_on_each_dataset` 参数控制是否在每个评估数据集上分开计算 loss，默认是将所有评估数据集的 loss 拼接后整体计算。
+
+6. `dataset_dir` 参数用于指定存储数据集的文件夹路径，可以是字符串或字典，当为字典时，将覆盖默认从本地 dataset_info.json 加载的行为。
+
+7. `data_shared_file_system",错,实体命中 0/1：无,docs/zh/configuration/data.md > 数据参数 > DatasetInfo > 采样规模的计算,4.3
+42,real-supplement,test,如何在 sft llama 时添加 special token？,使用 `new_special_tokens` 参数：要添加到 tokenizer 中的 special token，多个用逗号分隔，默认值为 None。,根据文档1中的信息，添加 special token 的方法是通过 `new_special_tokens` 参数。该参数用于指定要添加到 tokenizer 中的 special token，多个 special token 用逗号分隔。在 sft 训练时，需要将 `new_special_tokens` 参数设置为相应的 special token 值。此外，`split_special_tokens` 参数用于控制是否在分词时将 special token 分割，其默认值为 False。如果需要在分词时将 special token 分割，则需要将 `split_special_tokens` 参数设置为 True。,对,实体命中 1/1：new_special_tokens,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶,2.5
+43,real-operation,test,"请教如何编写template —— 您好，想向您请教下如何自定义template  原始Input：    原始配置：   原始样例返回内容：    改写的template：    改写后返回内容： ` 问题：“你好，你是谁？” {""role"":""assistant"",""content"":""\n我是李华，你是谁？\n\n""} `",我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。,"根据文档内容，以下是与问题相关的要点：
+
+1. `register_template` 方法用于为自定义模型注册 chat_template，可以在 `src/llamafactory/data/template.py` 中使用。
+2. 在实际应用中，用户输入的信息后会添加助手回复模板的头部 `<|header_start|>assistant<|header_end|>` 来引导模型进行回复。
+3. 用户消息和工具输出的模板中都附有了助手回复的头部，因此助手消息格式 `format_assistant` 省略了助手回复的头部，只保留其内容部分 `{{content}}<|eot|>。`。
+4. `name` 字段用于指定模板的名称，例如 `""llama4""`。
+5. `format_user` 字段用于指定用户消息的格式，包含生成提示模板，例如 `<|header_start|>user<|header_end|>\n\n{{content}}<|eot|><|header_start|>assistant<|header_end|>\n\n`。
+6",对,实体命中 3/3：src/llamafactory/data/template.py、register_template、chat_template,webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶,3.9
+46,real-param,test,如何自动保存checkpoint?,设置 `save_steps` 和 `save_epochs` 参数自动保存checkpoint。`save_steps` 默认为500，`save_epochs` 默认为null。,"根据文档内容，自动保存 checkpoint 的行为由以下参数控制：
+
+1. `save_strategy`：控制保存策略，可设为 `steps`、`epoch` 或 `no`。当设为 `steps` 时，会根据 `save_steps` 的值按 step 定期保存 checkpoint。
+2. `save_steps`：当 `save_strategy:steps` 时，每训练多少个 step 保存一次 checkpoint。
+3. `save_total_limit`：最多保留多少个 checkpoint，超过数量限制时会自动删除较旧的 checkpoint。
+4. `resume_from_checkpoint`：如果设置为 `auto`，会在 `output_dir` 下寻找最新的完整 checkpoint，用于恢复训练状态，但未设置此参数时，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+
+文档中没有明确提到“自动保存 checkpoint”这一术语，但根据上述参数的配置，当 `save_strategy` 设置为 `steps` 或 `epoch` 时，会根据 `save_steps` 或 `save",部分对,实体命中 1/2：save_steps,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存策略¶,4.3
+48,real-param,test,关于 packing 参数在 sft 阶段的疑问：为什么实际 batch 里的样本数和 micro_batch_size 对不上？,因为动态策略中的 micro_batch_size 用于计算 token 预算，并不表示最终 batch 一定包含相同数量的样本。,"根据文档内容，关于 packing 参数在 SFT 阶段的疑问，实际 batch 里的样本数和 micro_batch_size 可能对不上，原因如下：
+
+1. `micro_batch_size` 用于计算 token 预算，而不是最终 batch 一定包含相同数量的样本。在动态策略中，`micro_batch_size` 决定 token 预算，但实际选择的样本数会根据 token 预算动态调整。
+
+2. `dynamic_padding_free` 策略下，样本总长度不超过 token 预算的范围内决定样本数，并将所选样本拼接起来，因此实际 batch 里的样本数可能与 `micro_batch_size` 不一致。
+
+3. `context_parallel_size>1` 时，SFT 会强制 `calculate_per_token_loss=true`，这可能影响样本的组织方式和 batch 的构成。
+
+4. `global_batch_size` 与 `micro_batch_size` 共同决定每次参数更新需要累积的 micro-batch 数",对,实体命中 1/1：micro_batch_size,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,3.9
+49,real-param,test,seq_length 为什么是 8192，而 cutoff_len 设置为 4096 时？,批处理策略中每个 micro-batch 的 token 预算 = cutoff_len × micro_batch_size。示例中 cutoff_len: 2048、micro_batch_size: 4，预算即为 2048 × 4 = 8192。,"根据文档内容，`seq_length` 是 8192 的原因与 `cutoff_len` 的设置有关。具体来说：
+
+1. 在文档1中，`cutoff_len` 被设置为 2048，而 `micro_batch_size` 被设置为 4，因此每个 micro-batch 的 token 预算为 `2048 × 4 = 8192`，这表明 `seq_length` 的值为 8192 是基于这个计算得出的。
+
+2. 在文档2和文档3中，`cutoff_len` 被设置为 4096，但 `seq_length` 的值并未直接给出。然而，根据文档1中的逻辑，`seq_length` 的值应为 `cutoff_len × micro_batch_size`。如果 `cutoff_len` 是 4096，而 `micro_batch_size` 保持为 4，则 `seq_length` 应为 `4096 ×",对,实体命中 2/2：cutoff_len、micro_batch_size,docs/zh/feature-guide/batching.md > 批处理策略 > 配置示例,4.1
+50,real-operation,test,【DPO相关】请问DPO训练结束后，应该如何进行推理呢？能使用类似SFT训练后推理的脚本吗,LoRA 推理通过 `model` 指定训练时的基座，通过 `peft_config.adapter_name_or_path` 指定 adapter。,"根据文档内容，DPO训练结束后进行推理的步骤和方法并未直接说明。但结合相关文档信息，可以得出以下要点：
+
+1. DPO训练结束后，推理过程可能需要使用特定的脚本或方法，但文档中未明确说明是否可以使用类似SFT训练后推理的脚本。
+2. 在DPO训练中，reference log-prob的计算方式与LoRA训练不同，LoRA训练复用policy model的基座权重，并在计算reference log-prob时禁用adapter。
+3. ORPO和SimPO的目标计算不使用reference log-prob，这可能意味着它们的推理方式与DPO不同。
+4. 文档中未明确说明DPO训练后的推理是否需要特殊处理或是否可以复用SFT训练后的推理脚本。因此，无法确定是否可以直接使用类似SFT训练后推理的脚本。",错,实体命中 1/4：model,docs/zh/feature-guide/inference.md > 推理 > 使用 LoRA Adapter,3.3
+51,real-operation,test,"如何从checkpoints 完整复原出 optimizer,model 等的训练时的状态，使其可以从中断点继续训练",设置 `resume_from_checkpoint` 指向 checkpoint 路径（或 `auto`），即可恢复训练状态；该字段默认 None。,"根据文档内容，要从 checkpoints 完整复原出 optimizer、model 等的训练时的状态，使其可以从中断点继续训练，需要满足以下条件和配置：
+
+1. 使用 `resume_from_checkpoint` 恢复训练状态，该配置从 `output_dir` 中自动查找 checkpoint。
+2. `resume_from_checkpoint` 的值可以设置为 `auto`，这样会从 `output_dir` 下寻找最新的完整 checkpoint，也可以直接填写 checkpoint 路径。
+3. 恢复内容包括模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态。
+4. 如果之前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行完整的断点续训。此时更适合将保存结果用于推理、评估或后续权重转换，而不是严格接续之前的训练进度。
+5. `resume_from_checkpoint` 指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`",对,实体命中 2/2：resume_from_checkpoint、auto,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶,3.7
+52,real-operation,test,Qwen2-VL 7B 如何用命令行进行对话？,您可以使用 `llamafactory-cli chat inference_config.yaml` 或 `llamafactory-cli webchat inference_config.yaml` 进行推理与模型对话。对话时配置文件只需指定原始模型 model_name_or_path 和 template。,"根据文档内容，Qwen2-VL 7B 用命令行进行对话的配置和方法如下：
+
+1. 模型指定：`model` 参数需要指定模型 Hub ID 或包含完整权重的 HF 模型目录。对于 Qwen2-VL 7B，应使用对应的模型路径或 Hub ID。
+
+2. 对话配置：对话配置保存为 `chat.yaml` 文件，使用与 SFT 示例相同的基座。该文件应包含模型路径和采样后端设置。
+
+3. 采样后端：`sample_backend` 参数设置为 `hf`，表示使用 Hugging Face 后端进行交互式单条推理。
+
+4. 配置示例：`chat.yaml` 文件的配置示例如下：
+   ```yaml
+   model: Qwen/Qwen3-0.6B
+   sample_backend: hf
+   max_new_tokens: 512
+   ```
+
+5. 命令行调用：使用 `llamafactory-cli chat",错,实体命中 1/3：或,docs/zh/feature-guide/inference.md > 推理,3.6
+53,real-operation,test,（Instruct/Chat）模型对应的模板怎么找？,通过观察输出我们可以得到模型的 chat_template。除此以外也可以通过 huggingface repo 来获取模型的 template.,根据文档1，模型对应的模板可以通过 `register_template` 方法为自定义模型注册 chat_template。在实际应用中，用户消息和工具输出的模板中都附有了助手回复的头部 `<|header_start|>assistant<|header_end|>`，因此可以依据这个头部来识别和使用相应的模板。此外，`custom_chat_template` 字段可以用来覆盖 tokenizer/processor 的 Jinja2 chat template，该字段的默认值为 `None`。,对,实体命中 1/1：chat_template,webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶,2.1
+55,real-param,test,请问在 lora 微调 qwen3 moe 模型时，如何设置 lora_target？,lora_target 是应用 LoRA 方法的模块名称，使用逗号分隔多个模块，使用 all 指定所有模块，默认值为 all。,"根据文档内容，关于 lora 微调 qwen3 moe 模型时 lora_target 的设置，相关要点如下：
+
+1. `lora_target` 参数用于指定应用 LoRA 方法的模块名称，可以使用逗号分隔多个模块，或者使用 ""all"" 指定所有模块。
+2. 默认值为 ""all""，即如果未特别指定，LoRA 方法会应用到所有模块上。
+3. 在文档中提到，Megatron Bridge 固定作用在 `linear_qkv`、`linear_proj`、`linear_fc1`、`linear_fc2` 上，而自定义 `lora_target` 会被忽略并打 warning。
+4. 因此，如果希望自定义 `lora_target`，需要明确指定要应用 LoRA 的模块名称，而不是使用默认的 ""all"" 值。",对,实体命中 1/1：lora_target,webdocs/advanced__megatron_bridge.md > extra_config: /path/to/overrides.json > LoRA¶,3.3
+60,real-param,test,同时设置了 max_length 和 max_new_tokens，哪个生效？,max_new_tokens 会覆盖 max_length。两者默认值都是 1024；只设 max_length 而不设 max_new_tokens 时，会被默认的 max_new_tokens=1024 覆盖。,"根据文档内容，当同时设置了 max_length 和 max_new_tokens 时，max_new_tokens 的设置会覆盖 max_length。具体来说：
+
+- max_length 的默认值为 1024，用于指定文本最大长度（包括输入文本和生成文本的长度）。
+- max_new_tokens 的默认值为 128，用于指定生成文本的最大长度，且设置 max_new_tokens 会覆盖 max_length 的值。
+- 在文档3中，示例中设置了 max_new_tokens 为 512，这表明在实际使用中，max_new_tokens 的值会覆盖 max_length 的设置。",对,实体命中 2/2：max_new_tokens、max_length,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,2.5
+75,real-issue,test,请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行,支持流水线并行（PP）和张量并行（TP）等模型并行方式。,"根据文档内容，现在支持流水线并行（PP）和张量并行（TP）等模型并行方式。具体要点如下：
+
+1. **流水线并行（PP）**：通过设置 `pipeline_model_parallel_size` 参数，可以配置流水线并行的规模。该参数的默认值为 1，表示不启用流水线并行。
+
+2. **张量并行（TP）**：通过设置 `tensor_model_parallel_size` 参数，可以配置张量并行的规模。该参数的默认值为 1，表示不启用张量并行。
+
+3. **模型并行方式的使用**：这些并行方式（流水线并行和张量并行）是大模型训练中的内存优化技术，用于在训练过程中更高效地利用硬件资源。
+
+4. **与 DeepSpeed 的结合**：DeepSpeed 引入了原生自动张量并行（AutoTP）训练，支持与 ZeRO 结合使用，以在训练阶段实现更",对,中文重合 94%（15/16）,webdocs/advanced__distributed.md > 分布训练¶,3.9
+76,real-issue,test,如何用自定义数据集进行性能评估,使用task_dir参数指定包含评估数据集的文件夹路径，默认值为evaluation。,"根据文档内容，使用自定义数据集进行性能评估需要设置以下参数：
+
+1. `dataset`：用于训练的数据集名称，可以是多个数据集，用逗号分隔。
+2. `eval_dataset`：用于评估的数据集名称，可以是多个数据集，用逗号分隔。
+3. `dataset_dir`：存储数据集的文件夹路径，默认值为 ""data""。如果需要更改，可以设置为字符串或字典。
+4. `media_dir`：存储图像、视频或音频的文件夹路径，如果未指定，默认为 `dataset_dir`。
+5. `data_shared_file_system`：多机多卡时，不同机器存放数据集的路径是否是共享文件系统。默认值为 `False`。
+6. `cutoff_len`：输入的最大 token 数，超过该长度会被截断，默认值为 2048。
+7. `train_on_prompt`：是否在输入 prompt 上进行训练，默认值为 `False`。
+8. `mask",对,中文重合 68%（15/22）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,4.0
+88,real-issue,test,请问训练多轮会话是不是需要将一条多轮会话拆分为多条数据,不需要将一条多轮会话拆分为多条数据,"根据文档内容，训练多轮会话确实需要将一条多轮会话拆分为多条数据。具体来说，多轮对话会按每个受监督的 assistant turn 展开为多条训练样本，每条样本只监督最后一个 assistant turn。此外，`dataset_info.json` 中的 数据集描述 应为：
+
+```
+""dataset_name"": {
+ ""file_name"": ""data.json"",
+ ""columns"": {
+ ""prompt"": ""instruction"",
+ ""query"": ""input"",
+ ""response"": ""output"",
+ ""system"": ""system"",
+ ""history"": ""history""
+ }
+}
+```
+
+这表明在训练多轮会话时，需要将每条对话的每个 assistant turn 作为单独的数据样本进行处理。",对,中文重合 94%（15/16）,docs/zh/feature-guide/data_preparation.md > 数据准备 > SFT 数据格式,3.0
+121,doc-synth,test,`adamw_betas` 应该怎么设？默认是多少？,"内部 AdamW betas。默认值为 [0.9, 0.95]。","根据文档1，`adamw_betas` 的类型是 `list[float]`，默认值是 `[0.9, 0.95]`，并且其说明是“内部 AdamW betas”。文档2中也提到 `adamw_betas` 的值为 `[0.9, 0.95]`，并且说明 Muon 对适合正交化更新的二维权重使用 Muon，并将其他参数交给内部 AdamW。因此，`adamw_betas` 的默认值是 `[0.9, 0.95]`。",对,实体命中 2/2：0.9、0.95,docs/zh/configuration/training.md > 训练参数 > optim_config,2.9
+127,doc-synth,test,`apollo_scale` 应该怎么设？默认是多少？,APOLLO 缩放系数。默认值为 32.0。,根据文档中的信息，`apollo_scale` 是一个参数，其类型为 float，用于设置 APOLLO 缩放系数。在文档1中，`apollo_scale` 的默认值为 32.0。在文档2中，`apollo_scale` 被显式设置为 32.0。因此，`apollo_scale` 的默认值是 32.0。,对,实体命中 1/1：32.0,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶,1.8
+131,doc-synth,test,`apollo_update_interval` 应该怎么设？默认是多少？,更新 APOLLO 投影的步数间隔。默认值为 200。,根据文档1中的信息，`apollo_update_interval` 是一个参数，其类型为 int，介绍为“更新 APOLLO 投影的步数间隔”，默认值为 200。因此，`apollo_update_interval` 应该设置为一个整数，表示更新 APOLLO 投影的步数间隔，默认值为 200。,对,中文重合 83%（10/12）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶,1.9
+132,doc-synth,test,`badam_mask_mode` 不填的话会用什么值？,不填时使用默认值 adjacent。,根据文档中的信息，`badam_mask_mode` 参数的默认值为 `adjacent`。文档中明确指出，`badam_mask_mode` 的可选值为 `adjacent` 或 `scatter`，并且没有特别说明在不填的情况下会使用哪个值，但根据默认值的设定，可以推断出如果未指定 `badam_mask_mode` 的值，会使用 `adjacent`。因此，`badam_mask_mode` 不填的话会用 `adjacent` 这个值。,部分对,中文重合 57%（4/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > BAdam¶,2.3
+138,doc-synth,test,`batch_size` 应该怎么设？默认是多少？,每个GPU使用的批量大小。默认值为 4。,根据文档中的信息，`batch_size` 是一个整型参数，表示每个GPU使用的批量大小。默认值为 4。文档中没有提到 `batch_size` 应该怎么设，但根据默认值，可以知道在没有特别指定的情况下，`batch_size` 应该设为 4。此外，`batch_size` 与 `micro_batch_size` 和 `global_batch_size` 有关，但文档中没有明确说明 `batch_size` 应该如何设置，仅提供了默认值。因此，`batch_size` 应该设为 4，除非有特别的设置需求。,对,中文重合 83%（10/12）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,2.9
+139,doc-synth,test,`batching_strategy` 不填的话会用什么值？,不填时使用默认值 normal。,根据文档2中的表格，`batching_strategy` 的默认值是 `normal`。因此，如果 `batching_strategy` 不填的话，会用 `normal` 作为默认值。文档中提到的 `batching_strategy` 的默认值为 `normal`，并且该字段的类型是 `str`，取值范围包括 `normal`、`padding_free`、`dynamic_batching` 或 `dynamic_padding_free`。,部分对,中文重合 43%（3/7）,docs/zh/feature-guide/batching.md > 批处理策略 > 配置示例,2.0
+141,doc-synth,test,`bf16` 不填的话会用什么值？,不填时使用默认值 true。,根据文档1中的信息，`bf16`字段的默认值是`true`。因此，如果`bf16`不填的话，会使用默认值`true`。此外，`bf16`的类型是`bool`，表示是否使用bf16。,对,中文重合 71%（5/7）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,1.5
+143,doc-synth,test,`buffer_size` 应该怎么设？默认是多少？,启用 streaming 时用于随机选择样本的 buffer 大小。默认值为 16384。,根据文档3中的信息，`buffer_size` 是一个整数类型参数，用于启用数据流模式时用于随机选择样本的大小。默认值为未明确指定，但文档中未直接给出 `buffer_size` 的默认数值。因此，`buffer_size` 的默认值未在文档中明确写明。,对,中文重合 88%（15/17）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,1.6
+146,doc-synth,test,`compute_accuracy` 不填的话会用什么值？,不填时使用默认值 False。,"根据文档1中的信息，`compute_accuracy` 参数的默认值是 False。因此，如果 `compute_accuracy` 不填的话，会使用 False 作为其值。相关的要点包括：  
+- 参数名称：compute_accuracy  
+- 类型：bool  
+- 介绍：是否在评估时计算 token 级别的准确率。  
+- 默认值：False  
+- 与其它参数的关系：该参数与其他参数没有直接的关系，它是一个独立的配置项。",部分对,中文重合 57%（4/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶,2.3
+147,doc-synth,test,`compute_dtype` 默认值是多少？,默认值为 float16。,根据文档1中的表格，`compute_dtype`的默认值是`float16`。,对,中文重合 67%（2/3）,docs/zh/configuration/model.md > 模型参数 > quant_config,0.7
+158,doc-synth,test,`double_quantization` 不填的话会用什么值？,不填时使用默认值 True。,根据文档2中的信息，`double_quantization` 的默认值是 `true`。文档中提到，`double_quantization` 是一个 bool 类型的参数，且在文档2的表格中，默认值为 `true`。因此，如果 `double_quantization` 不填的话，会使用 `true` 作为其值。,部分对,中文重合 57%（4/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶,1.9
+160,doc-synth,test,`dpo_label_smoothing` 不填的话会用什么值？,不填时使用默认值 0.0。,"根据文档中的信息，`dpo_label_smoothing` 参数的默认值是 `0.0`。如果在配置中不填这个参数，它会使用默认值 `0.0`。此外，该参数的取值范围是 `[0, 0.5]`，因此在不填的情况下，会使用默认值 `0.0`，并且这个值在允许的范围内。",对,实体命中 1/1：0.0,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,2.3
+172,doc-synth,test,`freeze_trainable_layers` 不填的话会用什么值？,不填时使用默认值 2。,根据文档中的信息，`freeze_trainable_layers` 参数的默认值为 2。如果在配置中不填这个参数，它会使用默认值 2。此外，该参数的类型是 int，表示可训练层的数量，正数表示最后 n 层被设置为可训练的，负数表示前 n 层被设置为可训练的。,对,中文重合 71%（5/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Freeze¶,2.5
+179,doc-synth,test,`galore_proj_type` 应该怎么设？默认是多少？,"GaLore 投影的类型，可选值有： std, reverse_std, right, left, full。默认值为 std。","根据文档，`galore_proj_type` 是 GaLore 投影的类型，可选值有：std, reverse_std, right, left, full。默认值为 std。",对,实体命中 1/1：reverse_std,webdocs/advanced__tuning_algorithms.md > ... > Galore¶ > method,1.3
+183,doc-synth,test,`galore_update_interval` 不填的话会用什么值？,不填时使用默认值 200。,根据文档中的信息，`galore_update_interval` 参数的默认值为 200。文档中明确指出，该参数的类型是 int，且默认值为 200。因此，如果在配置中不填 `galore_update_interval`，它会使用默认值 200。,对,中文重合 71%（5/7）,webdocs/advanced__tuning_algorithms.md > ... > Galore¶ > method,1.3
+186,doc-synth,test,`image_max_pixels` 应该怎么设？默认是多少？,图像输入的最大像素数。默认值为 768 x 768。,根据文档，`image_max_pixels` 是图像输入的最大像素数。在文档1中，`image_max_pixels` 的默认值是 768 x 768。在文档2中，`image_max_pixels` 的值是 262144。在文档3中，`image_max_pixels` 的值是 262144。因此，`image_max_pixels` 的默认值是 768 x 768，但根据不同的文档，其值可以设置为 262144。,对,中文重合 85%（11/13）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 多模态模型¶,3.0
+189,doc-synth,test,`include_kernels` 应该怎么设？默认是多少？,`auto` 或逗号分隔的 FLA 算子名称。默认值为 auto。,根据文档内容，`include_kernels` 应该设置为 `auto` 或逗号分隔的算子名称。默认值是 `auto`。`include_kernels` 的类型是 `str`，且在 `name` 包含 `flash-linear-attention` 时，可以使用该字段。,对,实体命中 1/1：auto,docs/zh/feature-guide/kernel_acceleration.md > 融合算子加速 > Flash Linear Attention,1.7
+192,doc-synth,test,`kto_chosen_weight` 默认值是多少？,默认值为 1.0。,根据文档1中的信息，`kto_chosen_weight` 的默认值是 1.0。,对,实体命中 1/1：1.0,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.0
+195,doc-synth,test,`learning_rate` 这个参数是做什么的？默认值多少？,训练及优化器插件使用的学习率。默认值为 1e-4。,`learning_rate` 参数用于设置训练及优化器插件使用的学习率。默认值为 `1e-4`。,对,中文重合 94%（16/17）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,0.9
+198,doc-synth,test,`lora_rank` 应该怎么设？默认是多少？,LoRA 微调的本征维数 r，r 越大可训练的参数越多。默认值为 8。,根据文档中的信息，`lora_rank` 是 LoRA 微调的本征维数 r，r 越大可训练的参数越多。默认值为 8。此外，`lora_rank` 会映射到 Megatron LoRA 的 `dim` 参数。在文档3中，`lora_rank` 被设置为 8，这与默认值一致。因此，`lora_rank` 应该设为一个正整数，且默认值为 8。,对,中文重合 95%（18/19）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > method,2.3
+200,doc-synth,test,`loraplus_lr_embedding` 默认值是多少？,默认值为 1e-6。,根据文档2中的信息，`loraplus_lr_embedding` 参数的默认值是 1e-6。,对,中文重合 67%（2/3）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > method,0.6
+204,doc-synth,test,`micro_batch_size` 应该怎么设？默认是多少？,基础 micro-batch 大小。默认值为 1。,根据文档1，`micro_batch_size` 的类型是 `int`，默认值是 `1`。`micro_batch_size` 用于与 `global_batch_size` 和 `dp_size` 共同决定每次参数更新需要累积的 micro-batch 数量。当 `global_batch_size` 没有显式设置时，每个 DP 进程每次更新处理一个 micro-batch。如果显式设置 `global_batch_size`，它必须能被 `dp_size × micro_batch_size` 整除，每个进程的累积次数为 `global_batch_size / (dp_size × micro_batch_size)`。此外，`micro_batch_size` 用于计算动态策略中的 token 预算，与 `cutoff_len` 相乘得到 token 预算。,错,中文重合 29%（2/7）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,4.5
+208,doc-synth,test,`mp_replicate_size` 不填的话会用什么值？,不填时使用默认值 1。,根据文档2和文档3的内容，`mp_replicate_size` 的默认值为 `1`。文档3中明确指出，`mp_replicate_size` 的类型是 `int`，默认值为 `1`。同时，文档1中提到，`mp_replicate_size` 和 `mp_shard_size` 描述 FSDP 的二维参数 Mesh，但未显式指定时，`mp_replicate_size` 默认为 `world_size / mp_replicate_size`，不过这可能是一个描述性说明，而非默认值。综合文档2和文档3的信息，`mp_replicate_size` 不填的话会用 `1` 作为默认值。,部分对,中文重合 43%（3/7）,docs/zh/feature-guide/distributed_training.md > 分布式训练 > 配置并行拓扑,2.8
+209,doc-synth,test,`n_shot` 应该怎么设？默认是多少？,few-shot 的示例数量。默认值为 5。,根据文档中的信息，`n_shot` 是用于 few-shot 的示例数量。文档中明确指出，`n_shot` 的默认值为 5。因此，`n_shot` 应该设为 5，其默认值即为 5。,对,中文重合 88%（7/8）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,2.6
+214,doc-synth,test,`offload_folder` 这个参数是做什么的？默认值多少？,卸载模型权重的路径。默认值为 offload。,根据提供的文档，`offload_folder` 这个参数并未在任何文档中被提及。因此，无法从文档中确定该参数的用途和默认值。,错,中文重合 17%（2/12）,docs/zh/configuration/training.md > 训练参数 > dist_config > FSDP2,1.1
+219,doc-synth,test,`pissa_init` 不填的话会用什么值？,不填时使用默认值 False。,根据文档中的信息，`pissa_init` 参数的默认值为 `False`。如果在使用时没有特别指定 `pissa_init` 的值，它将默认使用 `False`。这意味着，如果没有设置该参数，PiSSA 适配器将不会被初始化。,部分对,中文重合 43%（3/7）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > PiSSA¶,1.8
+221,doc-synth,test,`plot_loss` 不填的话会用什么值？,不填时使用默认值 False。,"根据文档中的内容，`plot_loss` 的默认值是 `true`。文档中明确提到 `plot_loss: true`，因此如果 `plot_loss` 不填的话，会使用 `true` 作为值。此外，`plot_loss` 的取值范围是 `[true, false]`，但文档中没有提到其他可能的值或约束条件。",部分对,中文重合 57%（4/7）,examples/train_lora/qwen3_lora_sft_ray.yaml > examples/train_lora/qwen3_lora_sft_ray.yaml,2.5
+223,doc-synth,test,`ppo_epochs` 应该怎么设？默认是多少？,PPO 训练迭代次数。默认值为 4。,根据文档1中的信息，`ppo_epochs` 是 PPO 训练中的迭代次数参数。该参数的默认值为 4。文档中没有提到该参数的其他约束条件或与其它参数的关系。,对,中文重合 78%（7/9）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.6
+229,doc-synth,test,`pref_loss` 可以填哪些值？默认是哪个？,"支持 sigmoid, hinge, ipo, kto_pair, orpo, simpo；默认值为 sigmoid。",根据文档内容，`pref_loss` 可以填的值包括：`sigmoid`、`orpo` 或 `simpo`。默认值是 `sigmoid`。,错,实体命中 0/1：无,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,0.9
+234,doc-synth,test,`quantization_type` 可以填哪些值？默认是哪个？,"支持 fp4, nf4；默认值为 nf4。","根据文档内容，`quantization_type` 可以填的值是 ""fp4"" 和 ""nf4""。默认值是 ""nf4""。",部分对,中文重合 40%（2/5）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶,1.5
+238,doc-synth,test,`resize_vocab` 这个参数是做什么的？默认值多少？,是否调整词表和嵌入层的大小。默认值为 False。,根据提供的文档，没有提到 `resize_vocab` 这个参数。因此，无法确定 `resize_vocab` 的作用以及其默认值。,错,中文重合 12%（2/16）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > method,1.1
+239,doc-synth,test,`reward_model_type` 可以填哪些值？默认是哪个？,"支持 lora, full, api；默认值为 lora。",根据提供的文档内容，`reward_model_type` 参数并未在文档中明确提及。因此，无法从文档中确定 `reward_model_type` 可以填哪些值以及其默认值。文档中未涉及该参数的详细信息。,部分对,中文重合 40%（2/5）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.6
+241,doc-synth,test,`save_ckpt_as_hf` 应该怎么设？默认是多少？,是否在中间 checkpoint 中额外保存 HF 格式模型。默认值为 false。,根据文档内容，`save_ckpt_as_hf` 的默认值是 `false`。该参数用于控制是否在中间 checkpoint 中额外保存 HF 格式模型。当 `save_ckpt_as_hf: true` 时，FSDP2、FSDPTurbo 和 DeepSpeed 会额外在 checkpoint 中生成 `hf_model` 目录，并且会保留用于恢复训练的原始 checkpoint，同时额外保存 HF 格式模型。而当 `save_ckpt_as_hf: false` 时，保存中间 checkpoint 时不额外聚合 HF 格式权重。,对,中文重合 76%（13/17）,docs/zh/feature-guide/model_saving.md > 模型保存与恢复 > 不同后端的保存格式,2.4
+242,doc-synth,test,`seed` 默认值是多少？,默认值为 42。,根据文档，`seed` 参数的默认值是 42。在文档1中，`seed` 的默认值为 42，用于数据加载器的随机种子。在文档2中，`seed` 的默认值也是 42，用于随机种子。因此，`seed` 的默认值是 42。,对,中文重合 100%（3/3）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,1.5
+243,doc-synth,test,`shift_attn` 不填的话会用什么值？,不填时使用默认值 False。,根据提供的文档，`shift_attn` 参数并未在文档中提及，因此无法确定其默认值或相关约束条件。文档中未涉及 `shift_attn` 参数的任何信息。,错,中文重合 29%（2/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶,1.0
+244,doc-synth,test,`simpo_gamma` 不填的话会用什么值？,不填时使用默认值 0.5。,根据文档中的信息，`simpo_gamma` 参数的默认值是 0.5。如果在使用时没有特别指定值，会使用这个默认值。文档中明确提到 `simpo_gamma` 的默认值为 0.5，并且它用于 SimPO 损失中的 reward margin。因此，当 `simpo_gamma` 不填时，会使用 0.5 作为其值。,对,实体命中 1/1：0.5,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.7
+249,doc-synth,test,`swanlab_project` 应该怎么设？默认是多少？,SwanLab 中的项目名称。默认值为 “llamafactory”。,根据文档2，`swanlab_project` 是一个字符串类型参数，用于指定 SwanLab 中的项目名称。其默认值为 “llamafactory”。文档中没有提到该参数的其他约束条件或与其它参数的关系。,对,中文重合 89%（8/9）,webdocs/advanced__monitor.md > 实验监控¶ > SwanLab¶,1.3
+250,doc-synth,test,`task_dir` 不填的话会用什么值？,不填时使用默认值 evaluation。,"根据文档2，`task_dir` 参数的默认值为 ""evaluation""。如果`task_dir`不填的话，会使用默认值 ""evaluation""。此外，文档中提到如果该路径已经存在则会抛出错误。",对,中文重合 71%（5/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 评估参数¶,2.7
+251,doc-synth,test,`train_from_scratch` 不填的话会用什么值？,不填时使用默认值 False。,根据文档内容，`train_from_scratch` 参数没有在文档中明确提及，默认值或相关约束条件无法确定。文档中未提供与 `train_from_scratch` 相关的默认值、约束条件或与其他参数的关系。因此，无法回答该问题。,错,中文重合 29%（2/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 基本参数¶,1.4
+253,doc-synth,test,`trust_remote_code` 这个参数是做什么的？默认值多少？,是否信任来自 Hub 上数据集/模型的代码执行。默认值为 False。,根据文档1，`trust_remote_code` 参数是是否加载 Hub 远端代码。默认值是 false。该参数的取值范围是 bool 类型。,错,中文重合 20%（4/20）,docs/zh/configuration/model.md > 模型参数 > ModelArguments,0.9
+issue-3682,real-issue,test,请问推理的时候，instruction与input是按照如下方式拼接的吗？,是的，instruction与input会拼接成人类的最终输入。,根据文档中的描述，`instruction` 列对应的内容会与 `input` 列对应的内容拼接后作为最终的人类输入，即人类输入为 `instruction + input`。因此，在推理的时候，`instruction` 与 `input` 是按照这种方式拼接的。文档中明确提到：“`instruction` 列对应的内容会与 `input` 列对应的内容拼接后作为最终的人类输入，即人类输入为``instructionninput``。”,部分对,中文重合 31%（4/13）,webdocs/getting_started__data_preparation.md > 数据处理¶ > Alpaca¶ > 指令监督微调数据集¶,2.9
+issue-7372,real-issue,test,如何单机多卡微调一个模型，把模型参数分开加载到不同的GPU,使用 FSDP 引擎进行分布式训练，设置 `ShardingStrategy` 为 `FULL_SHARD` 可实现模型参数分开加载到不同 GPU。,"根据文档3的内容，使用 `accelerate` 指令启动进行单机多卡训练时，可以按照以下要点进行操作：
+
+1. 首先运行 `accelerate config` 命令，根据需求回答一系列问题后生成配置文件。
+2. 生成的配置文件将用于后续的训练过程，具体配置取决于用户在 `accelerate config` 过程中提供的回答。
+3. 使用 `accelerate` 指令启动训练时，模型参数会根据配置被分开加载到不同的GPU上，以实现单机多卡微调。",错,实体命中 0/2：无,webdocs/advanced__distributed.md > accelerate_multiNode_config.yaml > DeepSpeed¶ > 单机多卡¶ > deepspeed¶,4.5
+issue-6481,real-issue,test,如何进行API批量推理，batch interface,通过部署API服务的形式通过api调用来进行批量推理。,"根据文档内容，关于API批量推理的要点如下：
+
+1. 可以通过部署API服务的形式进行批量推理，通过API调用来实现。
+2. 部署API服务的具体方式和配置未在文档中明确说明，但可以参考`llamafactory-clichatinference_config.yaml`或`llamafactory-cliwebchatinference_config.yaml`的配置方式。
+3. 在进行API批量推理时，需要确保模型`model_name_or_path`存在且与`template`相对应。
+4. 默认情况下，模型推理将使用Huggingface引擎，但也可以指定`infer_backend:vllm`以使用vllm推理引擎。
+5. 文档中未明确说明如何通过API进行批量推理的具体命令或配置参数。",对,中文重合 78%（14/18）,webdocs/getting_started__inference.md > 推理¶,2.9
+issue-1990,real-issue,test,Help：训练中断后，可以加载最近的checkpoint，再接着训练吗？,可以，训练中断后可加载最近的 checkpoint 继续训练。,"根据文档内容，训练中断后可以加载最近的 checkpoint 并继续训练。具体要点如下：
+
+1. 如果训练过程中中断，可以使用 `resume_from_checkpoint` 指定恢复路径，从已有的 checkpoint 继续训练。
+2. `resume_from_checkpoint` 可以指向某个具体的 checkpoint 目录，例如 `checkpoint-1000`，恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。
+3. 如果未设置 `resume_from_checkpoint`，即使 `output_dir` 中存在 checkpoint，也不会触发续训。
+4. `resume_from_checkpoint: auto` 会从 `output_dir` 中自动查找最新的完整 checkpoint，用于恢复训练状态。
+5. `resume_from_checkpoint` 恢复的内容包括模型、优化器、学习率调度器、批次进度、训练步数及可用的随机数状态。
+6. 如果此前开启了 `save_only_model:true`，由于未保存 optimizer、scheduler 等状态，通常不能进行",对,中文重合 80%（12/15）,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶,3.6
+issue-3571,real-issue,test,How to specify visible gpu in full sft/lora sft?,"使用 `CUDA_VISIBLE_DEVICES` 指定可见的 GPU。例如：`CUDA_VISIBLE_DEVICES=0,1`。","根据文档内容，以下是与问题相关的要点：
+
+1. 在使用 `llamafactory-cli` 启动 NativeDDP 引擎时，如果 `CUDA_VISIBLE_DEVICES` 没有指定，则默认使用所有GPU。
+2. 如果需要指定GPU，例如第0、1个GPU，可以使用 `CUDA_VISIBLE_DEVICES=0,1` 参数。
+3. 在使用 `deepspeed` 指令启动 DeepSpeed 引擎时，无法使用 `CUDA_VISIBLE_DEVICES` 指定GPU。
+4. 使用 `deepspeed` 指令时，需要通过其他方式指定GPU，例如在命令中指定 `--num_gpus` 参数。",对,"实体命中 2/2：CUDA_VISIBLE_DEVICES、CUDA_VISIBLE_DEVICES=0,1",webdocs/advanced__distributed.md > 分布训练¶ > NativeDDP¶ > 单机多卡¶ > llamafactory-cli¶,2.6
+issue-1429,real-issue,test,请教如何编写template,根据文档1，可以通过在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。,"根据文档内容，编写template的要点如下：
+
+1. 使用 `register_template` 函数来定义模板，参数包括模板名称、用户消息格式、助手消息格式、系统消息格式、函数调用格式和工具输出格式等。
+
+2. 用户消息格式（`format_user`）使用 `StringFormatter` 定义，包含特定的标记，如 `<|header_start|>user<|header_end|>` 和 `<|eot|>`，用于分隔不同部分的内容。
+
+3. 助手消息格式（`format_assistant`）使用 `StringFormatter` 定义，仅包含内容部分和 `<|eot|>` 标记。
+
+4. 系统消息格式（`format_system`）使用 `StringFormatter` 定义，包含特定的标记，如 `<|header_start|>system<|header_end|>` 和 `<|eot|>`，用于分隔不同部分的内容。
+
+5. 函数调用格式（`format_function`）使用 `FunctionFormatter`",错,实体命中 1/3：register_template,webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶,3.9
+issue-1181,real-issue,test,如何设置Lora微调的 rank,设置LoRA微调的rank参数为`r`，默认值为`8`。,"根据文档内容，设置LoRA微调的rank（即`lora_rank`）的要点如下：
+
+1. `lora_rank` 是 LoRA 微调的本征维数 r，r 越大可训练的参数越多。
+2. `lora_rank` 的默认值为 8。
+3. 使用 rsLoRA 时，可以通过设置 `use_rslora` 为 `True` 来启用秩稳定 LoRA，这可以缓解梯度塌陷问题，提高训练稳定性。
+4. `lora_rank` 的值可以手动设置，但需要根据具体任务和模型进行调整，以避免训练不稳定。
+5. `lora_alpha` 通常为 `lora_rank * 2`，但其默认值为 `None`，表示需要手动设置。
+6. `lora_rank` 的设置会影响 LoRA 的性能和训练稳定性，较大的 `lora_rank` 值可能导致训练不稳定。",对,实体命中 2/2：r、8,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > rsLoRA¶,5.1
+issue-4154,real-issue,test,How to override the parameter in the yaml file?,可以通过追加参数更新 yaml 文件中的参数。例如：`llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml learning_rate=1e-5 logging_steps=1`。,根据文档3的内容，要覆盖YAML文件中的参数，可以通过在YAML文件中直接指定具体实现的名称和字段来实现。例如，`dist_config` 和 `kernel_config` 的 `name` 字段用于选择具体实现，其余字段由对应实现解析。文档中没有明确提到如何覆盖参数，但根据常规做法，可以通过在YAML文件中直接修改相关字段的值来实现参数的覆盖。如果需要覆盖特定参数，应直接在YAML文件中指定该参数的值。,错,实体命中 0/4：无,README_zh.md > A3 + openEuler > 利用 vLLM 部署 OpenAI API > 使用 W&B 面板,3.3

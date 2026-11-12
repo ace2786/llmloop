@@ -82,6 +82,8 @@ def main() -> int:
     ap.add_argument("--split", default="optimize", choices=["optimize", "valid", "test", "all"])
     ap.add_argument("--model", default="qwen3-4b-local")
     ap.add_argument("--topk", type=int, default=3, help="最终喂给模型的文档块数")
+    ap.add_argument("--prompt-style", default="concise", choices=["concise", "detailed"],
+                    help="提示词风格：concise 只答明确写的；detailed 要求把相关要点列全")
     ap.add_argument("--recall", type=int, default=20, help="BM25 粗召回条数（仅重排模式）")
     ap.add_argument("--no-rerank", action="store_true", help="只用 BM25，不重排（复现 v0）")
     ap.add_argument("--limit", type=int, default=0)
@@ -133,7 +135,7 @@ def main() -> int:
         loc = f"{chunks[top[0]]['path']} > {chunks[top[0]]['heading']}" if top else ""
 
         try:
-            got, dt = ask(a.model, build_prompt(q["question"], ctx))
+            got, dt = ask(a.model, build_prompt(q["question"], ctx, a.prompt_style))
         except Exception as e:  # noqa: BLE001
             got, dt = "", 0.0
             print(f"  [{i}] 调用失败 {type(e).__name__}")
