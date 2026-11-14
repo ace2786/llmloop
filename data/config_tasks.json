@@ -81,6 +81,56 @@
         "template": "llama3"
       },
       "source": "examples/train_qlora/llama3_lora_sft_gptq.yaml"
+    },
+    {
+      "id": "cfg-07",
+      "title": "继续预训练",
+      "requirement": "我想用 Qwen/Qwen3-4B 做继续预训练（不是指令微调），数据集用 c4_demo，LoRA 方式，配置怎么写？",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B",
+        "stage": "pt",
+        "finetuning_type": "lora",
+        "dataset": "c4_demo"
+      },
+      "source": "examples/train_lora/qwen3_lora_pretrain.yaml"
+    },
+    {
+      "id": "cfg-08",
+      "title": "DeepSpeed ZeRO-3 多卡",
+      "requirement": "我用 4 张卡训 Qwen/Qwen3-4B，显存有点紧，想用 DeepSpeed ZeRO-3 省显存，LoRA 微调，数据集 identity 和 alpaca_en_demo，配置怎么写？",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "sft",
+        "finetuning_type": "lora",
+        "deepspeed": "examples/deepspeed/ds_z3_config.json",
+        "dataset": "identity,alpaca_en_demo",
+        "template": "qwen3_nothink"
+      },
+      "source": "examples/train_lora/qwen3_lora_sft_ds3.yaml"
+    },
+    {
+      "id": "cfg-09",
+      "title": "LoRA 适配器推理",
+      "requirement": "LoRA 已经训好放在 saves/qwen3-4b/lora/sft 了，现在想用 Qwen/Qwen3-4B-Instruct-2507 加载这个 adapter 做推理，配置文件怎么写？",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "adapter_name_or_path": "saves/qwen3-4b/lora/sft",
+        "template": "qwen3_nothink",
+        "infer_backend": "huggingface"
+      },
+      "source": "examples/inference/qwen3_lora_sft.yaml"
+    },
+    {
+      "id": "cfg-10",
+      "title": "多模态微调",
+      "requirement": "我要微调 Qwen3-VL 做多模态任务，数据集用 mllm_demo、identity、alpaca_en_demo，LoRA 方式，配置怎么写？",
+      "key_params": {
+        "stage": "sft",
+        "finetuning_type": "lora",
+        "dataset": "mllm_demo,identity,alpaca_en_demo",
+        "template": "qwen3_vl_nothink"
+      },
+      "source": "examples/train_lora/qwen3vl_lora_sft.yaml"
     }
   ]
 }
