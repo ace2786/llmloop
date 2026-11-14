@@ -1,0 +1,79 @@
+{
+  "model": "qwen3-4b-local",
+  "rows": [
+    {
+      "id": "cfg-01",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template"
+      ],
+      "miss": []
+    },
+    {
+      "id": "cfg-02",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template",
+        "pref_beta"
+      ],
+      "miss": []
+    },
+    {
+      "id": "cfg-03",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template"
+      ],
+      "miss": []
+    },
+    {
+      "id": "cfg-04",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template"
+      ],
+      "miss": []
+    },
+    {
+      "id": "cfg-05",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template",
+        "learning_rate"
+      ],
+      "miss": []
+    },
+    {
+      "id": "cfg-06",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template"
+      ],
+      "miss": []
+    }
+  ]
+}

@@ -25,6 +25,36 @@ from lib.llm import ask  # noqa: E402
 
 DATA = ROOT / "data"
 
+_index = None
+
+
+def get_index():
+    """BM25 索引，只建一次。"""
+    global _index
+    if _index is None:
+        from rank_bm25 import BM25Okapi
+
+        from lib.text import tokenize
+
+        chunks = [json.loads(l) for l in
+                  (DATA / "chunks.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+        _index = (chunks, BM25Okapi([tokenize(c["text"]) for c in chunks]))
+    return _index
+
+
+def retrieve(requirement: str, k: int = 4) -> str:
+    """按需求检索文档块，拼成上下文。
+
+    query 里额外加了「template 模板」——实测纯需求检索时，模板对应关系排不进前 3，
+    而 template 恰好是模型最容易答错的一项。
+    """
+    from lib.text import tokenize
+
+    chunks, bm25 = get_index()
+    scores = bm25.get_scores(tokenize(requirement + " template 模板 对应关系"))
+    top = sorted(range(len(scores)), key=lambda j: -scores[j])[:k]
+    return "\n\n".join(f"[文档{i + 1}] {chunks[j]['text'][:700]}" for i, j in enumerate(top))
+
 PROMPT = """/no_think
 你是 LlamaFactory 配置助手。根据用户需求，写一份完整的训练配置（yaml 格式）。
 
@@ -60,10 +90,17 @@ bf16: true
 要求：
 1. 只输出 yaml 内容，不要解释、不要 markdown 代码块
 2. 需求里提到的模型、数据集、训练方式都要体现在配置里
-
+{extra}
 用户需求：{requirement}
 
 yaml 配置："""
+
+RAG_HINT = """3. 优先采用【相关文档】里写的参数名和取值
+4. template 要按文档里的模型与模板对应关系来填
+
+【相关文档】
+{ctx}
+"""
 
 
 def strip_fence(s: str) -> str:
@@ -112,13 +149,15 @@ def main() -> int:
     ap.add_argument("--model", default="qwen3-4b-local")
     ap.add_argument("--num-predict", type=int, default=900)
     ap.add_argument("--show", action="store_true", help="打印生成的 yaml")
+    ap.add_argument("--rag", action="store_true", help="先检索文档再生成（对比纯模型记忆）")
     a = ap.parse_args()
 
     tasks = json.loads((DATA / "config_tasks.json").read_text(encoding="utf-8"))["tasks"]
     if a.limit:
         tasks = tasks[: a.limit]
 
-    print(f"配置任务 {len(tasks)} 个，模型 {a.model}")
+    print(f"配置任务 {len(tasks)} 个，模型 {a.model}，"
+          f"{'检索增强' if a.rag else '纯模型记忆'}")
     print()
 
     total_hit = total_key = 0
@@ -128,7 +167,10 @@ def main() -> int:
     for t in tasks:
         t0 = time.time()
         try:
-            raw, _ = ask(a.model, PROMPT.format(requirement=t["requirement"]),
+            extra = ""
+            if a.rag:
+                extra = RAG_HINT.format(ctx=retrieve(t["requirement"]))
+            raw, _ = ask(a.model, PROMPT.format(requirement=t["requirement"], extra=extra),
                          num_predict=a.num_predict)
         except Exception as e:  # noqa: BLE001
             print(f"[{t['id']}] 调用失败 {type(e).__name__}: {e}")
