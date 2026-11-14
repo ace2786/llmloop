@@ -1,0 +1,86 @@
+{
+  "note": "配置生成任务：给一句人话需求，让被测助手生成 LlamaFactory 训练配置，再比对关键参数。判分只看 key_params（必须正确的几项），不要求整份 yaml 逐字一致。",
+  "version": 1,
+  "tasks": [
+    {
+      "id": "cfg-01",
+      "title": "LoRA 指令微调",
+      "requirement": "我想用 LoRA 微调 Qwen/Qwen3-4B-Instruct-2507 这个模型做指令微调，手上有 identity 和 alpaca_en_demo 两个数据集，帮我写个训练配置。",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "sft",
+        "finetuning_type": "lora",
+        "dataset": "identity,alpaca_en_demo",
+        "template": "qwen3_nothink"
+      },
+      "source": "examples/train_lora/qwen3_lora_sft.yaml"
+    },
+    {
+      "id": "cfg-02",
+      "title": "DPO 偏好对齐",
+      "requirement": "SFT 已经训完了，现在想用 Qwen/Qwen3-4B-Instruct-2507 做 DPO 偏好对齐，数据集是 dpo_en_demo，继续用 LoRA。",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "dpo",
+        "finetuning_type": "lora",
+        "dataset": "dpo_en_demo",
+        "template": "qwen3_nothink",
+        "pref_beta": "0.1"
+      },
+      "source": "examples/train_lora/qwen3_lora_dpo.yaml"
+    },
+    {
+      "id": "cfg-03",
+      "title": "奖励模型训练",
+      "requirement": "我要用 Qwen/Qwen3-4B-Instruct-2507 训一个奖励模型，LoRA 方式，数据集用 dpo_en_demo，配置怎么写？",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "rm",
+        "finetuning_type": "lora",
+        "dataset": "dpo_en_demo",
+        "template": "qwen3_nothink"
+      },
+      "source": "examples/train_lora/qwen3_lora_reward.yaml"
+    },
+    {
+      "id": "cfg-04",
+      "title": "KTO 对齐",
+      "requirement": "想用 Qwen/Qwen3-4B-Instruct-2507 试试 KTO 对齐，数据集是 kto_en_demo，LoRA 微调，配置怎么配？",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "kto",
+        "finetuning_type": "lora",
+        "dataset": "kto_en_demo",
+        "template": "qwen3_nothink"
+      },
+      "source": "examples/train_lora/qwen3_lora_kto.yaml"
+    },
+    {
+      "id": "cfg-05",
+      "title": "全参微调",
+      "requirement": "这次显存够，不想用 LoRA 了，想全参微调 Qwen/Qwen3-4B-Instruct-2507 做指令微调，数据集 identity 和 alpaca_en_demo。",
+      "key_params": {
+        "model_name_or_path": "Qwen/Qwen3-4B-Instruct-2507",
+        "stage": "sft",
+        "finetuning_type": "full",
+        "dataset": "identity,alpaca_en_demo",
+        "template": "qwen3_nothink",
+        "learning_rate": "1.0e-5"
+      },
+      "source": "examples/train_full/qwen3_full_sft.yaml"
+    },
+    {
+      "id": "cfg-06",
+      "title": "量化模型上做 LoRA",
+      "requirement": "我手上有 TechxGenus/Meta-Llama-3-8B-Instruct-GPTQ 这个量化模型，想在上面继续用 LoRA 微调，数据集 identity 和 alpaca_en_demo。",
+      "key_params": {
+        "model_name_or_path": "TechxGenus/Meta-Llama-3-8B-Instruct-GPTQ",
+        "stage": "sft",
+        "finetuning_type": "lora",
+        "dataset": "identity,alpaca_en_demo",
+        "template": "llama3"
+      },
+      "source": "examples/train_qlora/llama3_lora_sft_gptq.yaml"
+    }
+  ]
+}

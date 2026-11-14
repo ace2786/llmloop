@@ -1,0 +1,84 @@
+{
+  "model": "qwen3-4b-local",
+  "rows": [
+    {
+      "id": "cfg-01",
+      "score": 0.8,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset"
+      ],
+      "miss": [
+        "template=llama3≠qwen3_nothink"
+      ]
+    },
+    {
+      "id": "cfg-02",
+      "score": 0.8333333333333334,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "pref_beta"
+      ],
+      "miss": [
+        "template=llama3≠qwen3_nothink"
+      ]
+    },
+    {
+      "id": "cfg-03",
+      "score": 0.8,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset"
+      ],
+      "miss": [
+        "template=default≠qwen3_nothink"
+      ]
+    },
+    {
+      "id": "cfg-04",
+      "score": 0.8,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset"
+      ],
+      "miss": [
+        "template=default≠qwen3_nothink"
+      ]
+    },
+    {
+      "id": "cfg-05",
+      "score": 0.8333333333333334,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "learning_rate"
+      ],
+      "miss": [
+        "template=default≠qwen3_nothink"
+      ]
+    },
+    {
+      "id": "cfg-06",
+      "score": 1.0,
+      "hit": [
+        "model_name_or_path",
+        "stage",
+        "finetuning_type",
+        "dataset",
+        "template"
+      ],
+      "miss": []
+    }
+  ]
+}
