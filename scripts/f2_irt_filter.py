@@ -43,11 +43,14 @@ VERSIONS_TEST = [
     ("v3", "out/rerank_v3_test.csv"),
 ]
 
-# 优化集只有两版（BM25 / 重排，都是 concise）。两版训不了 IRT，
-# 但「按难度分层抽样」只需要难度排序，两版够用。
+# 优化集四版：BM25 / 重排 / detailed-top3 / detailed-top5。
+# 前两版正确率完全相同（33.3%），单靠它们难度排序没有区分度，
+# 2026-11-14 补跑后两版才让分层抽样有意义（见 B018）。
 VERSIONS_OPT = [
-    ("o0", "out/rerank_optimize_bm25_1111_1229.csv"),
-    ("o1", "out/rerank_optimize_rerank20_1111_1231.csv"),
+    ("o0", "out/rerank_opt_v0.csv"),
+    ("o1", "out/rerank_opt_v1.csv"),
+    ("o2", "out/rerank_opt_v2.csv"),
+    ("o3", "out/rerank_opt_v3.csv"),
 ]
 
 
@@ -136,6 +139,14 @@ def main() -> int:
     n_cfg, n_q = M.shape
     print(f"对错矩阵 {n_cfg} 个配置 × {n_q} 道题")
     print("各配置真实严格正确率：", {t: round(float(M[i].mean()), 3) for i, t in enumerate(tags)})
+
+    # B018：配置正确率全相同时，难度参数失去区分度，分层抽样会静默退化成随机抽样
+    _rates = [float(M[i].mean()) for i in range(n_cfg)]
+    if max(_rates) - min(_rates) < 0.01:
+        print()
+        print("⚠ 警告：各配置正确率几乎相同（差异 < 1 点），题目难度无法区分。")
+        print("  这种情况下分层抽样等于随机抽样，代表题会偏简单、估分虚高。")
+        print("  建议先补跑几个成绩不同的配置，再重新选代表题（见 bugs B018）。")
     print()
 
     # ---- 全量训练 ----

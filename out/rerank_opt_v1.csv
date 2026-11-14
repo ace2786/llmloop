@@ -1,0 +1,135 @@
+﻿id,source,split,question,标准答案,模型回答,自动判分,判分依据,命中文档,耗时s
+4,real-param,optimize,为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？,文档中 lora_alpha（LoRA 缩放系数）一般为 lora_rank * 2，你看到的 2 倍关系很可能来自 lora_alpha 与 lora_rank 的这个关系；文档未说明两处 lora_rank 不一致时以哪个为准。,文档中没有明确说明为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，也没有明确说明以哪个为准。因此，根据文档内容，无法确定具体原因和优先级。,部分对,实体命中 1/2：lora_rank,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > rsLoRA¶,3.8
+8,real-operation,optimize,请问给其他模型如何配置正确的template模板,我们可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。,可以通过类似的方法获取其他模型的 template 模板，即使用该模型的 tokenizer，通过 `apply_chat_template` 方法生成 chat_template。具体步骤包括：导入必要的库，加载预训练模型的 tokenizer，定义消息列表，然后调用 `apply_chat_template` 方法生成模板。此外，也可以通过 huggingface repo 来获取模型的 template。,错,实体命中 1/3：chat_template,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 量化¶,1.9
+9,real-param,optimize,do_sample 设为 False 时，temperature 和 top_p 还起作用吗？,不起作用。do_sample 为 False 时使用 greedy decoding（贪心解码），不再进行采样；temperature（默认 0.95）用于调整生成文本的随机性，top_p 用于控制候选 token 集合大小，两者都只在采样模式下参与生成。,文档中没有明确说明do_sample设为False时temperature和top_p是否还起作用。根据文档1中的描述，当do_sample设为False时，将使用greedy decoding，而temperature和top_p是用于调整生成文本随机性的参数，但在greedy decoding中可能不会使用这些参数。因此，文档中没有明确说明这些参数在do_sample设为False时是否起作用。,部分对,实体命中 2/3：do_sample、top_p,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,2.8
+11,real-param,optimize,do_sample 参数设为 False 时，文本生成使用什么策略？,使用贪心解码（greedy decoding）。do_sample 为 bool 类型、默认 True，控制是否使用采样策略生成文本。,greedy decoding。,错,实体命中 0/1：无,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,0.3
+13,real-param,optimize,在训练过程中电脑突然重启，如何接着训练,从 `output_dir` 中最新的完整 checkpoint 恢复训练状态。,使用 `resume_from_checkpoint` 指定恢复路径，例如 `checkpoint-1000`。恢复训练时，Trainer 会尝试继续加载该 checkpoint 对应的模型参数以及训练状态。,错,实体命中 0/1：无,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 断点续训¶,1.8
+16,real-operation,optimize,我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？,通过 `peft_config.name: lora` 配置。在上述训练配置中加入以下块，并将 `output_dir` 改为 `outputs/qwen3_lora`；基座仍为 `Qwen/Qwen3-0.6B`,在文档中没有明确提到如何直接从LoRA_A的权重微调LoRA_B，并将LoRA_B直接用在原始模型Model上。但根据文档内容，可以推断出在继续训练已有 adapter 时设置 `adapter_name_or_path`，训练只允许一个 adapter；LoRA 参数从 adapter 自身恢复。因此，您应该在训练配置中指定 `adapter_name_or_path` 为 LoRA_A，然后使用数据集B进行微调，得到 LoRA_B。这样，LoRA_B 可以直接用在原始模型Model上。,错,实体命中 0/6：无,docs/zh/feature-guide/sft.md > 监督微调（SFT） > LoRA,2.2
+17,real-param,optimize,支持 Qwen3-4B-Instruct-2507 的 KTO 训练吗？,支持。仓库提供了 KTO 训练配置示例，其中 model_name_or_path 为 Qwen/Qwen3-4B-Instruct-2507，stage 设为 kto。,是的，支持 Qwen3-4B-Instruct-2507 的 KTO 训练。根据文档1的配置，已经设置了 `stage: kto`，并且使用了 KTO 数据集 `kto_en_demo`，因此可以进行 KTO 训练。,错,实体命中 0/1：无,examples/train_lora/qwen3_lora_kto.yaml > examples/train_lora/qwen3_lora_kto.yaml,1.7
+20,real-operation,optimize,多模态数据集中如何使用多张图片？,多模态图像数据集需要额外添加一个 `images` 列，包含输入图像的路径。注意图片的数量必须与文本中所有 <image> 标记的数量严格一致。,"多模态数据集中使用多张图片时，需要确保图片的数量与文本中所有 <image> 标记的数量严格一致，并且在数据集中添加一个 `images` 列来包含输入图像的路径。同时，`dataset_info.json` 中的 数据集描述 应为：
+
+```
+""dataset_name"": {
+ ""file_name"": ""data.json"",
+ ""columns"": {
+ ""prompt"": ""instruction"",
+ ""query"": ""input"",
+ ""response"": ""output"",
+ ""images"": ""images""
+ }
+}
+```",对,实体命中 1/1：images,webdocs/getting_started__data_preparation.md > 数据处理¶ > Alpaca¶ > 多模态数据集¶ > 图像数据集¶,2.7
+28,real-supplement,optimize,如何设置模型推理的一些参数如 temperature？,通过 `temperature` 参数设置：用于调整生成文本的随机性，默认值 0.95；temperature 越高生成越随机，越低越确定。,temperature 的默认值为 0.95。,对,实体命中 2/2：temperature、0.95,docs/zh/feature-guide/model_export.md > 模型导出 > 导出配置,0.8
+30,real-param,optimize,--cutoff_len 1024，截断长度设置的 1024，是指 1024 个字，还是 1024 个 token？,是 token。cutoff_len 的定义是「输入的最大 token 数，超过该长度会被截断」，默认值 2048。,文档中没有明确说明“cutoff_len: 1024”是指1024个字还是1024个token，因此无法确定具体含义。根据上下文推测，这可能是指1024个token，但文档中并未明确说明。,对,实体命中 1/1：cutoff_len,webdocs/advanced__trainers.md > 训练方法¶ > Pre-training¶ > dataset,1.7
+31,real-supplement,optimize,如何用 accelerate 进行多机 SFT？,使用 accelerate 启动并指定多机配置文件：`accelerate launch --config_file fsdp_config_multiple_nodes.yaml train.py llm_config.yaml`。,"使用 `accelerate` 进行多机 SFT 的步骤如下：
+
+1. 运行 `accelerate config` 命令，根据需求回答一系列问题后生成配置文件。
+2. 在生成的配置文件中设置 `num_processes` 参数为多机数量（例如，如果使用 2 台机器，则设置为 2）。
+3. 使用 `accelerate launch` 命令启动训练任务，同时指定配置文件和训练脚本：
+   ```
+   accelerate launch --config_file fsdp_config.yaml src/train.py training_config.yaml
+   ```
+4. 使用 `ray job submit` 命令提交训练任务，示例命令如下：
+   ```
+   RAY_API_SERVER_ADDRESS='http://dashboard-host:dashboard-port' ray job submit -- USE_RAY=1 accelerate launch --config_file fsdp_config.yaml src/train.py training_config.yaml
+   ```",错,实体命中 1/3：config_file,webdocs/advanced__distributed.md > accelerate_singleNode_config.yaml > 多机多卡¶ > llamafactory-cli¶ > accelerate¶,3.5
+32,real-param,optimize,请问如何添加自定义模型？,注册模型的template，解析多模态数据并构建messages,"根据文档内容，添加自定义模型需要完成以下步骤：
+1. 注册模型的template，可以在 `src/llamafactory/data/template.py` 中使用 `register_template` 方法为自定义模型注册 chat_template。
+2. 解析多模态数据并构建 messages，这是为多模态模型添加支持时需要完成的两个主要任务之一。",对,中文重合 93%（13/14）,webdocs/advanced__model_support.md > 模型支持¶ > 注册 template¶,1.6
+44,real-param,optimize,如何为 Qwen3.5 启用 Liger Kernel 加速？,通过 `kernel_config` 统一配置模型侧的融合算子加速（如 Liger Kernel）。`kernel_config.name` 接受加速实现名称，也可用逗号分隔多个；未设置或设为 null 时不做算子替换。,"在启动训练时，在训练配置文件中添加以下参数：
+
+```
+enable_liger_kernel: True
+```
+
+并配置 `kernel_config` 为：
+
+```yaml
+kernel_config:
+  name: liger_kernel
+```",部分对,实体命中 1/2：kernel_config,webdocs/advanced__acceleration.md > 加速¶ > Liger Kernel¶,1.2
+54,real-operation,optimize,如何同时使用yaml文件和命令行参数？,您可以使用以下命令使用 `examples/train_lora/qwen3_lora_sft.yaml` 中的参数进行微调：,"可以通过追加参数更新 yaml 文件中的参数，例如：
+
+```
+llamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml \
+ learning_rate=1e-5 \
+ logging_steps=1
+```",对,实体命中 3/3：examples/train_lora/qwen3_lora_sft.yaml、train_lora、qwen3_lora_sft,webdocs/getting_started__sft.md > SFT 训练¶ > 命令行¶,1.2
+56,real-param,optimize,video_maxlen 和 cutoff_len 分别是什么含义？,video_maxlen 是视频输入的最大采样帧数，默认 128；cutoff_len 是输入的最大 token 数，超过会被截断，默认 2048。,video_maxlen 是视频输入的最大采样帧数，cutoff_len 是模型处理的最大序列长度。,对,实体命中 2/2：video_maxlen、cutoff_len,examples/train_lora/mossvl_lora_sft.yaml > examples/train_lora/mossvl_lora_sft.yaml,0.9
+58,real-supplement,optimize,求教怎么使用本地下载的模型？,将 `model_name_or_path` 指向本地模型目录路径；若需注册自定义模型组，使用 `register_model_group(models={...})`。,根据提供的文档内容，没有直接说明如何使用本地下载的模型。但可以结合文档中的信息推断出使用方法：将 `model_name_or_path` 设置为本地模型的路径来加载对应的模型。具体操作可能需要根据实际的模型格式和环境进行调整。,错,实体命中 1/3：model_name_or_path,README_zh.md > A3 + openEuler > 利用 vLLM 部署 OpenAI API > 从魔乐社区下载,1.4
+122,doc-synth,optimize,`adamw_eps` 应该怎么设？默认是多少？,内部 AdamW epsilon。默认值为 1e-8。,文档1中提到，`adamw_eps`的默认值是`1e-8`。因此，`adamw_eps`应该设为`1e-8`，默认值也是`1e-8`。,部分对,中文重合 40%（2/5）,docs/zh/configuration/training.md > 训练参数 > optim_config,1.9
+124,doc-synth,optimize,`apollo_proj` 可以填哪些值？默认是哪个？,"支持 svd, random；默认值为 random。","`apollo_proj` 可以填的值是 ""svd"" 或 ""random""。默认是 ""random""。",错,中文重合 20%（1/5）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶,1.5
+125,doc-synth,optimize,`apollo_proj_type` 可以填哪些值？默认是哪个？,"支持 std, right, left；默认值为 std。","`apollo_proj_type` 可以填的值是 ""std"", ""right"", ""left""。默认是 ""std""。",错,中文重合 20%（1/5）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶,0.5
+126,doc-synth,optimize,`apollo_rank` 这个参数是做什么的？默认值多少？,APOLLO 梯度的秩。默认值为 16。,`apollo_rank` 这个参数是 APOLLO 梯度的秩。默认值为 16。,对,中文重合 86%（6/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > Apollo¶,1.0
+135,doc-synth,optimize,`badam_switch_mode` 这个参数是做什么的？默认值多少？,"layer-wise BAdam 中块更新策略，可选值有： ascending, descending, random, fixed。默认值为 ascending。","`badam_switch_mode` 这个参数是用于设置 layer-wise BAdam 中块更新策略的，可选值有：ascending, descending, random, fixed。默认值为 ascending。",对,中文重合 85%（11/13）,webdocs/advanced__tuning_algorithms.md > ... > BAdam¶ > method,1.8
+137,doc-synth,optimize,`badam_verbose` 默认值是多少？,默认值为 0。,0,错,中文重合 0%（0/3）,webdocs/advanced__tuning_algorithms.md > ... > BAdam¶ > method,0.1
+140,doc-synth,optimize,`batching_workers` 不填的话会用什么值？,不填时使用默认值 16。,`batching_workers` 不填的话会用 `16`。,错,中文重合 14%（1/7）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 批处理配置,1.2
+145,doc-synth,optimize,`chunk_size` 应该怎么设？默认是多少？,chunk size；可选 `16`、`32`、`64`。默认值为 64。,`chunk_size` 应该设置为 `16`、`32` 或 `64` 中的一个，默认是 `64`。,对,实体命中 3/3：16、32、64,docs/zh/feature-guide/kernel_acceleration.md > 融合算子加速 > Flash Linear Attention,1.5
+148,doc-synth,optimize,`cp_mode` 默认值是多少？,默认值为 ulysses。,`cp_mode` 默认值是 `ulysses`。,对,中文重合 67%（2/3）,docs/zh/feature-guide/distributed_training.md > 分布式训练 > 配置并行拓扑,1.9
+149,doc-synth,optimize,`cp_size` 应该怎么设？默认是多少？,Context Parallel 大小。默认值为 1。,`cp_size` 应该设为能整除 world size 的整数，并且模型的 attention head 数必须能被 `cp_size` 整除。默认值是 1。,部分对,中文重合 40%（2/5）,docs/zh/feature-guide/distributed_training.md > 分布式训练 > Ulysses Context Parallel,1.5
+151,doc-synth,optimize,`cutoff_len` 默认值是多少？,默认值为 2048。,`cutoff_len` 默认值是 2048。,对,中文重合 67%（2/3）,webdocs/getting_started__eval.md > 评估¶ > NLG 评估¶ > dataset,0.9
+152,doc-synth,optimize,`data_shared_file_system` 不填的话会用什么值？,不填时使用默认值 false。,false,错,中文重合 0%（0/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶,1.1
+154,doc-synth,optimize,`disable_gradient_checkpointing` 这个参数是做什么的？默认值多少？,是否禁用梯度检查点。默认值为 False。,文档中没有提到 `disable_gradient_checkpointing` 这个参数。因此，无法根据提供的文档回答该问题。,错,中文重合 0%（0/12）,webdocs/advanced__tuning_algorithms.md > ... > Galore¶ > method,1.7
+159,doc-synth,optimize,`download_mode` 这个参数是做什么的？默认值多少？,评估数据集的下载模式，如果数据集已经存在则重复使用，否则则下载。默认值为 DownloadMode.REUSE_DATASET_IF_EXISTS。,`download_mode` 这个参数是用于设置评估数据集的下载模式，如果数据集已经存在则重复使用，否则则下载。默认值为 `DownloadMode.REUSE_DATASET_IF_EXISTS`。,对,实体命中 1/1：REUSE_DATASET_IF_EXISTS,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,1.7
+162,doc-synth,optimize,`enable_liger_kernel` 应该怎么设？默认是多少？,是否启用 liger 内核以加速训练。默认值为 False。,`enable_liger_kernel` 应该设为 `True`。默认是 `True`。,错,中文重合 7%（1/14）,webdocs/advanced__acceleration.md > 加速¶ > Liger Kernel¶,1.0
+163,doc-synth,optimize,`ep_dispatcher` 应该怎么设？默认是多少？,专家 token dispatcher。默认值为 eager。,`ep_dispatcher` 应该设为 `eager`，默认是 `eager`。,错,中文重合 20%（1/5）,docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo,1.0
+164,doc-synth,optimize,`eval_on_each_dataset` 默认值是多少？,默认值为 False。,False,错,中文重合 0%（0/3）,webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶,0.7
+167,doc-synth,optimize,`export_quantization_maxlen` 不填的话会用什么值？,不填时使用默认值 1024。,1024,错,中文重合 0%（0/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶,0.8
+168,doc-synth,optimize,`export_quantization_nsamples` 不填的话会用什么值？,不填时使用默认值 128。,128,错,中文重合 0%（0/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶,0.2
+169,doc-synth,optimize,`export_size` 不填的话会用什么值？,不填时使用默认值 5。,5,错,中文重合 0%（0/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型导出¶,0.6
+171,doc-synth,optimize,`freeze_multi_modal_projector` 默认值是多少？,默认值为 True。,True,错,中文重合 0%（0/3）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > 基本参数¶,1.2
+173,doc-synth,optimize,`freeze_trainable_modules` 应该怎么设？默认是多少？,可训练层的名称。使用 all 来指定所有模块。默认值为 all。,"`freeze_trainable_modules` 应该设为 ""all""，默认是 ""all""。",错,中文重合 5%（1/19）,webdocs/advanced__tuning_algorithms.md > ... > Freeze¶ > method,1.0
+177,doc-synth,optimize,`full_determinism` 默认值是多少？,默认值为 false。,false,错,中文重合 0%（0/3）,docs/zh/configuration/training.md > 训练参数 > TrainingArguments > 训练过程与精度,1.4
+181,doc-synth,optimize,`galore_scale` 这个参数是做什么的？默认值多少？,GaLore 的缩放系数。默认值为 0.25。,`galore_scale` 这个参数是用于设置 GaLore 的缩放系数。默认值为 0.25。,对,实体命中 1/1：0.25,webdocs/advanced__tuning_algorithms.md > ... > Galore¶ > method,1.3
+182,doc-synth,optimize,`galore_target` 不填的话会用什么值？,不填时使用默认值 all。,all,错,中文重合 0%（0/7）,webdocs/advanced__tuning_algorithms.md > ... > Galore¶ > method,0.1
+185,doc-synth,optimize,`ignore_pad_token_for_loss` 这个参数是做什么的？默认值多少？,计算 loss 时是否忽略 pad token。默认值为 True。,根据提供的文档，没有提到 `ignore_pad_token_for_loss` 这个参数。因此，无法确定该参数的用途和默认值。,错,中文重合 20%（2/10）,webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶,0.7
+193,doc-synth,optimize,`kto_rejected_weight` 默认值是多少？,默认值为 1.0。,1.0,对,实体命中 1/1：1.0,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.2
+194,doc-synth,optimize,`lang` 默认值是多少？,默认值为 en。,en,错,中文重合 0%（0/3）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,0.7
+196,doc-synth,optimize,`length_penalty` 默认值是多少？,默认值为 1.0。,1.0,对,实体命中 1/1：1.0,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,2.0
+197,doc-synth,optimize,`lora_dropout` 这个参数是做什么的？默认值多少？,LoRA 微调中的 dropout 率。默认值为 0。,LoRA 微调中的 dropout 率。默认值为 0.05。,对,中文重合 75%（6/8）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > method,2.2
+205,doc-synth,optimize,`mix_strategy` 可以填哪些值？默认是哪个？,"支持 concat, interleave_under, interleave_over；默认值为 concat。",文档中未提及 `mix_strategy` 参数，因此无法回答该问题。,错,实体命中 0/2：无,webdocs/advanced__arguments.md > 参数介绍¶ > 数据参数¶,1.1
+207,doc-synth,optimize,`model_revision` 默认值是多少？,默认值为 main。,根据提供的文档，没有提到 `model_revision` 参数，因此无法确定其默认值。文档中未包含该参数的信息。,对,中文重合 67%（2/3）,webdocs/advanced__tuning_algorithms.md > ... > LoRA¶ > method,1.1
+210,doc-synth,optimize,`neat_packing` 这个参数是做什么的？默认值多少？,是否启用不使用 cross-attention 的 sequences packing。默认值为 False。,根据提供的文档，没有提到 `neat_packing` 这个参数。因此，无法确定该参数的用途和默认值。,错,中文重合 18%（2/11）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,0.7
+211,doc-synth,optimize,`nesterov` 应该怎么设？默认是多少？,是否启用 Nesterov。默认值为 true。,`nesterov` 应该设为 `true`，默认是 `true`。,错,中文重合 14%（1/7）,docs/zh/configuration/training.md > 训练参数 > optim_config,0.5
+213,doc-synth,optimize,`num_beams` 应该怎么设？默认是多少？,用于 beam_search 的束宽度。值为 1 表示不使用 beam_search。默认值为 1。,`num_beams` 应该根据具体需求设置，通常用于控制 beam search 的束宽度。默认值是 1，表示不使用 beam search。,错,实体命中 0/1：无,webdocs/advanced__arguments.md > 参数介绍¶ > 生成参数¶,2.5
+215,doc-synth,optimize,`offload_params` 应该怎么设？默认是多少？,是否 offload 参数。默认值为 false。,`offload_params` 应该设为 `false`，默认是 `false`。,错,中文重合 14%（1/7）,docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo,0.9
+216,doc-synth,optimize,`overwrite_cache` 这个参数是做什么的？默认值多少？,是否覆盖缓存的训练和评估数据集。默认值为 False。,`overwrite_cache` 这个参数是用于控制是否覆盖已存在的缓存文件。默认值是 true。,部分对,中文重合 33%（6/18）,examples/extras/apollo/llama3_full_sft.yaml > examples/extras/apollo/llama3_full_sft.yaml,0.5
+217,doc-synth,optimize,`pin_memory` 默认值是多少？,默认值为 true。,true,错,中文重合 0%（0/3）,docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo,0.6
+220,doc-synth,optimize,`pissa_iter` 不填的话会用什么值？,不填时使用默认值 16。,16,错,中文重合 0%（0/7）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > LoRA¶,0.5
+222,doc-synth,optimize,`ppo_buffer_size` 默认值是多少？,默认值为 1。,1,错,中文重合 0%（0/3）,webdocs/advanced__arguments.md > 参数介绍¶ > 微调参数¶ > RLHF¶,1.1
+230,doc-synth,optimize,`preprocessing_batch_size` 默认值是多少？,默认值为 1000。,文档中没有提到 `preprocessing_batch_size` 的默认值。,对,中文重合 67%（2/3）,webdocs/getting_started__eval.md > 评估¶ > 评估相关参数¶,0.5
+233,doc-synth,optimize,`quantization_method` 可以填哪些值？默认是哪个？,"支持 bitsandbytes, hqq, eetq；默认值为 bitsandbytes。","`quantization_method` 可以填的值是 ""bitsandbytes"", ""hqq"", ""eetq""。默认是 ""bitsandbytes""。",错,中文重合 20%（1/5）,webdocs/advanced__arguments.md > 参数介绍¶ > 模型参数¶ > 模型量化¶,0.8
+235,doc-synth,optimize,`ray_num_workers` 应该怎么设？默认是多少？,Ray 训练所使用的工作进程数量。默认值为 1。,`ray_num_workers` 应该设为需要使用的 GPU 数量，文档中默认值为 1，但根据文档2中的配置，`ray_num_workers` 被设置为 4。因此，`ray_num_workers` 应设为 4，默认值为 1。,部分对,中文重合 40%（6/15）,webdocs/advanced__arguments.md > 参数介绍¶ > 训练参数¶ > RAY¶,1.5
+237,doc-synth,optimize,`reshard_after_forward` 默认值是多少？,默认值为 true。,`reshard_after_forward` 的默认值是 `true`。,对,中文重合 67%（2/3）,docs/zh/configuration/training.md > 训练参数 > dist_config > FSDPTurbo,0.9
+247,doc-synth,optimize,`streaming` 这个参数是做什么的？默认值多少？,字段已定义；当前训练路径不支持 streaming 数据集。默认值为 false。,`streaming` 参数用于启用数据流模式。默认值为 false。,错,中文重合 20%（4/20）,docs/zh/configuration/data.md > 数据参数 > DatasetInfo,1.4
+248,doc-synth,optimize,`swanlab_mode` 可以填哪些值？默认是哪个？,"支持 cloud, local；默认值为 cloud。","`swanlab_mode` 可以填的值是 ""cloud"" 或 ""local""，默认是 ""cloud""。",错,中文重合 20%（1/5）,webdocs/advanced__arguments.md > 参数介绍¶ > SwanLab 参数¶,1.7
+254,doc-synth,optimize,`upcast_layernorm` 应该怎么设？默认是多少？,是否将 layernorm 层权重精度提高至 fp32。默认值为 False。,文档中没有提到 `upcast_layernorm` 的设置方法和默认值。因此，无法从文档中获得相关信息。,错,中文重合 14%（2/14）,README_zh.md > A3 + openEuler,1.1
+issue-1029,real-issue,optimize,sft时候 训练脚本如何设置让模型按epoch保存,将 `save_strategy` 设置为 `epoch`。,"在SFT训练时，若希望模型按epoch保存，需将`save_strategy`设置为`epoch`，例如：
+
+```
+save_strategy: epoch
+```",对,实体命中 2/2：save_strategy、epoch,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > Checkpoint 保存策略¶,2.3
+issue-4601,real-issue,optimize,怎样使用accelerate库进行微调呢？,使用 `accelerate` 指令生成配置文件，然后启动 DeepSpeed 引擎进行微调。,"使用 `accelerate` 库进行微调，可以按照以下步骤操作：
+
+1. 修改 `examples/accelerate/fsdp_config.yaml` 以及 `examples/extras/fsdp_qlora/llama3_lora_sft.yaml` 文件以满足需求。
+2. 运行以下命令启动 FSDP+QLoRA 微调：
+   ```
+   bash examples/extras/fsdp_qlora/train.sh
+   ```
+
+另外，您还可以使用 `accelerate` 指令启动进行单机多卡训练或多机多卡训练，具体步骤如下：
+- 运行以下命令，根据需求回答一系列问题后生成配置文件：
+  ```
+  accelerate config
+  ```",对,实体命中 1/1：accelerate,webdocs/advanced__distributed.md > deepspeed_config.yaml > FSDP¶ > 单机多卡¶ > llamafactory-cli¶,2.7
+issue-3473,real-issue,optimize,How to select Badam optimizer in the web interface?,在 Web UI 中提交同一份 YAML 时，需在启动环境中设置 `USE_MEGATRON_BRIDGE=1` 以启用 BAdam 优化器。,"In the web interface, you can select the BAdam optimizer by setting the `use_badam` parameter to `True`. The specific configuration for BAdam, such as the mode (`badam_mode`), starting block index (`badam_start_block`), switch mode (`badam_switch_mode`), switch interval (`badam_switch_interval`), update ratio (`badam_update_ratio`), mask mode (`badam_mask_mode`), and verbose level (`badam_verbose`), can be adjusted in the web interface according to the parameters described in the documentation.",错,实体命中 0/2：无,webdocs/advanced__tuning_algorithms.md > ... > BAdam¶ > method,1.9
+issue-7172,real-issue,optimize,sft只保存模型权重不保存优化器参数怎么设置,设置 `save_only_model: true` 可以只保存模型权重，不保存优化器参数。,在配置中设置 `save_only_model: true` 可以实现只保存模型权重而不保存优化器参数。,对,实体命中 2/2：save_only_model: true、save_only_model,webdocs/getting_started__merge_lora.md > 模型保存、LoRA 合并与量化¶ > 模型保存¶ > 仅保存模型权重¶,0.8
+issue-7548,real-issue,optimize,llama-factory是否支持pipeline 并行训练,是的，LlamaFactory支持pipeline并行训练。,否。文档中未提及 llama-factory 支持 pipeline 并行训练。,部分对,中文重合 57%（4/7）,webdocs/advanced__distributed.md > 分布训练¶,0.7
+issue-8593,real-issue,optimize,强化学习中如何接入自己训练的reward model,在强化学习中接入自己训练的 reward model，需将 `stage` 设置为 `ppo`，并指定奖励模型的路径，如 `reward_model: saves/llama3-8b/lora/reward`。,"在使用 PPO 进行强化学习时，请将 `stage` 设置为 `ppo`，并且指定所使用奖励模型的路径。例如：
+
+```
+...
+stage: ppo
+reward_model: saves/llama3-8b/lora/reward
+...
+```",对,实体命中 3/3：stage、ppo、reward_model,webdocs/advanced__trainers.md > 训练方法¶ > Post-training¶ > RLHF¶ > PPO¶,2.0

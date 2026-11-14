@@ -1,157 +1,157 @@
 {
   "n": 30,
   "split": "optimize",
-  "note": "1PL 分层抽样的代表题，来自 2 个配置 × 69 道题的对错矩阵",
+  "note": "1PL 分层抽样的代表题，来自 4 个配置 × 69 道题的对错矩阵",
   "items": [
     {
       "index": 7,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "多模态数据集中如何使用多张图片？"
     },
     {
       "index": 11,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "请问如何添加自定义模型？"
     },
     {
       "index": 23,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "`chunk_size` 应该怎么设？默认是多少？"
     },
     {
       "index": 19,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "`apollo_rank` 这个参数是做什么的？默认值多少？"
     },
     {
       "index": 63,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "sft时候 训练脚本如何设置让模型按epoch保存"
     },
     {
       "index": 42,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "`kto_rejected_weight` 默认值是多少？"
     },
     {
       "index": 45,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "`lora_dropout` 这个参数是做什么的？默认值多少？"
     },
     {
       "index": 59,
-      "difficulty_b": -0.4455,
+      "difficulty_b": -0.6294,
       "question": "`reshard_after_forward` 默认值是多少？"
     },
     {
-      "index": 64,
-      "difficulty_b": -0.4455,
-      "question": "怎样使用accelerate库进行微调呢？"
-    },
-    {
       "index": 9,
-      "difficulty_b": -0.1122,
+      "difficulty_b": -0.3189,
       "question": "--cutoff_len 1024，截断长度设置的 1024，是指 1024 个字，还是 1024 个 token？"
     },
     {
       "index": 13,
-      "difficulty_b": -0.1122,
+      "difficulty_b": -0.3189,
       "question": "如何同时使用yaml文件和命令行参数？"
     },
     {
-      "index": 10,
-      "difficulty_b": 0.2229,
-      "question": "如何用 accelerate 进行多机 SFT？"
-    },
-    {
-      "index": 15,
-      "difficulty_b": 0.2229,
-      "question": "求教怎么使用本地下载的模型？"
-    },
-    {
-      "index": 18,
-      "difficulty_b": 0.2229,
-      "question": "`apollo_proj_type` 可以填哪些值？默认是哪个？"
-    },
-    {
-      "index": 30,
-      "difficulty_b": 0.2229,
-      "question": "`enable_liger_kernel` 应该怎么设？默认是多少？"
-    },
-    {
-      "index": 27,
-      "difficulty_b": 0.2229,
-      "question": "`data_shared_file_system` 不填的话会用什么值？"
-    },
-    {
-      "index": 21,
-      "difficulty_b": 0.2229,
-      "question": "`badam_verbose` 默认值是多少？"
-    },
-    {
-      "index": 16,
-      "difficulty_b": 0.2229,
-      "question": "`adamw_eps` 应该怎么设？默认是多少？"
-    },
-    {
-      "index": 36,
-      "difficulty_b": 0.2229,
-      "question": "`freeze_multi_modal_projector` 默认值是多少？"
-    },
-    {
       "index": 37,
-      "difficulty_b": 0.2229,
+      "difficulty_b": -0.0091,
       "question": "`freeze_trainable_modules` 应该怎么设？默认是多少？"
     },
     {
-      "index": 33,
-      "difficulty_b": 0.2229,
-      "question": "`export_quantization_maxlen` 不填的话会用什么值？"
+      "index": 38,
+      "difficulty_b": -0.0091,
+      "question": "`full_determinism` 默认值是多少？"
+    },
+    {
+      "index": 16,
+      "difficulty_b": -0.0091,
+      "question": "`adamw_eps` 应该怎么设？默认是多少？"
     },
     {
       "index": 40,
-      "difficulty_b": 0.2229,
+      "difficulty_b": -0.0091,
       "question": "`galore_target` 不填的话会用什么值？"
     },
     {
-      "index": 52,
-      "difficulty_b": 0.2229,
-      "question": "`overwrite_cache` 这个参数是做什么的？默认值多少？"
-    },
-    {
       "index": 50,
-      "difficulty_b": 0.2229,
+      "difficulty_b": -0.0091,
       "question": "`num_beams` 应该怎么设？默认是多少？"
     },
     {
-      "index": 55,
-      "difficulty_b": 0.2229,
-      "question": "`ppo_buffer_size` 默认值是多少？"
+      "index": 49,
+      "difficulty_b": -0.0091,
+      "question": "`nesterov` 应该怎么设？默认是多少？"
     },
     {
-      "index": 1,
-      "difficulty_b": 0.2229,
-      "question": "请问给其他模型如何配置正确的template模板"
+      "index": 33,
+      "difficulty_b": -0.0091,
+      "question": "`export_quantization_maxlen` 不填的话会用什么值？"
     },
     {
-      "index": 5,
-      "difficulty_b": 0.2229,
-      "question": "我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？"
+      "index": 3,
+      "difficulty_b": -0.0091,
+      "question": "do_sample 参数设为 False 时，文本生成使用什么策略？"
+    },
+    {
+      "index": 12,
+      "difficulty_b": 0.3008,
+      "question": "如何为 Qwen3.5 启用 Liger Kernel 加速？"
     },
     {
       "index": 0,
-      "difficulty_b": 0.2229,
+      "difficulty_b": 0.3008,
       "question": "为什么 yaml中设置的lora_rank和adapter config文件的lora_rank有2倍的关系，以哪个为准？"
     },
     {
-      "index": 60,
-      "difficulty_b": 0.2229,
-      "question": "`streaming` 这个参数是做什么的？默认值多少？"
+      "index": 51,
+      "difficulty_b": 0.3008,
+      "question": "`offload_params` 应该怎么设？默认是多少？"
+    },
+    {
+      "index": 6,
+      "difficulty_b": 0.3008,
+      "question": "支持 Qwen3-4B-Instruct-2507 的 KTO 训练吗？"
+    },
+    {
+      "index": 30,
+      "difficulty_b": 0.6117,
+      "question": "`enable_liger_kernel` 应该怎么设？默认是多少？"
+    },
+    {
+      "index": 25,
+      "difficulty_b": 0.6117,
+      "question": "`cp_size` 应该怎么设？默认是多少？"
+    },
+    {
+      "index": 46,
+      "difficulty_b": 0.6117,
+      "question": "`mix_strategy` 可以填哪些值？默认是哪个？"
+    },
+    {
+      "index": 27,
+      "difficulty_b": 0.6117,
+      "question": "`data_shared_file_system` 不填的话会用什么值？"
+    },
+    {
+      "index": 17,
+      "difficulty_b": 0.6117,
+      "question": "`apollo_proj` 可以填哪些值？默认是哪个？"
+    },
+    {
+      "index": 5,
+      "difficulty_b": 0.6117,
+      "question": "我有个类似问题。假定基础模型Model 1.我在基础模型Model 的基础上用数据集A微调了LoRA权重LoRA_A 2.我想继续在LoRA权重A的基础上，用数据集B微调LoRA权重LoRA_B 我不希望将LoRA_A存成一个基础模型，我希望直接从LoRA_A的权重微调LoRA_B，获得的B_adapter直接能用在原始模型Model的权重上，我该如何操作？"
     },
     {
       "index": 57,
-      "difficulty_b": 0.2229,
+      "difficulty_b": 0.6117,
       "question": "`quantization_method` 可以填哪些值？默认是哪个？"
+    },
+    {
+      "index": 48,
+      "difficulty_b": 0.6117,
+      "question": "`neat_packing` 这个参数是做什么的？默认值多少？"
     }
   ]
 }
