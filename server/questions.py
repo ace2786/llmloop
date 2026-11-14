@@ -3,7 +3,8 @@ import random
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from .audit import log_action
+from lib.audit import log_action
+
 from .auth import current_user
 from .db import connect, execute
 

@@ -171,6 +171,15 @@ def init_db() -> None:
         cols = [r[1] for r in conn.execute("PRAGMA table_info(questions)")]
         if "source" not in cols:
             conn.execute("ALTER TABLE questions ADD COLUMN source TEXT")
+        # 迁移：opt_rounds 补快速筛选三列（F2 接入后记录「代表题估分 / 是否被拦下 / 省了多少调用」）
+        rcols = [r[1] for r in conn.execute("PRAGMA table_info(opt_rounds)")]
+        for col, decl in (
+            ("screen_score", "REAL"),
+            ("screened", "INTEGER"),
+            ("calls_saved", "INTEGER"),
+        ):
+            if col not in rcols:
+                conn.execute(f"ALTER TABLE opt_rounds ADD COLUMN {col} {decl}")
         conn.commit()
     finally:
         conn.close()

@@ -1,0 +1,156 @@
+{
+  "n": 30,
+  "note": "1PL 分层抽样的代表题，来自 4 个配置 × 80 道题的对错矩阵",
+  "items": [
+    {
+      "index": 3,
+      "difficulty_b": -0.5768,
+      "question": "多机多卡，设置 data_shared_file_system 为 true 时每个 worker 都要算一遍 tokenize"
+    },
+    {
+      "index": 29,
+      "difficulty_b": -0.5768,
+      "question": "请问现在支持流水线并行或者张量并行等模型并行的方式吗？不是数据并行"
+    },
+    {
+      "index": 26,
+      "difficulty_b": -0.5768,
+      "question": "（Instruct/Chat）模型对应的模板怎么找？"
+    },
+    {
+      "index": 31,
+      "difficulty_b": -0.5768,
+      "question": "请问训练多轮会话是不是需要将一条多轮会话拆分为多条数据"
+    },
+    {
+      "index": 49,
+      "difficulty_b": -0.5768,
+      "question": "`kto_chosen_weight` 默认值是多少？"
+    },
+    {
+      "index": 75,
+      "difficulty_b": -0.5768,
+      "question": "Help：训练中断后，可以加载最近的checkpoint，再接着训练吗？"
+    },
+    {
+      "index": 74,
+      "difficulty_b": -0.5768,
+      "question": "如何进行API批量推理，batch interface"
+    },
+    {
+      "index": 8,
+      "difficulty_b": -0.3037,
+      "question": "vllm如何进行batch推理"
+    },
+    {
+      "index": 51,
+      "difficulty_b": -0.3037,
+      "question": "`lora_rank` 应该怎么设？默认是多少？"
+    },
+    {
+      "index": 11,
+      "difficulty_b": -0.3037,
+      "question": "请问预训练数据tokenizer后可以存储吗，下次运行直接加载tokenizer后的数据，不用每次都在线tokenizer?"
+    },
+    {
+      "index": 76,
+      "difficulty_b": -0.3037,
+      "question": "How to specify visible gpu in full sft/lora sft?"
+    },
+    {
+      "index": 50,
+      "difficulty_b": -0.031,
+      "question": "`learning_rate` 这个参数是做什么的？默认值多少？"
+    },
+    {
+      "index": 52,
+      "difficulty_b": -0.031,
+      "question": "`loraplus_lr_embedding` 默认值是多少？"
+    },
+    {
+      "index": 45,
+      "difficulty_b": -0.031,
+      "question": "`galore_proj_type` 应该怎么设？默认是多少？"
+    },
+    {
+      "index": 38,
+      "difficulty_b": -0.031,
+      "question": "`bf16` 不填的话会用什么值？"
+    },
+    {
+      "index": 65,
+      "difficulty_b": -0.031,
+      "question": "`seed` 默认值是多少？"
+    },
+    {
+      "index": 5,
+      "difficulty_b": -0.031,
+      "question": "我想接着checkpoint继续train 该怎么办呢"
+    },
+    {
+      "index": 30,
+      "difficulty_b": -0.031,
+      "question": "如何用自定义数据集进行性能评估"
+    },
+    {
+      "index": 10,
+      "difficulty_b": 0.242,
+      "question": "qwen2vl-sft后如何将adapter_model.safetensors和模型原始参数合并使用"
+    },
+    {
+      "index": 42,
+      "difficulty_b": 0.242,
+      "question": "`double_quantization` 不填的话会用什么值？"
+    },
+    {
+      "index": 73,
+      "difficulty_b": 0.242,
+      "question": "如何单机多卡微调一个模型，把模型参数分开加载到不同的GPU"
+    },
+    {
+      "index": 25,
+      "difficulty_b": 0.5157,
+      "question": "Qwen2-VL 7B 如何用命令行进行对话？"
+    },
+    {
+      "index": 7,
+      "difficulty_b": 0.5157,
+      "question": "如何设置 weight decay（权重衰减）？"
+    },
+    {
+      "index": 14,
+      "difficulty_b": 0.5157,
+      "question": "model.chat 功能怎么在框架内批量使用呢？"
+    },
+    {
+      "index": 62,
+      "difficulty_b": 0.5157,
+      "question": "`resize_vocab` 这个参数是做什么的？默认值多少？"
+    },
+    {
+      "index": 56,
+      "difficulty_b": 0.5157,
+      "question": "`offload_folder` 这个参数是做什么的？默认值多少？"
+    },
+    {
+      "index": 40,
+      "difficulty_b": 0.5157,
+      "question": "`compute_accuracy` 不填的话会用什么值？"
+    },
+    {
+      "index": 12,
+      "difficulty_b": 0.5157,
+      "question": "请问使用全参训练出的checkpoint如何与原始模型的权重进行合并？"
+    },
+    {
+      "index": 71,
+      "difficulty_b": 0.5157,
+      "question": "`trust_remote_code` 这个参数是做什么的？默认值多少？"
+    },
+    {
+      "index": 79,
+      "difficulty_b": 0.5157,
+      "question": "How to override the parameter in the yaml file?"
+    }
+  ]
+}

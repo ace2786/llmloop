@@ -15,11 +15,11 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
+from lib.audit import log_action
 from lib.judge import judge
 from lib.llm import ask, build_prompt
 from lib.text import tokenize
 
-from .audit import log_action
 from .auth import current_user
 from .db import connect, execute
 
@@ -80,6 +80,9 @@ def _run_eval(run_id: int, app_id: int, model: str, split: str, topk: int) -> No
     """后台跑一次评测。任何异常都写进 error 字段，状态置 failed。"""
     conn = connect()
     t0 = time.time()
+    # 后台线程没有登录态，但审计要归到应用所有者名下
+    _o = conn.execute("SELECT user_id FROM apps WHERE id=?", (app_id,)).fetchone()
+    owner_id = _o["user_id"] if _o else None
     try:
         conn.execute("UPDATE eval_runs SET status='running' WHERE id=?", (run_id,))
         conn.commit()
@@ -139,7 +142,7 @@ def _run_eval(run_id: int, app_id: int, model: str, split: str, topk: int) -> No
         conn.commit()
         print(f"[eval {run_id}] 完成：{correct}/{total}")
         log_action(
-            None, "eval.finish", "eval_run", run_id,
+            owner_id, "eval.finish", "eval_run", run_id,
             {"total": total, "correct": correct,
              "strict": round(correct / total, 4) if total else 0.0},
         )
@@ -150,7 +153,7 @@ def _run_eval(run_id: int, app_id: int, model: str, split: str, topk: int) -> No
         )
         conn.commit()
         print(f"[eval {run_id}] 失败：{e}")
-        log_action(None, "eval.failed", "eval_run", run_id, {"error": str(e)[:300]})
+        log_action(owner_id, "eval.failed", "eval_run", run_id, {"error": str(e)[:300]})
     finally:
         conn.close()
 

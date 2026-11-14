@@ -28,10 +28,10 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from rank_bm25 import BM25Okapi  # noqa: E402
 
+from lib.audit import log_action  # noqa: E402
 from lib.judge import judge  # noqa: E402
 from lib.llm import ask, build_prompt  # noqa: E402
 from lib.text import tokenize  # noqa: E402
-from server.audit import log_action  # noqa: E402
 from server.db import connect  # noqa: E402
 
 DATA = ROOT / "data"
@@ -55,7 +55,20 @@ ALLOWED = {
 # 要求至少多对 2 道才算「真的变好」，1 道算噪声。
 MIN_GAIN_QUESTIONS = 2
 
+# 快速筛选的余量：代表题估分比当前最佳低超过这个值，就直接淘汰，不跑全量。
+# 30 道代表题的留一误差约 1.6 点（测试集验证），留 3 点余量避免误杀。
+SCREEN_MARGIN = 0.03
+
 _reranker = None
+
+
+def load_rep_questions() -> set[str] | None:
+    """读 F2 选出的代表题（优化集版）。没有就返回 None，退化成不筛选。"""
+    p = DATA / "irt_rep_questions_optimize.json"
+    if not p.exists():
+        return None
+    d = json.loads(p.read_text(encoding="utf-8"))
+    return {x["question"] for x in d["items"]}
 
 
 def get_reranker(device: str):
@@ -91,9 +104,15 @@ def retrieve(bm25, chunks, question: str, cfg: dict, ranker) -> list[int]:
     return [cand[k] for k in order[: cfg["topk"]]]
 
 
-def evaluate(cfg: dict, split: str, model: str, bm25, chunks, ranker, limit: int = 0) -> dict:
-    """跑一遍评测，返回成绩和逐题明细。"""
+def evaluate(cfg: dict, split: str, model: str, bm25, chunks, ranker,
+             limit: int = 0, only: set[str] | None = None) -> dict:
+    """跑一遍评测，返回成绩和逐题明细。
+
+    only 不为空时只跑这些题（用于快速筛选）。
+    """
     qs = load_questions(split)
+    if only is not None:
+        qs = [q for q in qs if q["question"] in only]
     if limit:
         qs = qs[:limit]
 
@@ -254,6 +273,10 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true", help="只诊断+提议，不跑候选评测")
     ap.add_argument("--base-style", default="detailed", choices=["concise", "detailed"],
                     help="起点提示词风格。默认 detailed（第一轮优化后的当前最佳）")
+    ap.add_argument("--no-screen", action="store_true",
+                    help="关掉 F2 快速筛选，每个候选都跑全量（对照用）")
+    ap.add_argument("--verify-killed", action="store_true",
+                    help="被筛选拦下的候选也跑全量，用于统计误杀率（会抵消节省）")
     a = ap.parse_args()
 
     # 起点跟着当前最佳走：第一轮之后最佳已经是 detailed，再跑就该从 detailed 继续往上找
@@ -269,6 +292,9 @@ def main() -> int:
         ranker = get_reranker(a.device)
 
     conn = connect()
+    # 脚本没有登录态，但操作归属要落到应用所有者名下，否则审计查询（按 user_id 过滤）看不到
+    _owner = conn.execute("SELECT user_id FROM apps WHERE id=?", (a.app,)).fetchone()
+    owner_id = _owner["user_id"] if _owner else None
     cur = conn.execute(
         "INSERT INTO opt_runs (app_id, base_config, best_config, rounds_planned) VALUES (?,?,?,?)",
         (a.app, json.dumps(BASE_CONFIG, ensure_ascii=False),
@@ -276,9 +302,23 @@ def main() -> int:
     )
     opt_run_id = cur.lastrowid
     conn.commit()
-    log_action(None, "opt.start", "opt_run", opt_run_id,
-               {"app_id": a.app, "rounds": a.rounds, "model": a.model})
+    log_action(owner_id, "opt.start", "opt_run", opt_run_id,
+               {"app_id": a.app, "rounds": a.rounds, "model": a.model,
+                "screen": not a.no_screen})
     print(f"\n=== 优化实验 #{opt_run_id} 开始（{a.rounds} 轮）===\n")
+
+    # F2 快速筛选用的代表题；没有就退化成不筛选
+    rep_qs = None if a.no_screen else load_rep_questions()
+    if rep_qs:
+        print(f"F2 快速筛选：{len(rep_qs)} 道代表题（淘汰线 = 当前最佳 - {SCREEN_MARGIN:.0%}）")
+    elif a.no_screen:
+        print("F2 快速筛选：已关闭（--no-screen）")
+    else:
+        print("F2 快速筛选：没找到代表题，本次不筛选")
+    total_saved = 0
+    killed_fp = 0
+    screened_total = 0
+    print()
 
     # ① 基线
     print("① 基线评测（优化集）")
@@ -333,6 +373,42 @@ def main() -> int:
             conn.commit()
             continue
 
+        # ④ 快速筛选：先用代表题估分，明显不如当前最佳的直接淘汰
+        screen_score = None
+        screened = 0
+        calls_saved = 0
+        killed = False
+        if rep_qs and not a.no_screen:
+            print(f"④ 快速筛选（{len(rep_qs)} 道代表题）")
+            scr = evaluate(cand, "optimize", a.model, bm25, chunks, ranker, only=rep_qs)
+            est = scr["score"]
+            screen_score = est
+            total_q = len(load_questions("optimize"))
+            saved = total_q - scr["n"]
+            print(f"    估分 {est:.1%}（当前最佳 {best_score:.1%}，淘汰线 {best_score - SCREEN_MARGIN:.1%}）")
+            if est < best_score - SCREEN_MARGIN:
+                killed = True
+                screened = 1
+                calls_saved = saved
+                print(f"    估分低于淘汰线，跳过全量（省 {saved} 次调用）")
+                if not a.verify_killed:
+                    note = (f"快速筛选淘汰：代表题估分 {est:.1%}，比当前最佳低 "
+                            f"{best_score - est:.1%}，超过 {SCREEN_MARGIN:.0%} 余量；省 {saved} 次调用")
+                    print(f"⑥ 决策：淘汰 —— {note}")
+                    conn.execute(
+                        "INSERT INTO opt_rounds (opt_run_id, round_no, config, reason, expect, diag_json, "
+                        "screen_score, screened, calls_saved, decision, decision_note) "
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                        (opt_run_id, rnd, json.dumps(cand, ensure_ascii=False), prop["reason"],
+                         prop["expect"], json.dumps(diag, ensure_ascii=False), est, 1, saved,
+                         "skipped", note),
+                    )
+                    conn.execute("UPDATE opt_runs SET rounds_done=? WHERE id=?", (rnd, opt_run_id))
+                    conn.commit()
+                    total_saved += saved
+                    continue
+                print("    （--verify-killed：照样跑全量，用于统计误杀率）")
+
         # ① 候选评测（优化集）
         print("① 候选评测（优化集）")
         cand_res = evaluate(cand, "optimize", a.model, bm25, chunks, ranker, a.limit)
@@ -340,6 +416,14 @@ def main() -> int:
         opt_delta = cand_res["score"] - best_score
         print(f"    {cfg_str(cand)} → 严格 {cand_res['score']:.1%}（{cand_res['ok']}/{cand_res['n']}），"
               f"相对当前最佳 {opt_delta:+.1%}（{gain_q:+d} 道）")
+
+        if killed:
+            # 被筛选拦下但为了统计误杀率跑了全量：全量其实够好 = 误杀
+            if gain_q >= MIN_GAIN_QUESTIONS:
+                killed_fp += 1
+                print(f"    ⚠ 误杀：快速筛选判错，全量其实涨了 {gain_q} 道")
+            else:
+                print("    ✓ 筛选判对：全量确实没提升")
 
         decision, note = "reverted", ""
         valid_score = valid_delta = None
@@ -369,14 +453,21 @@ def main() -> int:
                 note = f"优化集涨了 {gain_q} 道，但验证集没跟上（{valid_delta:+.1%}），判为过拟合，退回"
             print(f"⑥ 决策：{decision} —— {note}")
 
+        # 通过筛选的候选多花了 len(rep_qs) 次调用（代表题），淘汰的才真正省下
+        if rep_qs and not a.no_screen and not killed:
+            calls_saved = -len(rep_qs)
+        screened_total += screened
+
         conn.execute(
             "INSERT INTO opt_rounds (opt_run_id, round_no, config, reason, expect, diag_json, "
-            "opt_score, opt_delta, valid_score, valid_delta, decision, decision_note) "
-            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            "opt_score, opt_delta, valid_score, valid_delta, decision, decision_note, "
+            "screen_score, screened, calls_saved) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
             (opt_run_id, rnd, json.dumps(cand, ensure_ascii=False), prop["reason"], prop["expect"],
              json.dumps(diag, ensure_ascii=False), cand_res["score"], opt_delta,
-             valid_score, valid_delta, decision, note),
+             valid_score, valid_delta, decision, note, screen_score, screened, calls_saved),
         )
+        total_saved += calls_saved or 0
         conn.execute(
             "UPDATE opt_runs SET best_config=?, best_score=?, best_valid=?, rounds_done=? WHERE id=?",
             (json.dumps(best_cfg, ensure_ascii=False), best_score, best_valid, rnd, opt_run_id),
@@ -393,9 +484,21 @@ def main() -> int:
     print(f"起点：{cfg_str(BASE_CONFIG)} → 严格 {base['score']:.1%}")
     print(f"终点：{cfg_str(best_cfg)} → 严格 {best_score:.1%}")
     print(f"提升：{best_score - base['score']:+.1%}（{(best_score - base['score']) * base['n']:+.0f} 道）")
-    log_action(None, "opt.finish", "opt_run", opt_run_id,
+    log_action(owner_id, "opt.finish", "opt_run", opt_run_id,
                {"base": round(base["score"], 4), "best": round(best_score, 4),
-                "best_config": best_cfg, "rounds": a.rounds})
+                "best_config": best_cfg, "rounds": a.rounds,
+                "screened": screened_total, "calls_saved": total_saved})
+
+    if rep_qs:
+        print()
+        print("F2 快速筛选统计")
+        print(f"  代表题            {len(rep_qs)} 道（全量 {len(load_questions('optimize'))} 道）")
+        print(f"  被拦下的候选      {screened_total} 个")
+        print(f"  净节省模型调用    {total_saved} 次"
+              f"（拦下省 {len(load_questions('optimize')) - len(rep_qs)}/个，放行多花 {len(rep_qs)}/个）")
+        if a.verify_killed and screened_total:
+            print(f"  误杀              {killed_fp} / {screened_total} "
+                  f"（{killed_fp / screened_total:.0%}）")
     for r in conn.execute(
         "SELECT round_no, config, opt_score, valid_score, decision FROM opt_rounds "
         "WHERE opt_run_id=? ORDER BY round_no", (opt_run_id,)
