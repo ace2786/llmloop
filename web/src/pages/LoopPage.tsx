@@ -104,6 +104,12 @@ export default function LoopPage({ appId }: { appId: number }) {
     return { total: runs.length, best, kept, rounds }
   }, [runs])
 
+  // 当前选中的实验：快速筛选净省下的模型调用（拦下省 39/个，放行多花 30/个）
+  const netSaved = useMemo(
+    () => (selected?.rounds ?? []).reduce((n, r) => n + (r.calls_saved ?? 0), 0),
+    [selected],
+  )
+
   return (
     <div className="page-stack">
       <header className="page-head">
@@ -207,6 +213,14 @@ export default function LoopPage({ appId }: { appId: number }) {
               <span className="mono">{cfgText(selected.best_config)}</span>
               <span className="mono loop-strong">{pct(selected.best_score)}</span>
             </div>
+            {netSaved !== 0 && (
+              <div>
+                <span className="loop-k">快速筛选</span>
+                <span className="mono">
+                  净{netSaved > 0 ? '省' : '多花'} {Math.abs(netSaved)} 次模型调用
+                </span>
+              </div>
+            )}
           </div>
 
           {selected.rounds.length === 0 ? (
@@ -249,6 +263,16 @@ export default function LoopPage({ appId }: { appId: number }) {
                     验证集 <strong>{pct(r.valid_score)}</strong>
                     <em>{delta(r.valid_delta)}</em>
                   </span>
+                  {r.screen_score !== null && r.screen_score !== undefined && (
+                    <span>
+                      快速筛选 <strong>{pct(r.screen_score)}</strong>
+                      <em>
+                        {r.screened
+                          ? `拦下，省 ${r.calls_saved ?? 0} 次调用`
+                          : `放行（多花 ${Math.abs(r.calls_saved ?? 0)} 次）`}
+                      </em>
+                    </span>
+                  )}
                   <span className="loop-note">{r.decision_note}</span>
                 </div>
               </div>

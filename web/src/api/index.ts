@@ -218,6 +218,9 @@ export interface OptRound {
   opt_delta: number | null
   valid_score: number | null
   valid_delta: number | null
+  screen_score: number | null
+  screened: number | null
+  calls_saved: number | null
   decision: OptDecision
   decision_note: string | null
   created_at: string
